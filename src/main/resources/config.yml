@@ -11,10 +11,21 @@ maxSeasonLength: -1 # Default is -1, which means no maximum length.
 # World will be reset, player rewards will be split among all players.
 maxSurvivorsRemaining: 1
 
+# This is the minimum number of votes required to end the season.
+# This only applies if there are more than 1 `maxSurvivorsRemaining` players.
+minVotesToEndSeason: 5
+
 # This is the number of days a player can be offline before they are considered inactive.
 # Inactive players will not be counted towards the `maxSurvivorsRemaining` count.
 # Inactive players will not receive seasonal rewards.
 lastLoginThreshold: 3 # In days
+
+# This is the frequency for which the plugin will prompt players to
+# vote to end the season, or continue the season.
+# Always applies, except when the last surviving player(s) falls off due to inactivity.
+confirmationIntervalDays: 0 # In days
+confirmationIntervalHours: 24 # In hours
+confirmationIntervalMinutes: 0 # In minutes
 
 endOfSeasonCommands:
   - "say Season has ended! The world will be reset and rewards will be split among all players."
