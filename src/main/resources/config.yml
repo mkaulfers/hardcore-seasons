@@ -14,7 +14,7 @@ maxSurvivorsRemaining: 1
 # This is the number of days a player can be offline before they are considered inactive.
 # Inactive players will not be counted towards the `maxSurvivorsRemaining` count.
 # Inactive players will not receive seasonal rewards.
-lastLoginThreshold: 3
+lastLoginThreshold: 3 # In days
 
 endOfSeasonCommands:
   - "say Season has ended! The world will be reset and rewards will be split among all players."
@@ -36,3 +36,5 @@ MySQL:
   database: "HCSeasons"
   username: ""
   password: ""
+  # Determines the frequency for which the plugin will update the database.
+  updateInterval: 5 # In minutes

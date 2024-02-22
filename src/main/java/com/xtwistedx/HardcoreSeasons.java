@@ -35,12 +35,14 @@ public final class HardcoreSeasons extends JavaPlugin {
         String database = rawConfig.getString("mySQLConfig.database");
         String username = rawConfig.getString("mySQLConfig.username");
         String password = rawConfig.getString("mySQLConfig.password");
+        int updateInterval = rawConfig.getInt("mySQLConfig.updateInterval");
 
         MySQLConfig mySQLConfig = new MySQLConfig(host,
                 port,
                 database,
                 username,
-                password);
+                password,
+                updateInterval);
 
         hcConfig = new HCConfig(minSeasonLength,
                 maxSeasonLength,
