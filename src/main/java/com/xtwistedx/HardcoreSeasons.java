@@ -1,6 +1,7 @@
 package com.xtwistedx;
 
 import com.xtwistedx.commands.HardcoreSeasonsCommand;
+import com.xtwistedx.listeners.TrackableBlockPlaced;
 import com.xtwistedx.models.HCConfig;
 import com.xtwistedx.models.MySQLConfig;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -16,6 +17,7 @@ public final class HardcoreSeasons extends JavaPlugin {
     public void onEnable() {
         loadConfigs();
         registerCommands();
+        registerListeners();
     }
 
     @Override
@@ -67,5 +69,9 @@ public final class HardcoreSeasons extends JavaPlugin {
 
     public void registerCommands() {
         this.getCommand("hardcoreseasons").setExecutor(new HardcoreSeasonsCommand(this));
+    }
+
+    public void registerListeners() {
+        getServer().getPluginManager().registerEvents(new TrackableBlockPlaced(), this);
     }
 }
