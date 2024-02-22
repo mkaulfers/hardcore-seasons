@@ -5,6 +5,8 @@ import com.xtwistedx.models.MySQLConfig;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.List;
+
 public final class HardcoreSeasons extends JavaPlugin {
     HCConfig hcConfig;
 
@@ -29,7 +31,11 @@ public final class HardcoreSeasons extends JavaPlugin {
         int maxSeasonLength = rawConfig.getInt("maxSeasonLength");
         int maxSurvivorsRemaining = rawConfig.getInt("maxSurvivorsRemaining");
         int lastLoginThreshold = rawConfig.getInt("lastLoginThreshold");
-        String[] endOfSeasonCommands = rawConfig.getStringList("endOfSeasonCommands").toArray(new String[0]);
+        int confirmationIntervalDays = rawConfig.getInt("confirmationIntervalDays");
+        int confirmationIntervalHours = rawConfig.getInt("confirmationIntervalHours");
+        int confirmationIntervalMinutes = rawConfig.getInt("confirmationIntervalMinutes");
+        List<String> endOfSeasonCommands = rawConfig.getStringList("endOfSeasonCommands");
+
         String host = rawConfig.getString("mySQLConfig.host");
         int port = rawConfig.getInt("mySQLConfig.port");
         String database = rawConfig.getString("mySQLConfig.database");
@@ -48,6 +54,9 @@ public final class HardcoreSeasons extends JavaPlugin {
                 maxSeasonLength,
                 maxSurvivorsRemaining,
                 lastLoginThreshold,
+                confirmationIntervalDays,
+                confirmationIntervalHours,
+                confirmationIntervalMinutes,
                 endOfSeasonCommands,
                 mySQLConfig);
     }
