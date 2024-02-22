@@ -37,6 +37,59 @@ public class SQLHandler {
         }
     }
 
+    public void initializeDatabase() {
+        if(!isConnected()) {
+            throw new IllegalStateException("Database is not connected");
+        }
+    }
+
+    /**
+     * Create the user table in the database
+     * @throws IllegalStateException if the database is not connected
+     * User table should have the following columns:
+     * - user_id (int, auto increment, primary key)
+     * - username (varchar, 255)
+     * - last_login (datetime)
+     */
+    private void createUserTable() {
+        if(!isConnected()) {
+            throw new IllegalStateException("Database is not connected");
+        }
+    }
+
+    /**
+     * Create the season table in the database
+     * @throws IllegalStateException if the database is not connected
+     * Season table should have the following columns:
+     * - season_id (int, auto increment, primary key)
+     * - start_date (datetime)
+     * - end_date (datetime)
+     * - players_alive (text)
+     * - players_banned (text)
+     */
+    private void createSeasonTable() {
+        if(!isConnected()) {
+            throw new IllegalStateException("Database is not connected");
+        }
+    }
+
+    /**
+     * Create the container table in the database
+     * @throws IllegalStateException if the database is not connected
+     * Container table should have the following columns:
+     * - container_id (int, auto increment, primary key)
+     * - x (int)
+     * - y (int)
+     * - z (int)
+     * - season_id (int, foreign key to season.season_id)
+     * - container_contents (text)
+     */
+    private void createContainerTable() {
+        if(!isConnected()) {
+            throw new IllegalStateException("Database is not connected");
+        }
+    }
+
     public SQLHandler(Config config) {
         this.config = config;
     }

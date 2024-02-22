@@ -1,5 +1,5 @@
 package com.xtwistedx.models;
-import org.bukkit.block.Lockable;
+import org.bukkit.block.Container;
 import java.util.Date;
 
 public class Season {
@@ -7,5 +7,5 @@ public class Season {
     Date startDate;
     Date endDate;
     User[] users;
-    Lockable[] trackedContainers;
+    Container[] trackedContainers;
 }
