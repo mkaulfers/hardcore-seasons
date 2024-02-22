@@ -1,5 +1,5 @@
 name: HardcoreSeasons
-version: '${project.version}'
+version: '1.0-SNAPSHOT'
 main: com.xtwistedx.HardcoreSeasons
 api-version: '1.20'
 command:

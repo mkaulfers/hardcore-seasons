@@ -1,0 +1,38 @@
+# This is the minimum length for the season.
+# End of season rewards, world will not be reset until this number of days has elapsed.
+minSeasonLength: 14 #Default is 14
+
+# This is the maximum length for the season.
+# World will be reset, player rewards will be split among all players.
+maxSeasonLength: -1 # Default is -1, which means no maximum length.
+
+# Whenever a season is beyond it's `minSeasonLength` and there are
+# less or equal to `maxSurvivorsRemaining` players, the season will end.
+# World will be reset, player rewards will be split among all players.
+maxSurvivorsRemaining: 1
+
+# This is the number of days a player can be offline before they are considered inactive.
+# Inactive players will not be counted towards the `maxSurvivorsRemaining` count.
+# Inactive players will not receive seasonal rewards.
+lastLoginThreshold: 3
+
+endOfSeasonCommands:
+  - "say Season has ended! The world will be reset and rewards will be split among all players."
+  - "server [playerName] survival"
+
+# Storage Settings
+# Not Recommended: SQLite
+# It will require manual intervention to reset the database.
+# In addition to manual intervention, to reward players, you will need to move the database file to the server
+# and inform players when it is acceptable to run the command.
+storage: "SQLite"
+
+# Recommended: MySQL
+# The entire process is fully automated, and players will be rewarded whenever the season ends.
+# Worlds will be reset automatically.
+MySQL:
+  host: "localhost"
+  port: 3306
+  database: "HCSeasons"
+  username: ""
+  password: ""

@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="HardcoreSeasons:jar">
+    <output-path>$PROJECT_DIR$/../_minecraft_dev_server/plugins</output-path>
+    <root id="archive" name="HardcoreSeasons.jar">
+      <element id="module-output" name="HardcoreSeasons" />
+    </root>
+  </artifact>
+</component>
