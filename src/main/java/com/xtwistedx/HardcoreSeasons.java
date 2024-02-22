@@ -2,15 +2,17 @@ package com.xtwistedx;
 
 import com.xtwistedx.commands.HardcoreSeasonsCommand;
 import com.xtwistedx.listeners.TrackableBlockPlaced;
-import com.xtwistedx.models.HCConfig;
+import com.xtwistedx.models.Config;
 import com.xtwistedx.models.MySQLConfig;
+import com.xtwistedx.storage.SQLHandler;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.List;
 
 public final class HardcoreSeasons extends JavaPlugin {
-    HCConfig hcConfig;
+    private Config config;
+    private SQLHandler sqlHandler;
 
     // Lifecycle methods
     @Override
@@ -18,11 +20,12 @@ public final class HardcoreSeasons extends JavaPlugin {
         loadConfigs();
         registerCommands();
         registerListeners();
+        handleStorage();
     }
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
+        sqlHandler.disconnect();
     }
 
     // Custom methods
@@ -55,7 +58,7 @@ public final class HardcoreSeasons extends JavaPlugin {
                 password,
                 updateInterval);
 
-        hcConfig = new HCConfig(minSeasonLength,
+        config = new Config(minSeasonLength,
                 maxSeasonLength,
                 maxSurvivorsRemaining,
                 lastLoginThreshold,
@@ -67,11 +70,24 @@ public final class HardcoreSeasons extends JavaPlugin {
                 mySQLConfig);
     }
 
-    public void registerCommands() {
+    private void registerCommands() {
         this.getCommand("hardcoreseasons").setExecutor(new HardcoreSeasonsCommand(this));
     }
 
-    public void registerListeners() {
+    private void registerListeners() {
         getServer().getPluginManager().registerEvents(new TrackableBlockPlaced(), this);
+    }
+
+    private void handleStorage() {
+        if(config.storageType.equalsIgnoreCase("mysql")) {
+            sqlHandler = new SQLHandler(config);
+            try {
+                sqlHandler.connect();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            /// Use SQLite
+        }
     }
 }

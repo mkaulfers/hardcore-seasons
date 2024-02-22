@@ -12,6 +12,8 @@ import java.util.List;
 /// Default command is /hardcoreseasons or /hcs
 /// This command can take a `reload` argument to reload the plugin's configuration
 public class HardcoreSeasonsCommand implements TabExecutor {
+    String reloadPermission = "hardcoreseasons.reload";
+
     HardcoreSeasons plugin;
 
     @Override
@@ -22,7 +24,7 @@ public class HardcoreSeasonsCommand implements TabExecutor {
 
             if (strings.length == 1) {
                 if (strings[0].equals("reload")) {
-                    if (player.hasPermission("hardcoreseasons.reload")) {
+                    if (player.hasPermission(reloadPermission)) {
                         plugin.reloadConfig();
                         player.sendMessage("HardcoreSeasons configuration reloaded");
                         return true;
@@ -42,10 +44,12 @@ public class HardcoreSeasonsCommand implements TabExecutor {
     @Override
     public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] strings) {
         if (command.getName().equals("hardcoreseasons") || command.getName().equals("hcs")) {
-            if (strings.length == 1) {
-                ArrayList<String> completions = new ArrayList<>();
-                completions.add("reload");
-                return completions;
+            if (commandSender instanceof Player) {
+                if (strings.length == 1 && commandSender.hasPermission(reloadPermission)) {
+                    ArrayList<String> completions = new ArrayList<>();
+                    completions.add("reload");
+                    return completions;
+                }
             }
         }
         return null;

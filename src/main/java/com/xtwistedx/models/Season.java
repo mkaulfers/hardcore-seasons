@@ -6,6 +6,6 @@ public class Season {
     int seasonId;
     Date startDate;
     Date endDate;
-    Survivor[] survivors;
+    User[] users;
     Lockable[] trackedContainers;
 }

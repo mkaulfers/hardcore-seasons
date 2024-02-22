@@ -1,12 +1,12 @@
 package com.xtwistedx.models;
 
 public class MySQLConfig {
-    String host;
-    int port;
-    String database;
-    String username;
-    String password;
-    int updateInterval;
+    public String host;
+    public int port;
+    public String database;
+    public String username;
+    public String password;
+    public int updateInterval;
 
     public MySQLConfig(String host, int port, String database, String username, String password, int updateInterval) {
         this.host = host;
