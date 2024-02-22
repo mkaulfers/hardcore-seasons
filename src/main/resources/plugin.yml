@@ -1,6 +1,9 @@
 name: HardcoreSeasons
-version: '${project.version}'
+version: ${project.version}
 main: com.xtwistedx.HardcoreSeasons
-api-version: '1.20'
-command:
-  prewards:
+api-version: "1.20"
+commands:
+  hardcoreseasons:
+    usage: /<command> [reload|vote]
+    description: HardcoreSeasons command
+    aliases: [hcs]

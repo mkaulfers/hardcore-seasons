@@ -1,6 +1,9 @@
 name: HardcoreSeasons
-version: '1.0-SNAPSHOT'
+version: 1.0-SNAPSHOT
 main: com.xtwistedx.HardcoreSeasons
-api-version: '1.20'
-command:
-  prewards:
+api-version: "1.20"
+commands:
+  hardcoreseasons:
+    usage: /<command> [reload|vote]
+    description: HardcoreSeasons command
+    aliases: [hcs]

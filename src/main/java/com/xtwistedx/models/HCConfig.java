@@ -11,6 +11,7 @@ public class HCConfig {
     int confirmationIntervalHours;
     int confirmationIntervalMinutes;
     List<String> endOfSeasonCommands;
+    String storageType;
     MySQLConfig mySQLConfig;
 
     public HCConfig(int minSeasonLength,
@@ -21,6 +22,7 @@ public class HCConfig {
                     int confirmationIntervalHours,
                     int confirmationIntervalMinutes,
                     List<String> endOfSeasonCommands,
+                    String storageType,
                     MySQLConfig mySQLConfig) {
         this.minSeasonLength = minSeasonLength;
         this.maxSeasonLength = maxSeasonLength;
@@ -30,6 +32,7 @@ public class HCConfig {
         this.confirmationIntervalHours = confirmationIntervalHours;
         this.confirmationIntervalMinutes = confirmationIntervalMinutes;
         this.endOfSeasonCommands = endOfSeasonCommands;
+        this.storageType = storageType;
         this.mySQLConfig = mySQLConfig;
     }
 }

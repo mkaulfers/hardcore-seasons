@@ -1,5 +1,6 @@
 package com.xtwistedx;
 
+import com.xtwistedx.commands.HardcoreSeasonsCommand;
 import com.xtwistedx.models.HCConfig;
 import com.xtwistedx.models.MySQLConfig;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -14,6 +15,7 @@ public final class HardcoreSeasons extends JavaPlugin {
     @Override
     public void onEnable() {
         loadConfigs();
+        registerCommands();
     }
 
     @Override
@@ -35,6 +37,7 @@ public final class HardcoreSeasons extends JavaPlugin {
         int confirmationIntervalHours = rawConfig.getInt("confirmationIntervalHours");
         int confirmationIntervalMinutes = rawConfig.getInt("confirmationIntervalMinutes");
         List<String> endOfSeasonCommands = rawConfig.getStringList("endOfSeasonCommands");
+        String storageType = rawConfig.getString("storageType");
 
         String host = rawConfig.getString("mySQLConfig.host");
         int port = rawConfig.getInt("mySQLConfig.port");
@@ -58,6 +61,11 @@ public final class HardcoreSeasons extends JavaPlugin {
                 confirmationIntervalHours,
                 confirmationIntervalMinutes,
                 endOfSeasonCommands,
+                storageType,
                 mySQLConfig);
+    }
+
+    public void registerCommands() {
+        this.getCommand("hardcoreseasons").setExecutor(new HardcoreSeasonsCommand(this));
     }
 }
