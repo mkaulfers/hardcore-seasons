@@ -42,10 +42,10 @@ storageType: "SQLite"
 # The entire process is fully automated, and players will be rewarded whenever the season ends.
 # Worlds will be reset automatically.
 MySQL:
-  host: "localhost"
+  host: 0.0.0.0
   port: 3306
-  database: "HCSeasons"
-  username: ""
-  password: ""
+  database: 'HCSeasons'
+  username: ''
+  password: ''
   # Determines the frequency for which the plugin will update the database.
   updateInterval: 5 # In minutes
