@@ -3,6 +3,7 @@
     <output-path>$PROJECT_DIR$/../_minecraft_dev_server/plugins</output-path>
     <root id="archive" name="HardcoreSeasons.jar">
       <element id="module-output" name="HardcoreSeasons" />
+      <element id="library" level="project" name="Maven: com.zaxxer:HikariCP:5.1.0" />
     </root>
   </artifact>
 </component>
