@@ -5,6 +5,7 @@ import com.xtwistedx.models.Config;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 public class SQLHandler {
     private Config config;
@@ -25,10 +26,11 @@ public class SQLHandler {
         String JDBC_URL = "jdbc:mysql://" + host + ":" + port + "/" + database + "?useSSL=false";
 
         connection = DriverManager.getConnection(JDBC_URL, username, password);
+        initializeDatabase();
     }
 
     public void disconnect() {
-        if(isConnected()) {
+        if (isConnected()) {
             try {
                 connection.close();
             } catch (SQLException e) {
@@ -37,57 +39,66 @@ public class SQLHandler {
         }
     }
 
-    public void initializeDatabase() {
-        if(!isConnected()) {
+    public void initializeDatabase() throws SQLException {
+        if (!isConnected()) {
             throw new IllegalStateException("Database is not connected");
         }
-    }
 
-    /**
-     * Create the user table in the database
-     * @throws IllegalStateException if the database is not connected
-     * User table should have the following columns:
-     * - user_id (int, auto increment, primary key)
-     * - username (varchar, 255)
-     * - last_login (datetime)
-     */
-    private void createUserTable() {
-        if(!isConnected()) {
-            throw new IllegalStateException("Database is not connected");
-        }
-    }
+        // Create schema
+        String CREATE_SCHEMA_QUERY = "CREATE SCHEMA IF NOT EXISTS `" + config.mySQLConfig.database + "`";
+        Statement stmt = connection.createStatement();
+        stmt.execute(CREATE_SCHEMA_QUERY);
 
-    /**
-     * Create the season table in the database
-     * @throws IllegalStateException if the database is not connected
-     * Season table should have the following columns:
-     * - season_id (int, auto increment, primary key)
-     * - start_date (datetime)
-     * - end_date (datetime)
-     * - players_alive (text)
-     * - players_banned (text)
-     */
-    private void createSeasonTable() {
-        if(!isConnected()) {
-            throw new IllegalStateException("Database is not connected");
-        }
-    }
+        // Switch to created schema
+        String USE_SCHEMA_QUERY = "USE `" + config.mySQLConfig.database + "`";
+        stmt.execute(USE_SCHEMA_QUERY);
 
-    /**
-     * Create the container table in the database
-     * @throws IllegalStateException if the database is not connected
-     * Container table should have the following columns:
-     * - container_id (int, auto increment, primary key)
-     * - x (int)
-     * - y (int)
-     * - z (int)
-     * - season_id (int, foreign key to season.season_id)
-     * - container_contents (text)
-     */
-    private void createContainerTable() {
-        if(!isConnected()) {
-            throw new IllegalStateException("Database is not connected");
-        }
+        // Separate strings to create each table independently
+        String CREATE_SEASONS_TABLE_QUERY = """
+                CREATE TABLE `Seasons` (
+                  `season_id` INT AUTO_INCREMENT,
+                  `start_date` DATETIME,
+                  `end_date` DATETIME,
+                  `active` BOOLEAN,
+                  PRIMARY KEY (`season_id`)
+                );
+                """;
+        stmt.execute(CREATE_SEASONS_TABLE_QUERY);
+
+        String CREATE_PLAYERS_TABLE_QUERY = """
+                CREATE TABLE `Players` (
+                  `player_id` INT AUTO_INCREMENT,
+                  `first_joined_date` DATETIME,
+                  `last_joined_date` DATETIME,
+                  PRIMARY KEY (`player_id`)
+                );
+                """;
+        stmt.execute(CREATE_PLAYERS_TABLE_QUERY);
+
+        String CREATE_SEASONS_PLAYERS_TABLE_QUERY = """
+                CREATE TABLE `Seasons_Players` (
+                  `season_player_id` INT AUTO_INCREMENT,
+                  `season_id` INT,
+                  `player_id` INT,
+                  PRIMARY KEY (`season_player_id`),
+                  FOREIGN KEY (`season_id`) REFERENCES `Seasons`(`season_id`),
+                  FOREIGN KEY (`player_id`) REFERENCES `Players`(`player_id`)
+                );
+                """;
+        stmt.execute(CREATE_SEASONS_PLAYERS_TABLE_QUERY);
+
+        String CREATE_CONTAINERS_TABLE_QUERY = """
+                CREATE TABLE `Containers` (
+                  `container_id` INT AUTO_INCREMENT,
+                  `player_id` INT,
+                  `season_id` INT,
+                  `inventory_data` BLOB,
+                  PRIMARY KEY (`container_id`),
+                  FOREIGN KEY (`player_id`) REFERENCES `Players`(`player_id`),
+                  FOREIGN KEY (`season_id`) REFERENCES `Seasons`(`season_id`)
+                );
+                """;
+        stmt.execute(CREATE_CONTAINERS_TABLE_QUERY);
     }
 
     public SQLHandler(Config config) {

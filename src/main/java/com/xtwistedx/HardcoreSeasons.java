@@ -44,12 +44,12 @@ public final class HardcoreSeasons extends JavaPlugin {
         List<String> endOfSeasonCommands = rawConfig.getStringList("endOfSeasonCommands");
         String storageType = rawConfig.getString("storageType");
 
-        String host = rawConfig.getString("mySQLConfig.host");
-        int port = rawConfig.getInt("mySQLConfig.port");
-        String database = rawConfig.getString("mySQLConfig.database");
-        String username = rawConfig.getString("mySQLConfig.username");
-        String password = rawConfig.getString("mySQLConfig.password");
-        int updateInterval = rawConfig.getInt("mySQLConfig.updateInterval");
+        String host = rawConfig.getString("MySQL.host");
+        int port = rawConfig.getInt("MySQL.port");
+        String database = rawConfig.getString("MySQL.database");
+        String username = rawConfig.getString("MySQL.username");
+        String password = rawConfig.getString("MySQL.password");
+        int updateInterval = rawConfig.getInt("MySQL.updateInterval");
 
         MySQLConfig mySQLConfig = new MySQLConfig(host,
                 port,
