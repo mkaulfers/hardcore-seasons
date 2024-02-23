@@ -1,4 +1,4 @@
-package com.xtwistedx.models;
+package usa.mkaulfers.hardcoreseasons.models;
 import org.bukkit.block.Container;
 import java.util.Date;
 

@@ -1,4 +1,4 @@
-package com.xtwistedx.models;
+package usa.mkaulfers.hardcoreseasons.models;
 
 public class MySQLConfig {
     public String host;

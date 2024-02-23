@@ -1,6 +1,6 @@
-package com.xtwistedx.listeners;
+package usa.mkaulfers.hardcoreseasons.listeners;
 
-import com.xtwistedx.storage.SQLHandler;
+import usa.mkaulfers.hardcoreseasons.storage.SQLHandler;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;

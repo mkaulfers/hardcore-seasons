@@ -1,4 +1,4 @@
-package com.xtwistedx.models;
+package usa.mkaulfers.hardcoreseasons.models;
 
 import java.util.Date;
 import java.util.UUID;

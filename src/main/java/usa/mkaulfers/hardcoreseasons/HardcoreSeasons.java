@@ -1,10 +1,10 @@
-package com.xtwistedx;
+package usa.mkaulfers.hardcoreseasons;
 
-import com.xtwistedx.commands.HardcoreSeasonsCommand;
-import com.xtwistedx.listeners.TrackableBlockPlaced;
-import com.xtwistedx.models.Config;
-import com.xtwistedx.models.MySQLConfig;
-import com.xtwistedx.storage.SQLHandler;
+import usa.mkaulfers.hardcoreseasons.commands.HardcoreSeasonsCommand;
+import usa.mkaulfers.hardcoreseasons.listeners.TrackableBlockPlaced;
+import usa.mkaulfers.hardcoreseasons.models.Config;
+import usa.mkaulfers.hardcoreseasons.models.MySQLConfig;
+import usa.mkaulfers.hardcoreseasons.storage.SQLHandler;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 

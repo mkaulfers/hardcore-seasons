@@ -1,6 +1,6 @@
-package com.xtwistedx.storage;
+package usa.mkaulfers.hardcoreseasons.storage;
 
-import com.xtwistedx.models.Config;
+import usa.mkaulfers.hardcoreseasons.models.Config;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

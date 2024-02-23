@@ -56,17 +56,17 @@ endOfSeasonCommands:
 # It will require manual intervention to reset the database.
 # In addition to manual intervention, to reward players, you will need to move the database file to the server
 # and inform players when it is acceptable to run the command.
-storage: "SQLite"
+storageType: "SQLite"
 
 # Recommended: MySQL
 # The entire process is fully automated, and players will be rewarded whenever the season ends.
 # Worlds will be reset automatically.
 MySQL:
-  host: "localhost"
+  host: 0.0.0.0
   port: 3306
-  database: "HCSeasons"
-  username: ""
-  password: ""
+  database: 'HCSeasons'
+  username: ''
+  password: ''
   # Determines the frequency for which the plugin will update the database.
   updateInterval: 5 # In minutes
 ```

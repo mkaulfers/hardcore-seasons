@@ -1,6 +1,6 @@
-package com.xtwistedx.commands;
+package usa.mkaulfers.hardcoreseasons.commands;
 
-import com.xtwistedx.HardcoreSeasons;
+import usa.mkaulfers.hardcoreseasons.HardcoreSeasons;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
