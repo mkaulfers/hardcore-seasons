@@ -1,21 +1,18 @@
 package usa.mkaulfers.hardcoreseasons.listeners;
+
 import org.bukkit.Location;
 import org.bukkit.block.Block;
-import org.bukkit.block.Container;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.inventory.Inventory;
+import org.bukkit.event.block.BlockBreakEvent;
 import usa.mkaulfers.hardcoreseasons.storage.SQLHandler;
 import usa.mkaulfers.hardcoreseasons.utils.BlockUtils;
-import usa.mkaulfers.hardcoreseasons.utils.InventoryUtils;
-import java.io.IOException;
 
-public class TrackableBlockPlaced implements Listener {
+public class TrackableBlockBroken implements Listener {
     SQLHandler sqlHandler;
 
     @EventHandler
-    public void onBlockPlace(BlockPlaceEvent event) throws IOException {
+    public void onBlockBreak(BlockBreakEvent event) {
         if (BlockUtils.isTrackable(event.getBlock())) {
 
             // TODO: Refactor this into a method
@@ -26,14 +23,14 @@ public class TrackableBlockPlaced implements Listener {
             int y = location.getBlockY();
             int z = location.getBlockZ();
 
-            Container container = (Container) event.getBlock().getState();
-            Inventory inventory = container.getInventory();
-
-            sqlHandler.insertContainer(activeSeasonId, x, y, z, InventoryUtils.inventoryToBase64(inventory));
+            if (sqlHandler.isContainerTracked(activeSeasonId, x, y, z)) {
+                event.getPlayer().sendMessage("You broke a tracked container!");
+                sqlHandler.deleteContainer(activeSeasonId, x, y, z);
+            }
         }
     }
 
-    public TrackableBlockPlaced(SQLHandler sqlHandler) {
+    public TrackableBlockBroken(SQLHandler sqlHandler) {
         this.sqlHandler = sqlHandler;
     }
 }

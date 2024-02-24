@@ -1,5 +1,7 @@
 package usa.mkaulfers.hardcoreseasons.utils;
 
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -9,6 +11,7 @@ import java.io.IOException;
 import java.util.Base64;
 
 public class InventoryUtils {
+
 
     public static String inventoryToBase64(Inventory inventory) throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
