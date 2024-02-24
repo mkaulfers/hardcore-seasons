@@ -37,12 +37,12 @@
                         <goals>
                             <goal>shade</goal>
                         </goals>
-                        <configuration>
-                            <finalName>${project.artifactId}-${project.version}-something</finalName>
-                            <outputDirectory>../_minecraft_dev_server/plugins</outputDirectory>
-                        </configuration>
+
                     </execution>
                 </executions>
+                <configuration>
+                    <outputFile>../_minecraft_dev_server/plugins/${project.artifactId}-${project.version}-DEV.jar</outputFile>
+                </configuration>
             </plugin>
         </plugins>
         <resources>
