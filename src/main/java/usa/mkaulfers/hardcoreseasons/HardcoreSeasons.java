@@ -19,8 +19,8 @@ public final class HardcoreSeasons extends JavaPlugin {
     public void onEnable() {
         loadConfigs();
         registerCommands();
-        registerListeners();
         handleStorage();
+        registerListeners();
     }
 
     @Override
@@ -75,7 +75,7 @@ public final class HardcoreSeasons extends JavaPlugin {
     }
 
     private void registerListeners() {
-        getServer().getPluginManager().registerEvents(new TrackableBlockPlaced(), this);
+        getServer().getPluginManager().registerEvents(new TrackableBlockPlaced(this.sqlHandler), this);
     }
 
     private void handleStorage() {

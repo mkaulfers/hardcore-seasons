@@ -7,13 +7,20 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import usa.mkaulfers.hardcoreseasons.storage.SQLHandler;
+import usa.mkaulfers.hardcoreseasons.utils.InventoryUtils;
 
+import javax.sound.midi.Track;
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.Base64;
 
 public class TrackableBlockPlaced implements Listener {
     // We only care about placing Chests, Trapped Chests, Barrels, Shulker Boxes, and Ender Chests
+    SQLHandler sqlHandler;
+
     @EventHandler
-    public void onBlockPlace(BlockPlaceEvent event) {
+    public void onBlockPlace(BlockPlaceEvent event) throws IOException {
         if (isTrackable(event.getBlock())) {
             event.getPlayer().sendMessage("You placed a trackable block!");
         }
@@ -21,9 +28,12 @@ public class TrackableBlockPlaced implements Listener {
         if (event.getBlock().getState() instanceof Container) {
             Container container = (Container) event.getBlock().getState();
             Inventory inventory = container.getInventory();
-            ItemStack[] contents = inventory.getContents();
 
-            event.getPlayer().sendMessage("Container Contents: " + Arrays.toString(contents));
+            sqlHandler.insertContainer(container.getBlock().getLocation().getBlockX(),
+                    container.getBlock().getLocation().getBlockY(),
+                    container.getBlock().getLocation().getBlockZ(),
+                    InventoryUtils.inventoryToBase64(inventory)
+            );
         }
     }
 
@@ -36,5 +46,9 @@ public class TrackableBlockPlaced implements Listener {
                 type == Material.FURNACE ||
                 type == Material.BLAST_FURNACE ||
                 type == Material.SMOKER;
+    }
+
+    public TrackableBlockPlaced(SQLHandler sqlHandler) {
+        this.sqlHandler = sqlHandler;
     }
 }
