@@ -18,6 +18,11 @@ in the list, based on survival time, and activity time.
 
 ### Default Config
 ```yaml
+# Set to true for the seasonal server.
+# Set to false for the non-seasonal server.
+# The non-seasonal server will be capable of receiving rewards.
+seasonalServer: true
+
 # This is the minimum length for the season.
 # End of season rewards, world will not be reset until this number of days has elapsed.
 minSeasonLength: 14 #Default is 14
