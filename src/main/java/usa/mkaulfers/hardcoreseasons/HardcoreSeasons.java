@@ -37,6 +37,7 @@ public final class HardcoreSeasons extends JavaPlugin {
         saveDefaultConfig();
 
         FileConfiguration rawConfig = getConfig();
+        boolean seasonalServer = rawConfig.getBoolean("seasonalServer");
         int minSeasonLength = rawConfig.getInt("minSeasonLength");
         int maxSeasonLength = rawConfig.getInt("maxSeasonLength");
         int maxSurvivorsRemaining = rawConfig.getInt("maxSurvivorsRemaining");
@@ -54,14 +55,18 @@ public final class HardcoreSeasons extends JavaPlugin {
         String password = rawConfig.getString("MySQL.password");
         int updateInterval = rawConfig.getInt("MySQL.updateInterval");
 
-        MySQLConfig mySQLConfig = new MySQLConfig(host,
+        MySQLConfig mySQLConfig = new MySQLConfig(
+                host,
                 port,
                 database,
                 username,
                 password,
-                updateInterval);
+                updateInterval
+        );
 
-        config = new Config(minSeasonLength,
+        config = new Config(
+                seasonalServer,
+                minSeasonLength,
                 maxSeasonLength,
                 maxSurvivorsRemaining,
                 lastLoginThreshold,
@@ -70,7 +75,8 @@ public final class HardcoreSeasons extends JavaPlugin {
                 confirmationIntervalMinutes,
                 endOfSeasonCommands,
                 storageType,
-                mySQLConfig);
+                mySQLConfig
+        );
     }
 
     private void registerCommands() {
@@ -85,7 +91,7 @@ public final class HardcoreSeasons extends JavaPlugin {
     }
 
     private void handleStorage() {
-        if(config.storageType.equalsIgnoreCase("mysql")) {
+        if (config.storageType.equalsIgnoreCase("mysql")) {
             sqlHandler = new SQLHandler(config);
             try {
                 sqlHandler.connect();
