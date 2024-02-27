@@ -2,9 +2,8 @@ package usa.mkaulfers.hardcoreseasons;
 
 import org.bukkit.plugin.PluginManager;
 import usa.mkaulfers.hardcoreseasons.commands.HardcoreSeasonsCommand;
-import usa.mkaulfers.hardcoreseasons.listeners.PlayerJoined;
-import usa.mkaulfers.hardcoreseasons.listeners.TrackableBlockBroken;
-import usa.mkaulfers.hardcoreseasons.listeners.TrackedContainerPlaced;
+import usa.mkaulfers.hardcoreseasons.listeners.SurvivorContainerBreak;
+import usa.mkaulfers.hardcoreseasons.listeners.SurvivorContainerPlace;
 import usa.mkaulfers.hardcoreseasons.models.PluginConfig;
 import usa.mkaulfers.hardcoreseasons.models.MySQLConfig;
 import usa.mkaulfers.hardcoreseasons.storage.DBManager;
@@ -85,8 +84,8 @@ public final class HardcoreSeasons extends JavaPlugin {
 
     private void registerListeners() {
         PluginManager pm = getServer().getPluginManager();
-        pm.registerEvents(new TrackedContainerPlaced(this.dbManager), this);
-        pm.registerEvents(new TrackableBlockBroken(this.dbManager), this);
+        pm.registerEvents(new SurvivorContainerPlace(this.dbManager), this);
+        pm.registerEvents(new SurvivorContainerBreak(this.dbManager), this);
 //        pm.registerEvents(new PlayerJoined(this.sqlHandler), this);
     }
 
