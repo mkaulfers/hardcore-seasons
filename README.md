@@ -13,7 +13,7 @@ game mode, will be able to use the command `/hcclaim` to claim the rewards from 
 entirety of all inventories that were saved, from all players who participated in the season. 
 
 Stacked items, such as `DIAMOND` or `DIRT` for example, will be evenly split, between multiple survivors if it's configured in the 
-`config.yml` file. In such cases where the number of items cannot be evenly split, the remainder will be distributed to the first survivor
+`pluginConfig.yml` file. In such cases where the number of items cannot be evenly split, the remainder will be distributed to the first survivor
 in the list, based on survival time, and activity time. 
 
 ### Default Config

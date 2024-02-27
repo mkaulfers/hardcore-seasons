@@ -2,7 +2,7 @@ package usa.mkaulfers.hardcoreseasons.models;
 
 import java.util.List;
 
-public class Config {
+public class PluginConfig {
     boolean seasonalServer;
     int minSeasonLength;
     int maxSeasonLength;
@@ -15,17 +15,17 @@ public class Config {
     public String storageType;
     public MySQLConfig mySQLConfig;
 
-    public Config(boolean seasonalServer,
-                  int minSeasonLength,
-                  int maxSeasonLength,
-                  int maxSurvivorsRemaining,
-                  int lastLoginThreshold,
-                  int confirmationIntervalDays,
-                  int confirmationIntervalHours,
-                  int confirmationIntervalMinutes,
-                  List<String> endOfSeasonCommands,
-                  String storageType,
-                  MySQLConfig mySQLConfig) {
+    public PluginConfig(boolean seasonalServer,
+                        int minSeasonLength,
+                        int maxSeasonLength,
+                        int maxSurvivorsRemaining,
+                        int lastLoginThreshold,
+                        int confirmationIntervalDays,
+                        int confirmationIntervalHours,
+                        int confirmationIntervalMinutes,
+                        List<String> endOfSeasonCommands,
+                        String storageType,
+                        MySQLConfig mySQLConfig) {
         this.seasonalServer = seasonalServer;
         this.minSeasonLength = minSeasonLength;
         this.maxSeasonLength = maxSeasonLength;

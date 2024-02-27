@@ -1,18 +1,19 @@
 package usa.mkaulfers.hardcoreseasons.listeners;
 
-import usa.mkaulfers.hardcoreseasons.storage.SQLHandler;
+import usa.mkaulfers.hardcoreseasons.storage.DBManager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 public class PlayerJoined implements Listener {
-    SQLHandler sqlHandler;
+    DBManager dbManager;
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         event.getPlayer().sendMessage("Welcome to the server!");
+//        sqlHandler.handlePlayerJoin(event.getPlayer().getUniqueId());
     }
 
-    public PlayerJoined(SQLHandler sqlHandler) {
-        this.sqlHandler = sqlHandler;
+    public PlayerJoined(DBManager dbManager) {
+        this.dbManager = dbManager;
     }
 }

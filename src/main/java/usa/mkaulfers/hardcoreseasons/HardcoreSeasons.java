@@ -4,18 +4,18 @@ import org.bukkit.plugin.PluginManager;
 import usa.mkaulfers.hardcoreseasons.commands.HardcoreSeasonsCommand;
 import usa.mkaulfers.hardcoreseasons.listeners.PlayerJoined;
 import usa.mkaulfers.hardcoreseasons.listeners.TrackableBlockBroken;
-import usa.mkaulfers.hardcoreseasons.listeners.TrackableBlockPlaced;
-import usa.mkaulfers.hardcoreseasons.models.Config;
+import usa.mkaulfers.hardcoreseasons.listeners.TrackedContainerPlaced;
+import usa.mkaulfers.hardcoreseasons.models.PluginConfig;
 import usa.mkaulfers.hardcoreseasons.models.MySQLConfig;
-import usa.mkaulfers.hardcoreseasons.storage.SQLHandler;
+import usa.mkaulfers.hardcoreseasons.storage.DBManager;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.List;
 
 public final class HardcoreSeasons extends JavaPlugin {
-    private Config config;
-    private SQLHandler sqlHandler;
+    private PluginConfig pluginConfig;
+    private DBManager dbManager;
 
     // Lifecycle methods
     @Override
@@ -28,7 +28,7 @@ public final class HardcoreSeasons extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        sqlHandler.disconnect();
+        dbManager.disconnect();
     }
 
     // Custom methods
@@ -64,7 +64,7 @@ public final class HardcoreSeasons extends JavaPlugin {
                 updateInterval
         );
 
-        config = new Config(
+        pluginConfig = new PluginConfig(
                 seasonalServer,
                 minSeasonLength,
                 maxSeasonLength,
@@ -85,18 +85,17 @@ public final class HardcoreSeasons extends JavaPlugin {
 
     private void registerListeners() {
         PluginManager pm = getServer().getPluginManager();
-        pm.registerEvents(new TrackableBlockPlaced(this.sqlHandler), this);
-        pm.registerEvents(new TrackableBlockBroken(this.sqlHandler), this);
-        pm.registerEvents(new PlayerJoined(this.sqlHandler), this);
+        pm.registerEvents(new TrackedContainerPlaced(this.dbManager), this);
+        pm.registerEvents(new TrackableBlockBroken(this.dbManager), this);
+//        pm.registerEvents(new PlayerJoined(this.sqlHandler), this);
     }
 
     private void handleStorage() {
-        if (config.storageType.equalsIgnoreCase("mysql")) {
-            sqlHandler = new SQLHandler(config);
-            try {
-                sqlHandler.connect();
-            } catch (Exception e) {
-                e.printStackTrace();
+        if (pluginConfig.storageType.equalsIgnoreCase("mysql")) {
+            if (dbManager == null) {
+                dbManager = new DBManager(pluginConfig);
+                dbManager.connect();
+                dbManager.initTables();
             }
         } else {
             /// Use SQLite
