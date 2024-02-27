@@ -1,13 +1,11 @@
-package usa.mkaulfers.hardcoreseasons.storage;
+package usa.mkaulfers.hardcoreseasons.models;
 
 import org.bukkit.block.Block;
 import org.bukkit.block.Container;
 import usa.mkaulfers.hardcoreseasons.interfaces.SQLManageable;
-import usa.mkaulfers.hardcoreseasons.storage.DBManager;
 import usa.mkaulfers.hardcoreseasons.utils.InventoryUtils;
 
-public class TrackedContainer implements SQLManageable {
-    public int containerId;
+public class SurvivorContainer implements SQLManageable {
     public int seasonId;
     public int x;
     public int y;
@@ -16,7 +14,7 @@ public class TrackedContainer implements SQLManageable {
     public String type;
     public String contents;
 
-    public TrackedContainer(Block block) {
+    public SurvivorContainer(Block block) {
         this.x = block.getX();
         this.y = block.getY();
         this.z = block.getZ();

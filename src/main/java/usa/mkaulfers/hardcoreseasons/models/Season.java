@@ -1,10 +1,16 @@
-package usa.mkaulfers.hardcoreseasons.storage;
+package usa.mkaulfers.hardcoreseasons.models;
 
 import usa.mkaulfers.hardcoreseasons.interfaces.SQLManageable;
 
-public class ActiveSeason implements SQLManageable {
-    int id;
+import java.util.Date;
 
+public class Season implements SQLManageable {
+    Date startDate;
+    Date endDate;
+    Survivor[] survivors;
+    SurvivorContainer[] containers;
+    SurvivorInventory[] inventories;
+    SurvivorEndChest[] endChests;
 
     @Override
     public String saveQuery() {
