@@ -43,19 +43,70 @@ public class DBManager {
         if (dataSource != null) {
             try {
                 Connection connection = dataSource.getConnection();
-                String CREATE_TRACKED_CONTAINERS_TABLE = """
-                CREATE TABLE IF NOT EXISTS `tracked_containers` (
-                  `container_id` INT AUTO_INCREMENT,
-                  `season_id` INT,
-                  `container_x` INT,
-                  `container_y` INT,
-                  `container_z` INT,
-                  `container_contents` TEXT,
-                  PRIMARY KEY (`container_id`),
-                  FOREIGN KEY (`season_id`) REFERENCES `seasons`(`season_id`)
-                );
-                """;
-                connection.prepareStatement(CREATE_TRACKED_CONTAINERS_TABLE).execute();
+
+                String CREATE_SEASONS_TABLE = """
+                        CREATE TABLE IF NOT EXISTS seasons (
+                            season_id INT AUTO_INCREMENT,
+                            start_date DATE,
+                            end_date DATE,
+                            PRIMARY KEY (season_id)
+                        );
+                        """;
+                connection.prepareStatement(CREATE_SEASONS_TABLE).execute();
+
+                String CREATE_SURVIVORS_TABLE = """
+                        CREATE TABLE IF NOT EXISTS survivors (
+                            survivor_id INT,
+                            season_id INT,
+                            join_date DATE,
+                            last_login DATE,
+                            is_dead BOOLEAN,
+                            PRIMARY KEY (survivor_id),
+                            FOREIGN KEY (season_id) REFERENCES seasons (season_id)
+                        );
+                        """;
+                connection.prepareStatement(CREATE_SURVIVORS_TABLE).execute();
+
+                String CREATE_SURVIVORS_CONTAINERS_TABLE = """
+                        CREATE TABLE IF NOT EXISTS `survivors_containers` (
+                          container_id INT AUTO_INCREMENT,
+                          season_id INT,
+                          container_x INT,
+                          container_y INT,
+                          container_z INT,
+                          world VARCHAR(255),
+                          type VARCHAR(255),
+                          contents VARCHAR(255),
+                          container_contents VARCHAR(255),
+                          PRIMARY KEY (container_id),
+                          FOREIGN KEY (season_id) REFERENCES seasons (season_id)
+                        );
+                        """;
+                connection.prepareStatement(CREATE_SURVIVORS_CONTAINERS_TABLE).execute();
+
+                String CREATE_SURVIVORS_END_CHESTS_TABLE = """
+                        CREATE TABLE IF NOT EXISTS `survivors_end_chests` (
+                          season_id INT,
+                          survivor_id INT,
+                          contents VARCHAR(255),
+                          PRIMARY KEY (season_id, survivor_id),
+                          FOREIGN KEY (season_id) REFERENCES seasons (season_id),
+                          FOREIGN KEY (survivor_id) REFERENCES survivors (survivor_id)
+                        );
+                        """;
+                connection.prepareStatement(CREATE_SURVIVORS_END_CHESTS_TABLE).execute();
+
+                String CREATE_SURVIVORS_INVENTORIES_TABLE = """
+                        CREATE TABLE IF NOT EXISTS `survivors_inventories` (
+                          season_id INT,
+                          survivor_id INT,
+                          contents VARCHAR(255),
+                          PRIMARY KEY (season_id, survivor_id),
+                          FOREIGN KEY (season_id) REFERENCES seasons (season_id),
+                          FOREIGN KEY (survivor_id) REFERENCES survivors (survivor_id)
+                        );
+                        """;
+                connection.prepareStatement(CREATE_SURVIVORS_INVENTORIES_TABLE).execute();
             } catch (Exception e) {
                 e.printStackTrace();
             }
