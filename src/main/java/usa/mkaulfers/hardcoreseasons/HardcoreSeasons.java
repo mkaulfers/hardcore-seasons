@@ -6,7 +6,7 @@ import usa.mkaulfers.hardcoreseasons.listeners.SurvivorContainerBreak;
 import usa.mkaulfers.hardcoreseasons.listeners.SurvivorContainerPlace;
 import usa.mkaulfers.hardcoreseasons.models.PluginConfig;
 import usa.mkaulfers.hardcoreseasons.models.MySQLConfig;
-import usa.mkaulfers.hardcoreseasons.storage.DBManager;
+import usa.mkaulfers.hardcoreseasons.storage.DatabaseManager;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -14,7 +14,7 @@ import java.util.List;
 
 public final class HardcoreSeasons extends JavaPlugin {
     private PluginConfig pluginConfig;
-    private DBManager dbManager;
+    private DatabaseManager databaseManager;
 
     // Lifecycle methods
     @Override
@@ -27,7 +27,7 @@ public final class HardcoreSeasons extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        dbManager.disconnect();
+        databaseManager.disconnect();
     }
 
     // Custom methods
@@ -84,17 +84,17 @@ public final class HardcoreSeasons extends JavaPlugin {
 
     private void registerListeners() {
         PluginManager pm = getServer().getPluginManager();
-        pm.registerEvents(new SurvivorContainerPlace(this.dbManager), this);
-        pm.registerEvents(new SurvivorContainerBreak(this.dbManager), this);
+        pm.registerEvents(new SurvivorContainerPlace(this.databaseManager), this);
+        pm.registerEvents(new SurvivorContainerBreak(this.databaseManager), this);
 //        pm.registerEvents(new PlayerJoined(this.sqlHandler), this);
     }
 
     private void handleStorage() {
         if (pluginConfig.storageType.equalsIgnoreCase("mysql")) {
-            if (dbManager == null) {
-                dbManager = new DBManager(pluginConfig);
-                dbManager.connect();
-                dbManager.initTables();
+            if (databaseManager == null) {
+                databaseManager = new DatabaseManager(pluginConfig);
+                databaseManager.connect();
+                databaseManager.initTables();
             }
         } else {
             /// Use SQLite

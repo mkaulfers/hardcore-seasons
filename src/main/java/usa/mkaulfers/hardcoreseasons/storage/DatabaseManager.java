@@ -7,11 +7,11 @@ import usa.mkaulfers.hardcoreseasons.models.PluginConfig;
 import java.sql.Connection;
 
 /// Singleton access
-public class DBManager {
+public class DatabaseManager {
     private HikariDataSource dataSource;
     private final PluginConfig pluginConfig;
 
-    public DBManager(PluginConfig pluginConfig) {
+    public DatabaseManager(PluginConfig pluginConfig) {
         this.pluginConfig = pluginConfig;
     }
 
