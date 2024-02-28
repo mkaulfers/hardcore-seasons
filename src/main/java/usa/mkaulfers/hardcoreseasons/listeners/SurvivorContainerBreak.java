@@ -16,7 +16,7 @@ public class SurvivorContainerBreak implements Listener {
         Block block = event.getBlock();
         if (BlockUtils.isTrackable(block)) {
             SurvivorContainer tc = new SurvivorContainer(block);
-            databaseManager.delete(tc);
+//            databaseManager.delete(tc);
         }
     }
 

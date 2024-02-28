@@ -1,13 +1,23 @@
 package usa.mkaulfers.hardcoreseasons.storage;
 
 import com.zaxxer.hikari.HikariDataSource;
-import usa.mkaulfers.hardcoreseasons.interfaces.SQLManageable;
-import usa.mkaulfers.hardcoreseasons.models.PluginConfig;
+import usa.mkaulfers.hardcoreseasons.models.*;
 
+import java.sql.Array;
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 /// Singleton access
 public class DatabaseManager {
+    public List<Season> seasons;
+    public List<Survivor> survivors;
+    public List<SurvivorContainer> containers;
+    public List<SurvivorEndChest> endChests;
+    public List<SurvivorInventory> inventories;
+
     private HikariDataSource dataSource;
     private final PluginConfig pluginConfig;
 
@@ -16,6 +26,10 @@ public class DatabaseManager {
     }
 
     public void connect() {
+        if (dataSource != null) {
+            return;
+        }
+
         String host = pluginConfig.mySQLConfig.host;
         int port = pluginConfig.mySQLConfig.port;
         String database = pluginConfig.mySQLConfig.database;
@@ -77,7 +91,6 @@ public class DatabaseManager {
                           world VARCHAR(255),
                           type VARCHAR(255),
                           contents VARCHAR(255),
-                          container_contents VARCHAR(255),
                           PRIMARY KEY (container_id),
                           FOREIGN KEY (season_id) REFERENCES seasons (season_id)
                         );
@@ -107,6 +120,13 @@ public class DatabaseManager {
                         );
                         """;
                 connection.prepareStatement(CREATE_SURVIVORS_INVENTORIES_TABLE).execute();
+
+                loadSeasons();
+                loadSurvivors();
+                loadContainers();
+                loadEndChests();
+                loadInventories();
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -115,54 +135,133 @@ public class DatabaseManager {
         connect();
     }
 
-    public void save(SQLManageable managedObject) {
+    private void loadSeasons() {
         if (dataSource != null) {
             try {
                 Connection connection = dataSource.getConnection();
-                connection.prepareStatement(managedObject.saveQuery()).execute();
+                ResultSet resultset = connection.prepareStatement("SELECT * FROM seasons").executeQuery();
+
+                List<Season> seasons = new ArrayList<>();
+
+                while (resultset.next()) {
+                    Season season = new Season();
+                    season.startDate = resultset.getDate("start_date");
+                    season.endDate = resultset.getDate("end_date");
+                    seasons.add(season);
+                }
+
+                this.seasons = seasons;
+
+                if (seasons.size() == 0) {
+                    connection.prepareStatement("INSERT INTO seasons (season_id, start_date, end_date) VALUES (1, NOW(), null)").execute();
+                    loadSeasons();
+                }
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            return;
         }
         connect();
     }
 
-    public void delete(SQLManageable managedObject) {
+    private void loadSurvivors() {
         if (dataSource != null) {
             try {
                 Connection connection = dataSource.getConnection();
-                connection.prepareStatement(managedObject.deleteQuery()).execute();
+                ResultSet resultset = connection.prepareStatement("SELECT * FROM survivors").executeQuery();
+
+                List<Survivor> survivors = new ArrayList<>();
+
+                while (resultset.next()) {
+                    Survivor survivor = new Survivor();
+                    survivor.id = UUID.fromString(resultset.getString("survivor_id"));
+                    survivor.seasonId = resultset.getInt("season_id");
+                    survivor.joinDate = resultset.getDate("join_date");
+                    survivor.lastLogin = resultset.getDate("last_login");
+                    survivor.isDead = resultset.getBoolean("is_dead");
+                    survivors.add(survivor);
+                }
+
+                this.survivors = survivors;
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            return;
         }
         connect();
     }
 
-    public void update(SQLManageable managedObject) {
+    private void loadContainers() {
         if (dataSource != null) {
             try {
                 Connection connection = dataSource.getConnection();
-                connection.prepareStatement(managedObject.updateQuery()).execute();
+                ResultSet resultset = connection.prepareStatement("SELECT * FROM survivors_containers").executeQuery();
+
+                List<SurvivorContainer> containers = new ArrayList<>();
+
+                while (resultset.next()) {
+                    SurvivorContainer container = new SurvivorContainer();
+                    container.seasonId = resultset.getInt("season_id");
+                    container.x = resultset.getInt("container_x");
+                    container.y = resultset.getInt("container_y");
+                    container.z = resultset.getInt("container_z");
+                    container.world = resultset.getString("world");
+                    container.type = resultset.getString("type");
+                    container.contents = resultset.getString("contents");
+                    containers.add(container);
+                }
+
+                this.containers = containers;
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            return;
         }
         connect();
     }
 
-    public void load(SQLManageable managedObject) {
+    private void loadEndChests() {
         if (dataSource != null) {
             try {
                 Connection connection = dataSource.getConnection();
-                connection.prepareStatement(managedObject.loadQuery()).execute();
+                ResultSet resultset = connection.prepareStatement("SELECT * FROM survivors_end_chests").executeQuery();
+
+                List<SurvivorEndChest> endChests = new ArrayList<>(resultset.getFetchSize());
+
+                while (resultset.next()) {
+                    SurvivorEndChest endChest = new SurvivorEndChest();
+                    endChest.playerUUID = UUID.fromString(resultset.getString("survivor_id"));
+                    endChest.seasonId = resultset.getInt("season_id");
+                    endChest.contents = resultset.getString("contents");
+                    endChests.add(endChest);
+                }
+
+                this.endChests = endChests;
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            return;
+        }
+        connect();
+    }
+
+    private void loadInventories() {
+        if (dataSource != null) {
+            try {
+                Connection connection = dataSource.getConnection();
+                ResultSet resultset = connection.prepareStatement("SELECT * FROM survivors_inventories").executeQuery();
+
+                List<SurvivorInventory> inventories = new ArrayList<>();
+
+                while (resultset.next()) {
+                    SurvivorInventory inventory = new SurvivorInventory();
+                    inventory.playerUUID = UUID.fromString(resultset.getString("survivor_id"));
+                    inventory.seasonId = resultset.getInt("season_id");
+                    inventory.contents = resultset.getString("contents");
+                    inventories.add(inventory);
+                }
+
+                this.inventories = inventories;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         connect();
     }

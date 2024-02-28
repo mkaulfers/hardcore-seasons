@@ -15,7 +15,7 @@ public class SurvivorContainerPlace implements Listener {
         Block block = event.getBlock();
         if (BlockUtils.isTrackable(block)) {
             SurvivorContainer tc = new SurvivorContainer(block);
-            databaseManager.save(tc);
+//            databaseManager.save(tc);
         }
     }
 
