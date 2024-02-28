@@ -1,4 +1,4 @@
-package usa.mkaulfers.hardcoreseasons.utils;
+package us.mkaulfers.hardcoreseasons.utils;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;

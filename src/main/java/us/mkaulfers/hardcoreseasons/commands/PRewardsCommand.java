@@ -1,4 +1,4 @@
-package usa.mkaulfers.hardcoreseasons.commands;
+package us.mkaulfers.hardcoreseasons.commands;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

@@ -1,15 +1,16 @@
-package usa.mkaulfers.hardcoreseasons.listeners;
+package us.mkaulfers.hardcoreseasons.listeners;
 
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
-import usa.mkaulfers.hardcoreseasons.models.SurvivorContainer;
-import usa.mkaulfers.hardcoreseasons.storage.DatabaseManager;
-import usa.mkaulfers.hardcoreseasons.utils.BlockUtils;
+import us.mkaulfers.hardcoreseasons.HardcoreSeasons;
+import us.mkaulfers.hardcoreseasons.models.SurvivorContainer;
+import us.mkaulfers.hardcoreseasons.storage.DatabaseManager;
+import us.mkaulfers.hardcoreseasons.utils.BlockUtils;
 
 public class SurvivorContainerBreak implements Listener {
-    DatabaseManager databaseManager;
+    HardcoreSeasons plugin;
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
@@ -20,7 +21,7 @@ public class SurvivorContainerBreak implements Listener {
         }
     }
 
-    public SurvivorContainerBreak(DatabaseManager databaseManager) {
-        this.databaseManager = databaseManager;
+    public SurvivorContainerBreak(HardcoreSeasons plugin) {
+        this.plugin = plugin;
     }
 }

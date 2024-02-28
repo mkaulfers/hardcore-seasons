@@ -1,8 +1,8 @@
-package usa.mkaulfers.hardcoreseasons.models;
+package us.mkaulfers.hardcoreseasons.models;
 
 import org.bukkit.block.Block;
 import org.bukkit.block.Container;
-import usa.mkaulfers.hardcoreseasons.utils.InventoryUtils;
+import us.mkaulfers.hardcoreseasons.utils.InventoryUtils;
 
 public class SurvivorContainer {
     public int seasonId;

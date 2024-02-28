@@ -1,4 +1,4 @@
-package usa.mkaulfers.hardcoreseasons.models;
+package us.mkaulfers.hardcoreseasons.models;
 
 import java.util.UUID;
 

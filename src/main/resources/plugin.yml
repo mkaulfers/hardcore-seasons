@@ -1,6 +1,6 @@
 name: HardcoreSeasons
 version: ${project.version}
-main: usa.mkaulfers.hardcoreseasons.HardcoreSeasons
+main: us.mkaulfers.hardcoreseasons.HardcoreSeasons
 api-version: "1.20"
 commands:
   hardcoreseasons:

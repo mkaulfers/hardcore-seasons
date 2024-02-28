@@ -1,20 +1,21 @@
-package usa.mkaulfers.hardcoreseasons;
+package us.mkaulfers.hardcoreseasons;
 
-import org.bukkit.plugin.PluginManager;
-import usa.mkaulfers.hardcoreseasons.commands.HardcoreSeasonsCommand;
-import usa.mkaulfers.hardcoreseasons.listeners.SurvivorContainerBreak;
-import usa.mkaulfers.hardcoreseasons.listeners.SurvivorContainerPlace;
-import usa.mkaulfers.hardcoreseasons.models.PluginConfig;
-import usa.mkaulfers.hardcoreseasons.models.MySQLConfig;
-import usa.mkaulfers.hardcoreseasons.storage.DatabaseManager;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import us.mkaulfers.hardcoreseasons.commands.HardcoreSeasonsCommand;
+import us.mkaulfers.hardcoreseasons.listeners.PlayerJoined;
+import us.mkaulfers.hardcoreseasons.listeners.SurvivorContainerBreak;
+import us.mkaulfers.hardcoreseasons.listeners.SurvivorContainerPlace;
+import us.mkaulfers.hardcoreseasons.models.MySQLConfig;
+import us.mkaulfers.hardcoreseasons.models.PluginConfig;
+import us.mkaulfers.hardcoreseasons.storage.DatabaseManager;
 
 import java.util.List;
 
 public final class HardcoreSeasons extends JavaPlugin {
-    private PluginConfig pluginConfig;
-    private DatabaseManager databaseManager;
+    public PluginConfig pluginConfig;
+    public DatabaseManager databaseManager;
 
     // Lifecycle methods
     @Override
@@ -84,17 +85,18 @@ public final class HardcoreSeasons extends JavaPlugin {
 
     private void registerListeners() {
         PluginManager pm = getServer().getPluginManager();
-        pm.registerEvents(new SurvivorContainerPlace(this.databaseManager), this);
-        pm.registerEvents(new SurvivorContainerBreak(this.databaseManager), this);
-//        pm.registerEvents(new PlayerJoined(this.sqlHandler), this);
+        pm.registerEvents(new SurvivorContainerPlace(this), this);
+        pm.registerEvents(new SurvivorContainerBreak(this), this);
+        pm.registerEvents(new PlayerJoined(this), this);
     }
 
     private void handleStorage() {
         if (pluginConfig.storageType.equalsIgnoreCase("mysql")) {
             if (databaseManager == null) {
-                databaseManager = new DatabaseManager(pluginConfig);
+                databaseManager = new DatabaseManager(this);
                 databaseManager.connect();
                 databaseManager.initTables();
+                databaseManager.initManagers();
             }
         } else {
             /// Use SQLite

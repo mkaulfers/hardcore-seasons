@@ -1,8 +1,6 @@
-package usa.mkaulfers.hardcoreseasons.utils;
+package us.mkaulfers.hardcoreseasons.utils;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;

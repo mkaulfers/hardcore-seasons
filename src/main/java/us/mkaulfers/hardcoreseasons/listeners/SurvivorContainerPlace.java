@@ -1,14 +1,15 @@
-package usa.mkaulfers.hardcoreseasons.listeners;
+package us.mkaulfers.hardcoreseasons.listeners;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
-import usa.mkaulfers.hardcoreseasons.models.SurvivorContainer;
-import usa.mkaulfers.hardcoreseasons.storage.DatabaseManager;
-import usa.mkaulfers.hardcoreseasons.utils.BlockUtils;
+import us.mkaulfers.hardcoreseasons.HardcoreSeasons;
+import us.mkaulfers.hardcoreseasons.models.SurvivorContainer;
+import us.mkaulfers.hardcoreseasons.storage.DatabaseManager;
+import us.mkaulfers.hardcoreseasons.utils.BlockUtils;
 
 public class SurvivorContainerPlace implements Listener {
-    DatabaseManager databaseManager;
+    HardcoreSeasons plugin;
 
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent event) {
@@ -19,7 +20,7 @@ public class SurvivorContainerPlace implements Listener {
         }
     }
 
-    public SurvivorContainerPlace(DatabaseManager databaseManager) {
-        this.databaseManager = databaseManager;
+    public SurvivorContainerPlace(HardcoreSeasons plugin) {
+        this.plugin = plugin;
     }
 }
