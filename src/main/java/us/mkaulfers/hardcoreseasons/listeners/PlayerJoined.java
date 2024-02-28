@@ -30,8 +30,7 @@ public class PlayerJoined implements Listener {
                 survivor.isDead = false;
                 plugin.databaseManager.survivorsManager.saveSurvivor(survivor);
             } else {
-                Date lastLogin = new Date();
-                //Update last login
+                plugin.databaseManager.survivorsManager.updateSurvivorLastLogin(playerId, new Timestamp(new Date().getTime()));
             }
         });
     }

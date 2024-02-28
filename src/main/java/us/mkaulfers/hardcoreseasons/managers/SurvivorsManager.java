@@ -6,6 +6,7 @@ import us.mkaulfers.hardcoreseasons.models.Survivor;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -61,6 +62,27 @@ public class SurvivorsManager {
                     survivors.add(survivor);
                 } catch (Exception e) {
                     Bukkit.getLogger().warning("[Hardcore Seasons]: Could not save survivor.");
+                }
+            });
+        }
+    }
+
+    public void updateSurvivorLastLogin(UUID survivorId, Timestamp timestamp) {
+        if (plugin.databaseManager.dataSource != null) {
+            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+                try {
+                    Connection connection = plugin.databaseManager.dataSource.getConnection();
+                    String query = "UPDATE survivors SET last_login = ? WHERE survivor_id = ?";
+                    java.sql.PreparedStatement preparedStatement = connection.prepareStatement(query);
+                    preparedStatement.setTimestamp(1, timestamp);
+                    preparedStatement.setString(2, survivorId.toString());
+                    preparedStatement.execute();
+                    
+                    survivors.stream()
+                            .filter(survivor -> survivor.id.equals(survivorId))
+                            .forEach(survivor -> survivor.lastLogin = timestamp);
+                } catch (Exception e) {
+                    Bukkit.getLogger().warning("[Hardcore Seasons]: Could not update survivor.");
                 }
             });
         }
