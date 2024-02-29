@@ -4,9 +4,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import us.mkaulfers.hardcoreseasons.commands.HardcoreSeasonsCommand;
-import us.mkaulfers.hardcoreseasons.listeners.PlayerJoined;
-import us.mkaulfers.hardcoreseasons.listeners.SurvivorContainerBreak;
-import us.mkaulfers.hardcoreseasons.listeners.SurvivorContainerPlace;
+import us.mkaulfers.hardcoreseasons.listeners.*;
 import us.mkaulfers.hardcoreseasons.models.MySQLConfig;
 import us.mkaulfers.hardcoreseasons.models.PluginConfig;
 import us.mkaulfers.hardcoreseasons.storage.DatabaseManager;
@@ -88,6 +86,8 @@ public final class HardcoreSeasons extends JavaPlugin {
         pm.registerEvents(new SurvivorContainerPlace(this), this);
         pm.registerEvents(new SurvivorContainerBreak(this), this);
         pm.registerEvents(new PlayerJoined(this), this);
+        pm.registerEvents(new PreLogin(this), this);
+        pm.registerEvents(new OnPlayerDeath(this), this);
     }
 
     private void handleStorage() {
@@ -97,6 +97,7 @@ public final class HardcoreSeasons extends JavaPlugin {
                 databaseManager.connect();
                 databaseManager.initTables();
                 databaseManager.initManagers();
+                databaseManager.scheduleIntervalUpdate();
             }
         } else {
             /// Use SQLite

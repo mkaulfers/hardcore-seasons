@@ -124,6 +124,20 @@ public class DatabaseManager {
         connect();
     }
 
+    public void scheduleIntervalUpdate() {
+        int updateInterval = plugin.pluginConfig.mySQLConfig.updateInterval;
+        Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
+            if (dataSource != null) {
+                this.seasonsManager.loadSeasons();
+                this.survivorsManager.loadSurvivors();
+                this.containersManager.loadContainers();
+                this.endChestsManager.loadEndChests();
+                this.inventoriesManager.loadInventories();
+            }
+//        }, 0, (updateInterval * 20L) * 60L);
+        }, 600L, 600L);
+    }
+
     public void initManagers() {
         this.seasonsManager = new SeasonsManager(plugin);
         this.survivorsManager = new SurvivorsManager(plugin);

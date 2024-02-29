@@ -19,26 +19,28 @@ public class InventoriesManager {
         loadInventories();
     }
 
-    void loadInventories() {
+    public void loadInventories() {
         if (plugin.databaseManager.dataSource != null) {
-            try {
-                Connection connection = plugin.databaseManager.dataSource.getConnection();
-                ResultSet resultset = connection.prepareStatement("SELECT * FROM survivors_inventories").executeQuery();
+            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+                try {
+                    Connection connection = plugin.databaseManager.dataSource.getConnection();
+                    ResultSet resultset = connection.prepareStatement("SELECT * FROM survivors_inventories").executeQuery();
 
-                List<SurvivorInventory> inventories = new ArrayList<>();
+                    List<SurvivorInventory> inventories = new ArrayList<>();
 
-                while (resultset.next()) {
-                    SurvivorInventory inventory = new SurvivorInventory();
-                    inventory.playerUUID = UUID.fromString(resultset.getString("survivor_id"));
-                    inventory.seasonId = resultset.getInt("season_id");
-                    inventory.contents = resultset.getString("contents");
-                    inventories.add(inventory);
+                    while (resultset.next()) {
+                        SurvivorInventory inventory = new SurvivorInventory();
+                        inventory.playerUUID = UUID.fromString(resultset.getString("survivor_id"));
+                        inventory.seasonId = resultset.getInt("season_id");
+                        inventory.contents = resultset.getString("contents");
+                        inventories.add(inventory);
+                    }
+                    connection.close();
+                    this.inventories = inventories;
+                } catch (Exception e) {
+                    Bukkit.getLogger().warning("[Hardcore Seasons]: Could not load inventories.");
                 }
-
-                this.inventories = inventories;
-            } catch (Exception e) {
-                Bukkit.getLogger().warning("[Hardcore Seasons]: Could not load inventories.");
-            }
+            });
         }
         plugin.databaseManager.connect();
     }

@@ -20,28 +20,32 @@ public class SurvivorsManager {
         loadSurvivors();
     }
 
-    void loadSurvivors() {
+    public void loadSurvivors() {
         if (plugin.databaseManager.dataSource != null) {
-            try {
-                Connection connection = plugin.databaseManager.dataSource.getConnection();
-                ResultSet resultset = connection.prepareStatement("SELECT * FROM survivors").executeQuery();
+            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+                try {
+                    Connection connection = plugin.databaseManager.dataSource.getConnection();
+                    ResultSet resultset = connection.prepareStatement("SELECT * FROM survivors")
+                            .executeQuery();
 
-                List<Survivor> survivors = new ArrayList<>();
+                    List<Survivor> survivors = new ArrayList<>();
 
-                while (resultset.next()) {
-                    Survivor survivor = new Survivor();
-                    survivor.id = UUID.fromString(resultset.getString("survivor_id"));
-                    survivor.seasonId = resultset.getInt("season_id");
-                    survivor.joinDate = resultset.getTimestamp("join_date");
-                    survivor.lastLogin = resultset.getTimestamp("last_login");
-                    survivor.isDead = resultset.getBoolean("is_dead");
-                    survivors.add(survivor);
+                    while (resultset.next()) {
+                        Survivor survivor = new Survivor();
+                        survivor.id = UUID.fromString(resultset.getString("survivor_id"));
+                        survivor.seasonId = resultset.getInt("season_id");
+                        survivor.joinDate = resultset.getTimestamp("join_date");
+                        survivor.lastLogin = resultset.getTimestamp("last_login");
+                        survivor.isDead = resultset.getBoolean("is_dead");
+                        survivors.add(survivor);
+                    }
+                    connection.close();
+                    this.survivors = survivors;
+                } catch (Exception e) {
+                    Bukkit.getLogger().warning("[Hardcore Seasons]: Could not load survivors.");
+                    e.printStackTrace();
                 }
-
-                this.survivors = survivors;
-            } catch (Exception e) {
-                Bukkit.getLogger().warning("[Hardcore Seasons]: Could not load survivors.");
-            }
+            });
         }
         plugin.databaseManager.connect();
     }
@@ -59,6 +63,7 @@ public class SurvivorsManager {
                     preparedStatement.setTimestamp(4, survivor.lastLogin);
                     preparedStatement.setBoolean(5, survivor.isDead);
                     preparedStatement.execute();
+                    connection.close();
                     survivors.add(survivor);
                 } catch (Exception e) {
                     Bukkit.getLogger().warning("[Hardcore Seasons]: Could not save survivor.");
@@ -77,10 +82,31 @@ public class SurvivorsManager {
                     preparedStatement.setTimestamp(1, timestamp);
                     preparedStatement.setString(2, survivorId.toString());
                     preparedStatement.execute();
-                    
+                    connection.close();
                     survivors.stream()
                             .filter(survivor -> survivor.id.equals(survivorId))
                             .forEach(survivor -> survivor.lastLogin = timestamp);
+                } catch (Exception e) {
+                    Bukkit.getLogger().warning("[Hardcore Seasons]: Could not update survivor.");
+                }
+            });
+        }
+    }
+
+    public void updateSurvivorIsDead(UUID survivorId, boolean isDead) {
+        if (plugin.databaseManager.dataSource != null) {
+            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+                try {
+                    Connection connection = plugin.databaseManager.dataSource.getConnection();
+                    String query = "UPDATE survivors SET is_dead = ? WHERE survivor_id = ?";
+                    java.sql.PreparedStatement preparedStatement = connection.prepareStatement(query);
+                    preparedStatement.setBoolean(1, isDead);
+                    preparedStatement.setString(2, survivorId.toString());
+                    preparedStatement.execute();
+                    connection.close();
+                    survivors.stream()
+                            .filter(survivor -> survivor.id.equals(survivorId))
+                            .forEach(survivor -> survivor.isDead = isDead);
                 } catch (Exception e) {
                     Bukkit.getLogger().warning("[Hardcore Seasons]: Could not update survivor.");
                 }

@@ -15,8 +15,6 @@ public class PlayerJoined implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        event.getPlayer().sendMessage("Welcome to the server!");
-
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             /// Create new survivor, for the active season.
             UUID playerId = event.getPlayer().getUniqueId();
@@ -42,15 +40,6 @@ public class PlayerJoined implements Listener {
                 .survivors
                 .stream()
                 .anyMatch(survivor -> survivor.id.equals(playerId));
-    }
-
-    private boolean isPlayerDead(UUID playerId) {
-        return plugin
-                .databaseManager
-                .survivorsManager
-                .survivors
-                .stream()
-                .anyMatch(survivor -> survivor.id.equals(playerId) && survivor.isDead);
     }
 
     public PlayerJoined(HardcoreSeasons plugin) {

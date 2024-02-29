@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class SeasonsManager {
     public List<Season> seasons;
@@ -23,31 +24,42 @@ public class SeasonsManager {
         return null;
     }
 
+    public boolean isNewSeasonForPlayer(Season season, UUID playerId) {
+        return plugin
+                .databaseManager
+                .survivorsManager
+                .survivors
+                .stream()
+                .anyMatch(survivor -> survivor.id.equals(playerId) && survivor.seasonId == season.seasonId);
+    }
+
     public SeasonsManager(HardcoreSeasons plugin) {
         this.plugin = plugin;
         loadSeasons();
     }
 
-    void loadSeasons() {
+    public void loadSeasons() {
         if (plugin.databaseManager.dataSource != null) {
-            try {
-                Connection connection = plugin.databaseManager.dataSource.getConnection();
-                List<Season> seasons = new ArrayList<>();
+            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+                try {
+                    Connection connection = plugin.databaseManager.dataSource.getConnection();
+                    List<Season> seasons = new ArrayList<>();
 
-                ResultSet resultset = connection.prepareStatement("SELECT * FROM seasons").executeQuery();
-                processSeasonResultSet(resultset, seasons);
+                    ResultSet resultset = connection.prepareStatement("SELECT * FROM seasons").executeQuery();
+                    processSeasonResultSet(resultset, seasons);
 
-                // If there are no seasons, create one. Then reload the seasons.
-                if (seasons.isEmpty()) {
-                    connection.prepareStatement("INSERT INTO seasons (season_id, start_date, end_date) VALUES (1, NOW(), null)").execute();
-                    ResultSet resultSetAfterInsert = connection.prepareStatement("SELECT * FROM seasons").executeQuery();
-                    processSeasonResultSet(resultSetAfterInsert, seasons);
+                    // If there are no seasons, create one. Then reload the seasons.
+                    if (seasons.isEmpty()) {
+                        connection.prepareStatement("INSERT INTO seasons (season_id, start_date, end_date) VALUES (1, NOW(), null)").execute();
+                        ResultSet resultSetAfterInsert = connection.prepareStatement("SELECT * FROM seasons").executeQuery();
+                        processSeasonResultSet(resultSetAfterInsert, seasons);
+                    }
+                    connection.close();
+                    this.seasons = seasons;
+                } catch (Exception e) {
+                    Bukkit.getLogger().warning("[Hardcore Seasons]: Could not load seasons.");
                 }
-
-                this.seasons = seasons;
-            } catch (Exception e) {
-                Bukkit.getLogger().warning("[Hardcore Seasons]: Could not load seasons.");
-            }
+            });
         }
         plugin.databaseManager.connect();
     }
