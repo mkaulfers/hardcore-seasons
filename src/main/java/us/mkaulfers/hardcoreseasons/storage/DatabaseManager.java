@@ -134,8 +134,7 @@ public class DatabaseManager {
                 this.endChestsManager.loadEndChests();
                 this.inventoriesManager.loadInventories();
             }
-//        }, 0, (updateInterval * 20L) * 60L);
-        }, 600L, 600L);
+        }, (updateInterval * 20L) * 60L, (updateInterval * 20L) * 60L);
     }
 
     public void initManagers() {
