@@ -15,7 +15,8 @@ public class SurvivorContainer {
 
     public SurvivorContainer() {}
 
-    public SurvivorContainer(Block block) {
+    public SurvivorContainer(Block block, int seasonId) {
+        this.seasonId = seasonId;
         this.x = block.getX();
         this.y = block.getY();
         this.z = block.getZ();

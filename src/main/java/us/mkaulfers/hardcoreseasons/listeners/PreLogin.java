@@ -21,20 +21,7 @@ public class PreLogin implements Listener {
     public void onAsyncPlayerPreLogin(AsyncPlayerPreLoginEvent event) {
         UUID playerId = event.getUniqueId();
         int activeSeason = plugin.databaseManager.seasonsManager.getActiveSeason().seasonId;
-        // Has the player ever joined?
-        // If not, add them to the database with the current season.
 
-        // If the player has joined, and is alive, and current season matches their season let them join.
-        // If their last season joined is lower than the current season, update them.
-        //     create a new survivor entry for the current season.
-
-        // If the player has joined, and is dead, kick them.
-
-
-        /// Create new survivor, for the active season.
-
-
-        // First time joining.
         if (!plugin.databaseManager.survivorsManager.doesSurvivorExist(playerId, activeSeason)) {
             Survivor survivor = new Survivor();
             survivor.id = playerId;
@@ -44,8 +31,6 @@ public class PreLogin implements Listener {
             survivor.isDead = false;
             plugin.databaseManager.survivorsManager.saveSurvivor(survivor);
         } else {
-            // Not first time joining.
-            // If the player is dead, kick them.
             if (plugin.databaseManager.survivorsManager.isSurvivorDead(playerId, activeSeason)) {
                 // TODO: Replace this with a config message.
                 // TODO: Make this check the database, not local memory.

@@ -16,8 +16,9 @@ public class SurvivorContainerBreak implements Listener {
     public void onBlockBreak(BlockBreakEvent event) {
         Block block = event.getBlock();
         if (BlockUtils.isTrackable(block)) {
-            SurvivorContainer tc = new SurvivorContainer(block);
-//            databaseManager.delete(tc);
+            int activeSeason = plugin.databaseManager.seasonsManager.getActiveSeason().seasonId;
+            SurvivorContainer survivorContainer = new SurvivorContainer(block, activeSeason);
+            plugin.databaseManager.containersManager.deleteContainer(survivorContainer);
         }
     }
 

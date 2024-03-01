@@ -12,7 +12,6 @@ public class OnPlayerDeath implements Listener {
         this.plugin = plugin;
     }
 
-    /// Ban the player from the server, and kick them.
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
         event.getEntity().spigot().respawn();
