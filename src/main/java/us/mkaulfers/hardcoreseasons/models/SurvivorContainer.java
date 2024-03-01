@@ -15,7 +15,15 @@ public class SurvivorContainer {
     public String type;
     public String contents;
 
-    public SurvivorContainer() {}
+    public SurvivorContainer(int seasonId, int x, int y, int z, String world, String type, String contents) {
+        this.seasonId = seasonId;
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.world = world;
+        this.type = type;
+        this.contents = contents;
+    }
 
     public SurvivorContainer(Block block, int seasonId) {
         this.seasonId = seasonId;
