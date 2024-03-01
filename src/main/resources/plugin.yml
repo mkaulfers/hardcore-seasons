@@ -7,3 +7,7 @@ commands:
     usage: /<command> [reload|vote]
     description: HardcoreSeasons command
     aliases: [hcs]
+  survivor:
+    usage: /<command>
+    description: Opens Hardcore Seasons GUI.
+    aliases: [surv]

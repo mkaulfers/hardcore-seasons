@@ -9,6 +9,8 @@ import us.mkaulfers.hardcoreseasons.HardcoreSeasons;
 import us.mkaulfers.hardcoreseasons.models.SurvivorContainer;
 import us.mkaulfers.hardcoreseasons.utils.InventoryUtils;
 
+import java.util.List;
+
 public class InventoryClose implements Listener {
     HardcoreSeasons plugin;
 
@@ -18,6 +20,12 @@ public class InventoryClose implements Listener {
 
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent event) {
+        List<String> guiMenuNames = List.of("Survivor Menu");
+
+        if (guiMenuNames.contains(event.getView().getTitle())) {
+            return;
+        }
+
         int seasonId = plugin.databaseManager.seasonsManager.getActiveSeason().seasonId;
         int x = event.getInventory().getLocation().getBlockX();
         int y = event.getInventory().getLocation().getBlockY();

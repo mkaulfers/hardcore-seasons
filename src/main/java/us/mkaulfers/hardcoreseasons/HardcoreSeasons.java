@@ -4,6 +4,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import us.mkaulfers.hardcoreseasons.commands.HardcoreSeasonsCommand;
+import us.mkaulfers.hardcoreseasons.commands.SurvivorCommand;
 import us.mkaulfers.hardcoreseasons.listeners.*;
 import us.mkaulfers.hardcoreseasons.models.MySQLConfig;
 import us.mkaulfers.hardcoreseasons.models.PluginConfig;
@@ -79,6 +80,7 @@ public final class HardcoreSeasons extends JavaPlugin {
 
     private void registerCommands() {
         this.getCommand("hardcoreseasons").setExecutor(new HardcoreSeasonsCommand(this));
+        this.getCommand("survivor").setExecutor(new SurvivorCommand(this));
     }
 
     private void registerListeners() {
