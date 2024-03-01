@@ -37,16 +37,6 @@ public class DatabaseManager {
         dataSource.setJdbcUrl("jdbc:mysql://" + host + ":" + port + "/" + database);
         dataSource.addDataSourceProperty("user", username);
         dataSource.addDataSourceProperty("password", password);
-
-        if (dataSource != null) {
-            try {
-                Connection connection = dataSource.getConnection();
-                String USE_SCHEMA_QUERY = "USE " + plugin.pluginConfig.mySQLConfig.database;
-                connection.prepareStatement(USE_SCHEMA_QUERY).execute();
-            } catch (Exception e) {
-                Bukkit.getLogger().warning("[Hardcore Seasons]: Could not connect to the database.");
-            }
-        }
     }
 
     public void initTables() {
@@ -56,30 +46,31 @@ public class DatabaseManager {
 
                 String CREATE_SEASONS_TABLE = """
                         CREATE TABLE IF NOT EXISTS seasons (
+                            id INT AUTO_INCREMENT,
                             season_id INT,
                             start_date DATETIME,
                             end_date DATETIME,
-                            PRIMARY KEY (season_id)
+                            PRIMARY KEY (id)
                         );
                         """;
                 connection.prepareStatement(CREATE_SEASONS_TABLE).execute();
 
                 String CREATE_SURVIVORS_TABLE = """
                         CREATE TABLE IF NOT EXISTS survivors (
+                            id INT AUTO_INCREMENT,
                             survivor_id VARCHAR(36),
                             season_id INT,
                             join_date DATETIME,
                             last_login DATETIME,
                             is_dead BOOLEAN,
-                            PRIMARY KEY (survivor_id),
-                            FOREIGN KEY (season_id) REFERENCES seasons (season_id)
+                            PRIMARY KEY (id)
                         );
                         """;
                 connection.prepareStatement(CREATE_SURVIVORS_TABLE).execute();
 
                 String CREATE_SURVIVORS_CONTAINERS_TABLE = """
                         CREATE TABLE IF NOT EXISTS `survivors_containers` (
-                          container_id INT AUTO_INCREMENT,
+                          id INT AUTO_INCREMENT,
                           season_id INT,
                           container_x INT,
                           container_y INT,
@@ -87,37 +78,35 @@ public class DatabaseManager {
                           world VARCHAR(255),
                           type VARCHAR(255),
                           contents VARCHAR(255),
-                          PRIMARY KEY (container_id),
-                          FOREIGN KEY (season_id) REFERENCES seasons (season_id)
+                          PRIMARY KEY (id)
                         );
                         """;
                 connection.prepareStatement(CREATE_SURVIVORS_CONTAINERS_TABLE).execute();
 
                 String CREATE_SURVIVORS_END_CHESTS_TABLE = """
                         CREATE TABLE IF NOT EXISTS `survivors_end_chests` (
+                          id INT AUTO_INCREMENT,
                           season_id INT,
                           survivor_id VARCHAR(36),
                           contents VARCHAR(255),
-                          PRIMARY KEY (season_id, survivor_id),
-                          FOREIGN KEY (season_id) REFERENCES seasons (season_id),
-                          FOREIGN KEY (survivor_id) REFERENCES survivors (survivor_id)
+                          PRIMARY KEY (id)
                         );
                         """;
                 connection.prepareStatement(CREATE_SURVIVORS_END_CHESTS_TABLE).execute();
 
                 String CREATE_SURVIVORS_INVENTORIES_TABLE = """
                         CREATE TABLE IF NOT EXISTS `survivors_inventories` (
+                          id INT AUTO_INCREMENT,
                           season_id INT,
                           survivor_id VARCHAR(36),
                           contents VARCHAR(255),
-                          PRIMARY KEY (season_id, survivor_id),
-                          FOREIGN KEY (season_id) REFERENCES seasons (season_id),
-                          FOREIGN KEY (survivor_id) REFERENCES survivors (survivor_id)
+                          PRIMARY KEY (id)
                         );
                         """;
                 connection.prepareStatement(CREATE_SURVIVORS_INVENTORIES_TABLE).execute();
             } catch (Exception e) {
                 Bukkit.getLogger().warning("[Hardcore Seasons]: Could not create tables.");
+                e.printStackTrace();
             }
             return;
         }

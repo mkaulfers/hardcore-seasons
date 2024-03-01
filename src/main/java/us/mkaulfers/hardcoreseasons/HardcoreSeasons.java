@@ -85,7 +85,6 @@ public final class HardcoreSeasons extends JavaPlugin {
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new SurvivorContainerPlace(this), this);
         pm.registerEvents(new SurvivorContainerBreak(this), this);
-        pm.registerEvents(new PlayerJoined(this), this);
         pm.registerEvents(new PreLogin(this), this);
         pm.registerEvents(new OnPlayerDeath(this), this);
     }

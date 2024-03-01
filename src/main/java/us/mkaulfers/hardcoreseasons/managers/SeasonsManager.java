@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -16,21 +17,11 @@ public class SeasonsManager {
     private final HardcoreSeasons plugin;
 
     public Season getActiveSeason() {
-        for (Season season : seasons) {
-            if (season.endDate == null) {
-                return season;
-            }
-        }
-        return null;
-    }
-
-    public boolean isNewSeasonForPlayer(Season season, UUID playerId) {
-        return plugin
-                .databaseManager
-                .survivorsManager
-                .survivors
+        // Return the season with the highest seasonId
+        return seasons
                 .stream()
-                .anyMatch(survivor -> survivor.id.equals(playerId) && survivor.seasonId == season.seasonId);
+                .max(Comparator.comparingInt(s -> s.seasonId))
+                .orElse(null);
     }
 
     public SeasonsManager(HardcoreSeasons plugin) {

@@ -16,9 +16,9 @@ public class OnPlayerDeath implements Listener {
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
         event.getEntity().spigot().respawn();
-        int seasonId = plugin.databaseManager.seasonsManager.getActiveSeason().seasonId;
+        int activeSeason = plugin.databaseManager.seasonsManager.getActiveSeason().seasonId;
         plugin.databaseManager.survivorsManager.updateSurvivorIsDead(event.getEntity().getUniqueId(), true);
-        String result = String.format("You have died, join back in season %d.", seasonId + 1);
+        String result = String.format("You have died, join back in season %d.", activeSeason + 1);
         event.getEntity().kickPlayer(result);
     }
 }
