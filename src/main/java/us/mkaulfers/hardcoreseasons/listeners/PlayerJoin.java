@@ -19,8 +19,9 @@ public class PlayerJoin implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         UUID playerUUID = event.getPlayer().getUniqueId();
-        Inventory savedInventory = plugin.databaseManager.inventoriesManager.getInventory(playerUUID, 1);
-        ItemStack[] savedContents = savedInventory.getContents();
-        event.getPlayer().getInventory().setContents(savedContents);
+        int activeSeason = plugin.databaseManager.seasonsManager.getActiveSeason().seasonId;
+        ItemStack[] savedInventories = plugin.databaseManager.inventoriesManager.getInventory(playerUUID, activeSeason);
+        event.getPlayer().getInventory().setContents(savedInventories);
+
     }
 }

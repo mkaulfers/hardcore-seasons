@@ -4,7 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.PlayerInventory;
 import us.mkaulfers.hardcoreseasons.HardcoreSeasons;
 import us.mkaulfers.hardcoreseasons.models.SurvivorInventory;
 import us.mkaulfers.hardcoreseasons.utils.InventoryUtils;
@@ -23,14 +23,10 @@ public class PlayerQuit implements Listener {
 
         try {
             int activeSeason = plugin.databaseManager.seasonsManager.getActiveSeason().seasonId;
-            Inventory inventory = event.getPlayer().getInventory();
-            String serializedInventory = InventoryUtils.inventoryToBase64(inventory);
+            PlayerInventory inventory = event.getPlayer().getInventory();
+            String serializedInventory = InventoryUtils.playerInventoryToBase64(inventory);
 
-            SurvivorInventory survivorInventory = new SurvivorInventory();
-            survivorInventory.playerUUID = playerId;
-            survivorInventory.seasonId = activeSeason;
-            survivorInventory.contents = serializedInventory;
-
+            SurvivorInventory survivorInventory = new SurvivorInventory(playerId, activeSeason, serializedInventory);
             if (plugin.databaseManager.inventoriesManager.doesInventoryExist(playerId, activeSeason)) {
                 plugin.databaseManager.inventoriesManager.updateInventory(survivorInventory);
             } else {

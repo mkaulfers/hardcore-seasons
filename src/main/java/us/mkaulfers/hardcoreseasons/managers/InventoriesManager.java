@@ -2,6 +2,7 @@ package us.mkaulfers.hardcoreseasons.managers;
 
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import us.mkaulfers.hardcoreseasons.HardcoreSeasons;
 import us.mkaulfers.hardcoreseasons.models.SurvivorInventory;
 import us.mkaulfers.hardcoreseasons.utils.InventoryUtils;
@@ -28,18 +29,14 @@ public class InventoriesManager {
                         inventory.seasonId == seasonId);
     }
 
-    public Inventory getInventory(UUID playerId, int seasonId) {
-        SurvivorInventory survivorInventory = inventories
-                .stream()
-                .filter(inventory -> inventory.playerUUID.equals(playerId) &&
-                        inventory.seasonId == seasonId)
-                .findFirst()
-                .orElse(null);
-        if (survivorInventory != null) {
-            try {
-                return InventoryUtils.base64ToInventory(survivorInventory.contents);
-            } catch (Exception e) {
-                Bukkit.getLogger().warning("[Hardcore Seasons]: Could not deserialize inventory.\n" + e.getMessage());
+    public ItemStack[] getInventory(UUID playerId, int seasonId) {
+        for (SurvivorInventory inventory : inventories) {
+            if (inventory.playerUUID.equals(playerId) && inventory.seasonId == seasonId) {
+                try {
+                    return InventoryUtils.itemStackArrayFromBase64(inventory.contents);
+                } catch (Exception e) {
+                    Bukkit.getLogger().warning("[Hardcore Seasons]: Could not deserialize inventory.\n" + e.getMessage());
+                }
             }
         }
         return null;
@@ -55,10 +52,12 @@ public class InventoriesManager {
                     List<SurvivorInventory> inventories = new ArrayList<>();
 
                     while (resultset.next()) {
-                        SurvivorInventory inventory = new SurvivorInventory();
-                        inventory.playerUUID = UUID.fromString(resultset.getString("survivor_id"));
-                        inventory.seasonId = resultset.getInt("season_id");
-                        inventory.contents = resultset.getString("contents");
+                        UUID playerId = UUID.fromString(resultset.getString("survivor_id"));
+                        int seasonId = resultset.getInt("season_id");
+                        String contents = resultset.getString("contents");
+                        String armorContents = resultset.getString("armor_contents");
+
+                        SurvivorInventory inventory = new SurvivorInventory(playerId, seasonId, contents);
                         inventories.add(inventory);
                     }
                     connection.close();

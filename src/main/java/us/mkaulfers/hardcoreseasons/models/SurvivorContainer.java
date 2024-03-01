@@ -2,6 +2,8 @@ package us.mkaulfers.hardcoreseasons.models;
 
 import org.bukkit.block.Block;
 import org.bukkit.block.Container;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import us.mkaulfers.hardcoreseasons.utils.InventoryUtils;
 
 public class SurvivorContainer {
@@ -25,7 +27,9 @@ public class SurvivorContainer {
 
         try {
             Container container = (Container) block.getState();
-            this.contents = InventoryUtils.inventoryToBase64(container.getInventory());
+            Inventory inventory = container.getInventory();
+            ItemStack[] contents = inventory.getContents();
+            this.contents = InventoryUtils.itemStackArrayToBase64(contents);
         } catch (Exception e) {
             throw new IllegalArgumentException("Block is not a container");
         }
