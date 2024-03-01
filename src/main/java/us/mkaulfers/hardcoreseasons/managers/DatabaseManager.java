@@ -100,7 +100,6 @@ public class DatabaseManager {
                           season_id INT,
                           survivor_id VARCHAR(36),
                           contents MEDIUMTEXT,
-                          armor_contents MEDIUMTEXT,
                           PRIMARY KEY (id)
                         );
                         """;

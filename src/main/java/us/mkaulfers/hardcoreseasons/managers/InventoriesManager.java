@@ -55,8 +55,6 @@ public class InventoriesManager {
                         UUID playerId = UUID.fromString(resultset.getString("survivor_id"));
                         int seasonId = resultset.getInt("season_id");
                         String contents = resultset.getString("contents");
-                        String armorContents = resultset.getString("armor_contents");
-
                         SurvivorInventory inventory = new SurvivorInventory(playerId, seasonId, contents);
                         inventories.add(inventory);
                     }
