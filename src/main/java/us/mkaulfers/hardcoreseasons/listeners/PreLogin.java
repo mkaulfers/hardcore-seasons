@@ -27,7 +27,7 @@ public class PreLogin implements Listener {
             survivor.id = playerId;
             survivor.seasonId = activeSeason;
             survivor.joinDate = new Timestamp(new Date().getTime());
-            survivor.lastLogin = new Timestamp(new Date().getTime());
+            survivor.lastOnline = new Timestamp(new Date().getTime());
             survivor.isDead = false;
             plugin.databaseManager.survivorsManager.saveSurvivor(survivor);
         } else {
@@ -37,8 +37,6 @@ public class PreLogin implements Listener {
                 // Temporary fix implemented by updating at set intervals from config.
                 String result = String.format("You are dead and cannot join the server until season %d.", activeSeason + 1);
                 event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, result);
-            } else {
-                plugin.databaseManager.survivorsManager.updateSurvivorLastLogin(playerId, new Timestamp(new Date().getTime()));
             }
         }
     }

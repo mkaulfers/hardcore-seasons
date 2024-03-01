@@ -1,4 +1,4 @@
-package us.mkaulfers.hardcoreseasons.storage;
+package us.mkaulfers.hardcoreseasons.managers;
 
 import com.zaxxer.hikari.HikariDataSource;
 import org.bukkit.Bukkit;
@@ -61,7 +61,7 @@ public class DatabaseManager {
                             survivor_id VARCHAR(36),
                             season_id INT,
                             join_date DATETIME,
-                            last_login DATETIME,
+                            last_online DATETIME,
                             is_dead BOOLEAN,
                             PRIMARY KEY (id)
                         );
@@ -77,7 +77,7 @@ public class DatabaseManager {
                           container_z INT,
                           world VARCHAR(255),
                           type VARCHAR(255),
-                          contents VARCHAR(255),
+                          contents MEDIUMTEXT,
                           PRIMARY KEY (id)
                         );
                         """;
@@ -88,7 +88,7 @@ public class DatabaseManager {
                           id INT AUTO_INCREMENT,
                           season_id INT,
                           survivor_id VARCHAR(36),
-                          contents VARCHAR(255),
+                          contents MEDIUMTEXT,
                           PRIMARY KEY (id)
                         );
                         """;
@@ -99,14 +99,13 @@ public class DatabaseManager {
                           id INT AUTO_INCREMENT,
                           season_id INT,
                           survivor_id VARCHAR(36),
-                          contents VARCHAR(255),
+                          contents MEDIUMTEXT,
                           PRIMARY KEY (id)
                         );
                         """;
                 connection.prepareStatement(CREATE_SURVIVORS_INVENTORIES_TABLE).execute();
             } catch (Exception e) {
-                Bukkit.getLogger().warning("[Hardcore Seasons]: Could not create tables.");
-                e.printStackTrace();
+                Bukkit.getLogger().warning("[Hardcore Seasons]: Could not create tables.\n" + e.getMessage());
             }
             return;
         }

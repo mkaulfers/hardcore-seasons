@@ -3,25 +3,25 @@ package us.mkaulfers.hardcoreseasons.listeners;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.BlockBreakEvent;
 import us.mkaulfers.hardcoreseasons.HardcoreSeasons;
 import us.mkaulfers.hardcoreseasons.models.SurvivorContainer;
 import us.mkaulfers.hardcoreseasons.utils.BlockUtils;
 
-public class SurvivorContainerPlace implements Listener {
+public class BlockBreak implements Listener {
     HardcoreSeasons plugin;
 
     @EventHandler
-    public void onBlockPlace(BlockPlaceEvent event) {
+    public void onBlockBreak(BlockBreakEvent event) {
         Block block = event.getBlock();
         if (BlockUtils.isTrackable(block)) {
             int activeSeason = plugin.databaseManager.seasonsManager.getActiveSeason().seasonId;
             SurvivorContainer survivorContainer = new SurvivorContainer(block, activeSeason);
-            plugin.databaseManager.containersManager.saveContainer(survivorContainer);
+            plugin.databaseManager.containersManager.deleteContainer(survivorContainer);
         }
     }
 
-    public SurvivorContainerPlace(HardcoreSeasons plugin) {
+    public BlockBreak(HardcoreSeasons plugin) {
         this.plugin = plugin;
     }
 }

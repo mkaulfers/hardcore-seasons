@@ -7,7 +7,7 @@ import us.mkaulfers.hardcoreseasons.commands.HardcoreSeasonsCommand;
 import us.mkaulfers.hardcoreseasons.listeners.*;
 import us.mkaulfers.hardcoreseasons.models.MySQLConfig;
 import us.mkaulfers.hardcoreseasons.models.PluginConfig;
-import us.mkaulfers.hardcoreseasons.storage.DatabaseManager;
+import us.mkaulfers.hardcoreseasons.managers.DatabaseManager;
 
 import java.util.List;
 
@@ -83,10 +83,14 @@ public final class HardcoreSeasons extends JavaPlugin {
 
     private void registerListeners() {
         PluginManager pm = getServer().getPluginManager();
-        pm.registerEvents(new SurvivorContainerPlace(this), this);
-        pm.registerEvents(new SurvivorContainerBreak(this), this);
+        pm.registerEvents(new BlockPlace(this), this);
+        pm.registerEvents(new BlockBreak(this), this);
         pm.registerEvents(new PreLogin(this), this);
-        pm.registerEvents(new OnPlayerDeath(this), this);
+        pm.registerEvents(new PlayerDeath(this), this);
+        pm.registerEvents(new PlayerQuit(this), this);
+
+        //Debugging Event
+        pm.registerEvents(new PlayerJoin(this), this);
     }
 
     private void handleStorage() {

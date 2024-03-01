@@ -3,7 +3,6 @@ package us.mkaulfers.hardcoreseasons.managers;
 import org.bukkit.Bukkit;
 import us.mkaulfers.hardcoreseasons.HardcoreSeasons;
 import us.mkaulfers.hardcoreseasons.models.SurvivorEndChest;
-import us.mkaulfers.hardcoreseasons.storage.DatabaseManager;
 
 import java.sql.Connection;
 import java.sql.ResultSet;

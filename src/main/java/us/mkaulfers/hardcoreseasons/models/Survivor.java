@@ -7,6 +7,6 @@ public class Survivor {
     public UUID id;
     public int seasonId;
     public Timestamp joinDate;
-    public Timestamp lastLogin;
+    public Timestamp lastOnline;
     public boolean isDead;
 }
