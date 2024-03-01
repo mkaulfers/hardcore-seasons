@@ -48,6 +48,8 @@ public class HardcoreSeasonsCommand implements TabExecutor {
                 if (strings.length == 1 && commandSender.hasPermission(reloadPermission)) {
                     ArrayList<String> completions = new ArrayList<>();
                     completions.add("reload");
+                    completions.add("vote");
+                    completions.add("endSeason");
                     return completions;
                 }
             }
