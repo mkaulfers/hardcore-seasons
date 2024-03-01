@@ -26,6 +26,13 @@ public class HardcoreSeasonsCommand implements TabExecutor {
                 if (strings[0].equals("reload")) {
                     if (player.hasPermission(reloadPermission)) {
                         plugin.reloadConfig();
+                        plugin.databaseManager.connect();
+                        plugin.databaseManager.initTables();
+                        plugin.databaseManager.seasonsManager.loadSeasons();
+                        plugin.databaseManager.survivorsManager.loadSurvivors();
+                        plugin.databaseManager.containersManager.loadContainers();
+                        plugin.databaseManager.inventoriesManager.loadInventories();
+                        plugin.databaseManager.endChestsManager.loadEndChests();
                         player.sendMessage("HardcoreSeasons configuration reloaded");
                         return true;
                     } else {
