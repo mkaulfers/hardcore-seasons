@@ -1,10 +1,9 @@
 package us.mkaulfers.hardcoreseasons.commands;
 
 import dev.triumphteam.gui.builder.item.ItemBuilder;
-import dev.triumphteam.gui.components.ScrollType;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
-import dev.triumphteam.gui.guis.ScrollingGui;
+import dev.triumphteam.gui.guis.PaginatedGui;
 import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -51,11 +50,9 @@ public class SurvivorCommand implements TabExecutor {
     }
 
     public void openRewardGUI(Player player) {
-        ScrollingGui gui = Gui.scrolling()
+        PaginatedGui gui = Gui.paginated()
                 .title(Component.text(ChatColor.DARK_BLUE + "Claim Rewards"))
                 .rows(6)
-                .pageSize(45)
-                .scrollType(ScrollType.VERTICAL)
                 .create();
 
         GuiItem goBackPanel = ItemBuilder
@@ -102,10 +99,21 @@ public class SurvivorCommand implements TabExecutor {
                     event.getWhoClicked().closeInventory();
                 });
 
+        GuiItem placeholder = ItemBuilder
+                .from(Material.BLACK_STAINED_GLASS_PANE)
+                .name(Component.text(""))
+                .asGuiItem(event -> {
+                    event.setCancelled(true);
+                });
+
         gui.setItem(45, goBackPanel);
+        gui.setItem(46, placeholder);
+        gui.setItem(47, placeholder);
         gui.setItem(48, pageBack);
         gui.setItem(49, currentPage);
         gui.setItem(50, pageNext);
+        gui.setItem(51, placeholder);
+        gui.setItem(52, placeholder);
         gui.setItem(53, close);
 
         gui.open(player);
