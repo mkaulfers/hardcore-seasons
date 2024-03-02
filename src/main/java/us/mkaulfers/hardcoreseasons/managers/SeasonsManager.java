@@ -31,7 +31,6 @@ public class SeasonsManager {
     }
 
     public void loadSeasons() {
-        if (plugin.databaseManager.dataSource != null) {
             CompletableFuture.runAsync(() -> {
                 try {
                     Connection connection = plugin.databaseManager.dataSource.getConnection();
@@ -52,8 +51,6 @@ public class SeasonsManager {
                     Bukkit.getLogger().warning("[Hardcore Seasons]: Could not load seasons.");
                 }
             });
-        }
-        plugin.databaseManager.connect();
     }
 
     private void processSeasonResultSet(ResultSet resultset, List<Season> seasons) throws SQLException {
