@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HardcoreSeasonsCommand implements TabExecutor {
-    String reloadPermission = "hardcoreseasons.reload";
+
     HardcoreSeasons plugin;
 
     public HardcoreSeasonsCommand(HardcoreSeasons plugin) {
@@ -26,13 +26,8 @@ public class HardcoreSeasonsCommand implements TabExecutor {
 
             if (strings.length == 1) {
                 if (strings[0].equals("reload")) {
-                    if (player.hasPermission(reloadPermission)) {
-                        reloadPlugin(player);
-                        return true;
-                    } else {
-                        player.sendMessage("You do not have permission to reload HardcoreSeasons configuration");
-                        return false;
-                    }
+                    reloadPlugin(player);
+                    return true;
                 }
             }
         }
@@ -44,7 +39,7 @@ public class HardcoreSeasonsCommand implements TabExecutor {
     public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] args) {
         if (command.getName().equals("hardcoreseasons") || command.getName().equals("hcs")) {
             if (commandSender instanceof Player) {
-                if (args.length == 1 && commandSender.hasPermission(reloadPermission)) {
+                if (args.length == 1) {
                     return StringUtil.copyPartialMatches(args[0], List.of("reload"), new ArrayList<>());
                 }
             }

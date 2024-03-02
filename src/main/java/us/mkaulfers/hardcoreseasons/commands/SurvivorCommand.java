@@ -11,7 +11,7 @@ import us.mkaulfers.hardcoreseasons.HardcoreSeasons;
 import java.util.List;
 
 public class SurvivorCommand implements TabExecutor {
-    String survivorPermission = "hardcoreseasons.survivor";
+
     HardcoreSeasons plugin;
 
     public SurvivorCommand(HardcoreSeasons plugin) {
@@ -26,13 +26,8 @@ public class SurvivorCommand implements TabExecutor {
 
             if (strings.length == 0) {
                 if (s.equalsIgnoreCase("survivor") || s.equalsIgnoreCase("surv")) {
-                    if (player.hasPermission(survivorPermission)) {
-                        showSurvivorGUI(player);
-                        return true;
-                    } else {
-                        player.sendMessage("You do not have permission to use the survivor command");
-                        return false;
-                    }
+                    showSurvivorGUI(player);
+                    return true;
                 }
             }
         }
