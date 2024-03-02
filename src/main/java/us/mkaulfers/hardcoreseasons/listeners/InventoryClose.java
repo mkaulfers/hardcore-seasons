@@ -21,7 +21,9 @@ public class InventoryClose implements Listener {
 
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent event) {
-        List<String> guiMenuNames = List.of(ChatColor.DARK_BLUE + "Claim Rewards");
+        List<String> guiMenuNames = List.of(
+                ChatColor.DARK_BLUE + "Claim Rewards"
+        );
 
         if (guiMenuNames.contains(event.getView().getTitle())) {
             return;
