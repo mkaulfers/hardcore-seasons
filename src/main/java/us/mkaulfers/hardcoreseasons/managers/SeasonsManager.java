@@ -7,14 +7,12 @@ import us.mkaulfers.hardcoreseasons.models.Season;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 public class SeasonsManager {
-    public List<Season> seasons;
+    public ConcurrentSkipListSet<Season> seasons;
     private final HardcoreSeasons plugin;
 
     public Season getActiveSeason() {
@@ -34,7 +32,7 @@ public class SeasonsManager {
             CompletableFuture.runAsync(() -> {
                 try {
                     Connection connection = plugin.databaseManager.dataSource.getConnection();
-                    List<Season> seasons = new ArrayList<>();
+                    ConcurrentSkipListSet<Season> seasons = new ConcurrentSkipListSet<>();
 
                     ResultSet resultset = connection.prepareStatement("SELECT * FROM seasons").executeQuery();
                     processSeasonResultSet(resultset, seasons);
@@ -53,12 +51,13 @@ public class SeasonsManager {
             });
     }
 
-    private void processSeasonResultSet(ResultSet resultset, List<Season> seasons) throws SQLException {
+    private void processSeasonResultSet(ResultSet resultset, ConcurrentSkipListSet<Season> seasons) throws SQLException {
         while (resultset.next()) {
-            Season season = new Season();
-            season.seasonId = resultset.getInt("season_id");
-            season.startDate = resultset.getTimestamp("start_date");
-            season.endDate = resultset.getTimestamp("end_date");
+            Season season = new Season(
+                    resultset.getInt("season_id"),
+                    resultset.getTimestamp("start_date"),
+                    resultset.getTimestamp("end_date")
+            );
             seasons.add(season);
         }
     }

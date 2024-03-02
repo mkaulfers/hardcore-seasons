@@ -6,7 +6,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import us.mkaulfers.hardcoreseasons.utils.InventoryUtils;
 
-public class SurvivorContainer {
+public class SurvivorContainer implements Comparable<SurvivorContainer> {
     public int seasonId;
     public int x;
     public int y;
@@ -23,6 +23,11 @@ public class SurvivorContainer {
         this.world = world;
         this.type = type;
         this.contents = contents;
+    }
+
+    @Override
+    public int compareTo(SurvivorContainer o) {
+        return this.seasonId - o.seasonId;
     }
 
     public SurvivorContainer(Block block, int seasonId) {

@@ -23,12 +23,13 @@ public class PreLogin implements Listener {
         int activeSeason = plugin.databaseManager.seasonsManager.getActiveSeason().seasonId;
 
         if (!plugin.databaseManager.survivorsManager.doesSurvivorExist(playerId, activeSeason)) {
-            Survivor survivor = new Survivor();
-            survivor.id = playerId;
-            survivor.seasonId = activeSeason;
-            survivor.joinDate = new Timestamp(new Date().getTime());
-            survivor.lastOnline = new Timestamp(new Date().getTime());
-            survivor.isDead = false;
+            Survivor survivor = new Survivor(
+                    playerId,
+                    activeSeason,
+                    new Timestamp(new Date().getTime()),
+                    new Timestamp(new Date().getTime()),
+                    false
+            );
             plugin.databaseManager.survivorsManager.saveSurvivor(survivor);
         } else {
             if (plugin.databaseManager.survivorsManager.isSurvivorDead(playerId, activeSeason)) {

@@ -9,9 +9,10 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 public class ContainersManager {
-    public List<SurvivorContainer> containers;
+    public ConcurrentSkipListSet<SurvivorContainer> containers;
     private final HardcoreSeasons plugin;
 
     public ContainersManager(HardcoreSeasons plugin) {
@@ -50,17 +51,18 @@ public class ContainersManager {
                 Connection connection = plugin.databaseManager.dataSource.getConnection();
                 ResultSet resultset = connection.prepareStatement("SELECT * FROM survivors_containers").executeQuery();
 
-                List<SurvivorContainer> containers = new ArrayList<>();
+                ConcurrentSkipListSet<SurvivorContainer> containers = new ConcurrentSkipListSet<>();
 
                 while (resultset.next()) {
-                    int seasonId = resultset.getInt("season_id");
-                    int x = resultset.getInt("container_x");
-                    int y = resultset.getInt("container_y");
-                    int z = resultset.getInt("container_z");
-                    String world = resultset.getString("world");
-                    String type = resultset.getString("type");
-                    String contents = resultset.getString("contents");
-                    SurvivorContainer container = new SurvivorContainer(seasonId, x, y, z, world, type, contents);
+                    SurvivorContainer container = new SurvivorContainer(
+                            resultset.getInt("season_id"),
+                            resultset.getInt("container_x"),
+                            resultset.getInt("container_y"),
+                            resultset.getInt("container_z"),
+                            resultset.getString("world"),
+                            resultset.getString("type"),
+                            resultset.getString("contents")
+                    );
                     containers.add(container);
                 }
                 connection.close();

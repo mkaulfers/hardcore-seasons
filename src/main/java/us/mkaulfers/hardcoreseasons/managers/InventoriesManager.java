@@ -1,21 +1,20 @@
 package us.mkaulfers.hardcoreseasons.managers;
 
 import org.bukkit.Bukkit;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import us.mkaulfers.hardcoreseasons.HardcoreSeasons;
 import us.mkaulfers.hardcoreseasons.models.SurvivorInventory;
 import us.mkaulfers.hardcoreseasons.utils.InventoryUtils;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 public class InventoriesManager {
-    public List<SurvivorInventory> inventories;
+    public ConcurrentSkipListSet<SurvivorInventory> inventories;
     private final HardcoreSeasons plugin;
 
     public InventoriesManager(HardcoreSeasons plugin) {
@@ -49,13 +48,14 @@ public class InventoriesManager {
                 Connection connection = plugin.databaseManager.dataSource.getConnection();
                 ResultSet resultset = connection.prepareStatement("SELECT * FROM survivors_inventories").executeQuery();
 
-                List<SurvivorInventory> inventories = new ArrayList<>();
+                ConcurrentSkipListSet<SurvivorInventory> inventories = new ConcurrentSkipListSet<>();
 
                 while (resultset.next()) {
-                    UUID playerId = UUID.fromString(resultset.getString("survivor_id"));
-                    int seasonId = resultset.getInt("season_id");
-                    String contents = resultset.getString("contents");
-                    SurvivorInventory inventory = new SurvivorInventory(playerId, seasonId, contents);
+                    SurvivorInventory inventory = new SurvivorInventory(
+                            UUID.fromString(resultset.getString("survivor_id")),
+                            resultset.getInt("season_id"),
+                            resultset.getString("contents")
+                    );
                     inventories.add(inventory);
                 }
                 connection.close();
@@ -71,7 +71,7 @@ public class InventoriesManager {
             try {
                 Connection connection = plugin.databaseManager.dataSource.getConnection();
                 String query = "INSERT INTO survivors_inventories (survivor_id, season_id, contents) VALUES (?, ?, ?)";
-                java.sql.PreparedStatement preparedStatement = connection.prepareStatement(query);
+                PreparedStatement preparedStatement = connection.prepareStatement(query);
                 preparedStatement.setString(1, survivorInventory.playerUUID.toString());
                 preparedStatement.setInt(2, survivorInventory.seasonId);
                 preparedStatement.setString(3, survivorInventory.contents);
@@ -89,7 +89,7 @@ public class InventoriesManager {
             try {
                 Connection connection = plugin.databaseManager.dataSource.getConnection();
                 String query = "UPDATE survivors_inventories SET contents = ? WHERE survivor_id = ? AND season_id = ?";
-                java.sql.PreparedStatement preparedStatement = connection.prepareStatement(query);
+                PreparedStatement preparedStatement = connection.prepareStatement(query);
                 preparedStatement.setString(1, survivorInventory.contents);
                 preparedStatement.setString(2, survivorInventory.playerUUID.toString());
                 preparedStatement.setInt(3, survivorInventory.seasonId);

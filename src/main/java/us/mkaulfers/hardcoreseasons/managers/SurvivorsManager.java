@@ -5,15 +5,15 @@ import us.mkaulfers.hardcoreseasons.HardcoreSeasons;
 import us.mkaulfers.hardcoreseasons.models.Survivor;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 public class SurvivorsManager {
-    public List<Survivor> survivors;
+    public ConcurrentSkipListSet<Survivor> survivors;
     private final HardcoreSeasons plugin;
 
     public SurvivorsManager(HardcoreSeasons plugin) {
@@ -42,15 +42,16 @@ public class SurvivorsManager {
                 ResultSet resultset = connection.prepareStatement("SELECT * FROM survivors")
                         .executeQuery();
 
-                List<Survivor> survivors = new ArrayList<>();
+                ConcurrentSkipListSet<Survivor> survivors = new ConcurrentSkipListSet<>();
 
                 while (resultset.next()) {
-                    Survivor survivor = new Survivor();
-                    survivor.id = UUID.fromString(resultset.getString("survivor_id"));
-                    survivor.seasonId = resultset.getInt("season_id");
-                    survivor.joinDate = resultset.getTimestamp("join_date");
-                    survivor.lastOnline = resultset.getTimestamp("last_online");
-                    survivor.isDead = resultset.getBoolean("is_dead");
+                    Survivor survivor = new Survivor(
+                            UUID.fromString(resultset.getString("survivor_id")),
+                            resultset.getInt("season_id"),
+                            resultset.getTimestamp("join_date"),
+                            resultset.getTimestamp("last_online"),
+                            resultset.getBoolean("is_dead")
+                    );
                     survivors.add(survivor);
                 }
                 connection.close();
@@ -66,7 +67,7 @@ public class SurvivorsManager {
             try {
                 Connection connection = plugin.databaseManager.dataSource.getConnection();
                 String query = "INSERT INTO survivors (survivor_id, season_id, join_date, last_online, is_dead) VALUES (?, ?, ?, ?, ?)";
-                java.sql.PreparedStatement preparedStatement = connection.prepareStatement(query);
+                PreparedStatement preparedStatement = connection.prepareStatement(query);
                 preparedStatement.setString(1, survivor.id.toString());
                 preparedStatement.setInt(2, survivor.seasonId);
                 preparedStatement.setTimestamp(3, survivor.joinDate);
@@ -88,7 +89,7 @@ public class SurvivorsManager {
                 int activeSeason = plugin.databaseManager.seasonsManager.getActiveSeason().seasonId;
 
                 String query = "UPDATE survivors SET last_online = ? WHERE survivor_id = ? AND season_id = ?";
-                java.sql.PreparedStatement preparedStatement = connection.prepareStatement(query);
+                PreparedStatement preparedStatement = connection.prepareStatement(query);
                 preparedStatement.setTimestamp(1, timestamp);
                 preparedStatement.setString(2, survivorId.toString());
                 preparedStatement.setInt(3, activeSeason);
@@ -111,7 +112,7 @@ public class SurvivorsManager {
                 int activeSeason = plugin.databaseManager.seasonsManager.getActiveSeason().seasonId;
 
                 String query = "UPDATE survivors SET is_dead = ? WHERE survivor_id = ? AND season_id = ?";
-                java.sql.PreparedStatement preparedStatement = connection.prepareStatement(query);
+                PreparedStatement preparedStatement = connection.prepareStatement(query);
                 preparedStatement.setBoolean(1, isDead);
                 preparedStatement.setString(2, survivorId.toString());
                 preparedStatement.setInt(3, activeSeason);

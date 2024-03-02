@@ -13,9 +13,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 public class EndChestsManager {
-    public List<SurvivorEndChest> endChests;
+    public ConcurrentSkipListSet<SurvivorEndChest> endChests;
     private final HardcoreSeasons plugin;
 
     public EndChestsManager(HardcoreSeasons plugin) {
@@ -49,13 +50,14 @@ public class EndChestsManager {
                 Connection connection = plugin.databaseManager.dataSource.getConnection();
                 ResultSet resultset = connection.prepareStatement("SELECT * FROM survivors_end_chests").executeQuery();
 
-                List<SurvivorEndChest> endChests = new ArrayList<>(resultset.getFetchSize());
+                ConcurrentSkipListSet<SurvivorEndChest> endChests = new ConcurrentSkipListSet<>();
 
                 while (resultset.next()) {
-                    UUID playerId = UUID.fromString(resultset.getString("survivor_id"));
-                    int seasonId = resultset.getInt("season_id");
-                    String contents = resultset.getString("contents");
-                    SurvivorEndChest endChest = new SurvivorEndChest(playerId, seasonId, contents);
+                    SurvivorEndChest endChest = new SurvivorEndChest(
+                            UUID.fromString(resultset.getString("survivor_id")),
+                            resultset.getInt("season_id"),
+                            resultset.getString("contents")
+                    );
                     endChests.add(endChest);
                 }
                 connection.close();
