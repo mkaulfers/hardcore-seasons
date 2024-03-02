@@ -12,6 +12,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public class InventoriesManager {
     public List<SurvivorInventory> inventories;
@@ -44,7 +45,7 @@ public class InventoriesManager {
 
     public void loadInventories() {
         if (plugin.databaseManager.dataSource != null) {
-            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            CompletableFuture.runAsync(() -> {
                 try {
                     Connection connection = plugin.databaseManager.dataSource.getConnection();
                     ResultSet resultset = connection.prepareStatement("SELECT * FROM survivors_inventories").executeQuery();
@@ -70,7 +71,7 @@ public class InventoriesManager {
 
     public void saveInventory(SurvivorInventory survivorInventory) {
         if (plugin.databaseManager.dataSource != null) {
-            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            CompletableFuture.runAsync(() -> {
                 try {
                     Connection connection = plugin.databaseManager.dataSource.getConnection();
                     String query = "INSERT INTO survivors_inventories (survivor_id, season_id, contents) VALUES (?, ?, ?)";
@@ -91,7 +92,7 @@ public class InventoriesManager {
 
     public void updateInventory(SurvivorInventory survivorInventory) {
         if (plugin.databaseManager.dataSource != null) {
-            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            CompletableFuture.runAsync(() -> {
                 try {
                     Connection connection = plugin.databaseManager.dataSource.getConnection();
                     String query = "UPDATE survivors_inventories SET contents = ? WHERE survivor_id = ? AND season_id = ?";

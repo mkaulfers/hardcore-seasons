@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public class SeasonsManager {
     public List<Season> seasons;
@@ -31,7 +32,7 @@ public class SeasonsManager {
 
     public void loadSeasons() {
         if (plugin.databaseManager.dataSource != null) {
-            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            CompletableFuture.runAsync(() -> {
                 try {
                     Connection connection = plugin.databaseManager.dataSource.getConnection();
                     List<Season> seasons = new ArrayList<>();

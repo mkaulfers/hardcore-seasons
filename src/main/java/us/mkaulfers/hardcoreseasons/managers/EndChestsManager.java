@@ -12,6 +12,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public class EndChestsManager {
     public List<SurvivorEndChest> endChests;
@@ -44,7 +45,7 @@ public class EndChestsManager {
 
     public void loadEndChests() {
         if (plugin.databaseManager.dataSource != null) {
-            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            CompletableFuture.runAsync(() -> {
                 try {
                     Connection connection = plugin.databaseManager.dataSource.getConnection();
                     ResultSet resultset = connection.prepareStatement("SELECT * FROM survivors_end_chests").executeQuery();
@@ -70,7 +71,7 @@ public class EndChestsManager {
 
     public void saveEndChest(SurvivorEndChest endChest) {
         if (plugin.databaseManager.dataSource != null) {
-            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            CompletableFuture.runAsync(() -> {
                 try {
                     Connection connection = plugin.databaseManager.dataSource.getConnection();
                     String query = "INSERT INTO survivors_end_chests (season_id, survivor_id, contents) VALUES (?, ?, ?)";
@@ -91,7 +92,7 @@ public class EndChestsManager {
 
     public void updateEndChest(SurvivorEndChest endChest) {
         if (plugin.databaseManager.dataSource != null) {
-            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            CompletableFuture.runAsync(() -> {
                 try {
                     Connection connection = plugin.databaseManager.dataSource.getConnection();
                     String query = "UPDATE survivors_end_chests SET contents = ? WHERE season_id = ? AND survivor_id = ?";

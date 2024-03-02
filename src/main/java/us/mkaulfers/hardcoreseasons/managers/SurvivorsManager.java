@@ -10,6 +10,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public class SurvivorsManager {
     public List<Survivor> survivors;
@@ -36,7 +37,7 @@ public class SurvivorsManager {
 
     public void loadSurvivors() {
         if (plugin.databaseManager.dataSource != null) {
-            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            CompletableFuture.runAsync(() -> {
                 try {
                     Connection connection = plugin.databaseManager.dataSource.getConnection();
                     ResultSet resultset = connection.prepareStatement("SELECT * FROM survivors")
@@ -65,7 +66,7 @@ public class SurvivorsManager {
 
     public void saveSurvivor(Survivor survivor) {
         if (plugin.databaseManager.dataSource != null) {
-            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            CompletableFuture.runAsync(() -> {
                 try {
                     Connection connection = plugin.databaseManager.dataSource.getConnection();
                     String query = "INSERT INTO survivors (survivor_id, season_id, join_date, last_online, is_dead) VALUES (?, ?, ?, ?, ?)";
@@ -87,7 +88,7 @@ public class SurvivorsManager {
 
     public void updateSurvivorLastOnline(UUID survivorId, Timestamp timestamp) {
         if (plugin.databaseManager.dataSource != null) {
-            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            CompletableFuture.runAsync(() -> {
                 try {
                     Connection connection = plugin.databaseManager.dataSource.getConnection();
                     int activeSeason = plugin.databaseManager.seasonsManager.getActiveSeason().seasonId;
@@ -112,7 +113,7 @@ public class SurvivorsManager {
 
     public void updateSurvivorIsDead(UUID survivorId, boolean isDead) {
         if (plugin.databaseManager.dataSource != null) {
-            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            CompletableFuture.runAsync(() -> {
                 try {
                     Connection connection = plugin.databaseManager.dataSource.getConnection();
                     int activeSeason = plugin.databaseManager.seasonsManager.getActiveSeason().seasonId;

@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public class ContainersManager {
     public List<SurvivorContainer> containers;
@@ -45,7 +46,7 @@ public class ContainersManager {
 
     public void loadContainers() {
         if (plugin.databaseManager.dataSource != null) {
-            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            CompletableFuture.runAsync(() -> {
                 try {
                     Connection connection = plugin.databaseManager.dataSource.getConnection();
                     ResultSet resultset = connection.prepareStatement("SELECT * FROM survivors_containers").executeQuery();
@@ -75,7 +76,7 @@ public class ContainersManager {
 
     public void saveContainer(SurvivorContainer container) {
         if (plugin.databaseManager.dataSource != null) {
-            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            CompletableFuture.runAsync(() -> {
                 try {
                     Connection connection = plugin.databaseManager.dataSource.getConnection();
                     String query = "INSERT INTO survivors_containers (season_id, container_x, container_y, container_z, world, type, contents) VALUES (?, ?, ?, ?, ?, ?, ?)";
@@ -95,11 +96,12 @@ public class ContainersManager {
                 }
             });
         }
+        plugin.databaseManager.connect();
     }
 
     public void updateContainer(SurvivorContainer container) {
         if (plugin.databaseManager.dataSource != null) {
-            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            CompletableFuture.runAsync(() -> {
                 try {
                     Connection connection = plugin.databaseManager.dataSource.getConnection();
                     String query = "UPDATE survivors_containers SET contents = ? WHERE season_id = ? AND container_x = ? AND container_y = ? AND container_z = ? AND world = ? AND type = ?";
@@ -125,11 +127,12 @@ public class ContainersManager {
                 }
             });
         }
+        plugin.databaseManager.connect();
     }
 
     public void deleteContainer(SurvivorContainer container) {
         if (plugin.databaseManager.dataSource != null) {
-            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            CompletableFuture.runAsync(() -> {
                 try {
                     Connection connection = plugin.databaseManager.dataSource.getConnection();
                     String query = "DELETE FROM survivors_containers WHERE season_id = ? AND container_x = ? AND container_y = ? AND container_z = ? AND world = ? AND type = ?";
@@ -148,5 +151,6 @@ public class ContainersManager {
                 }
             });
         }
+        plugin.databaseManager.connect();
     }
 }
