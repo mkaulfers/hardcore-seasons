@@ -55,67 +55,79 @@ public class SurvivorCommand implements TabExecutor {
                 .rows(6)
                 .create();
 
+        gui.setDefaultClickAction(event -> {
+            List<Integer> buttonSlots = List.of(45, 46, 47, 48, 50, 51, 52, 53);
+            if (buttonSlots.contains(event.getSlot())) {
+                event.setCancelled(true);
+            }
+        });
+
+        // Create a bunch of test items, dirt, to add to the gui.
+        for (int i = 0; i < 100; i++) {
+            GuiItem item = ItemBuilder
+                    .from(Material.DIRT)
+                    .asGuiItem();
+
+            gui.addItem(item);
+        }
+
         GuiItem goBackPanel = ItemBuilder
                 .from(Material.SPECTRAL_ARROW)
                 .name(Component.text(ChatColor.GOLD + "Go Back"))
                 .asGuiItem(event -> {
-                    event.setCancelled(true);
                     player.sendMessage("Go Back");
-                });
-
-        GuiItem currentPage = ItemBuilder
-                .from(Material.PAPER)
-                .name(Component.text(ChatColor.GOLD + "Page " + ChatColor.AQUA + gui.getCurrentPageNum() + ChatColor.GOLD + "/" + ChatColor.AQUA + gui.getPagesNum()))
-                .asGuiItem(event -> {
-                    event.setCancelled(true);
-                    player.sendMessage("Current Page");
                 });
 
         GuiItem pageBack = ItemBuilder
                 .from(Material.ARROW)
                 .name(Component.text(ChatColor.GOLD + "Previous"))
                 .asGuiItem(event -> {
-                    event.setCancelled(true);
                     gui.previous();
-                    gui.updateItem(49, currentPage);
-                    player.sendMessage("Previous");
+                    gui.updateItem(49, currentPageItem(gui.getCurrentPageNum(), gui.getPagesNum()));
+                    player.sendMessage("Page " + gui.getCurrentPageNum() + "/" + gui.getPagesNum());
                 });
+
+        gui.updateItem(49, currentPageItem(gui.getCurrentPageNum(), gui.getPagesNum()));
 
         GuiItem pageNext = ItemBuilder
                 .from(Material.ARROW)
                 .name(Component.text(ChatColor.GOLD + "Next"))
                 .asGuiItem(event -> {
-                    event.setCancelled(true);
                     gui.next();
-                    gui.updateItem(49, currentPage);
-                    player.sendMessage("Next");
+                    gui.updateItem(49, currentPageItem(gui.getCurrentPageNum(), gui.getPagesNum()));
+                    player.sendMessage("Page " + gui.getCurrentPageNum() + "/" + gui.getPagesNum());
                 });
 
         GuiItem close = ItemBuilder
                 .from(Material.BARRIER)
                 .name(Component.text(ChatColor.RED + "Close"))
                 .asGuiItem(event -> {
-                    event.setCancelled(true);
                     event.getWhoClicked().closeInventory();
                 });
 
         GuiItem placeholder = ItemBuilder
                 .from(Material.BLACK_STAINED_GLASS_PANE)
                 .name(Component.text(""))
-                .asGuiItem(event -> {
-                    event.setCancelled(true);
-                });
+                .asGuiItem();
 
         gui.setItem(45, goBackPanel);
         gui.setItem(46, placeholder);
         gui.setItem(47, placeholder);
         gui.setItem(48, pageBack);
-        gui.setItem(49, currentPage);
         gui.setItem(50, pageNext);
         gui.setItem(51, placeholder);
         gui.setItem(52, placeholder);
         gui.setItem(53, close);
 
         gui.open(player);
+    }
+
+    private GuiItem currentPageItem(int currentPage, int totalPages) {
+        return ItemBuilder
+                .from(Material.PAPER)
+                .name(Component.text(ChatColor.GOLD + "Page " + ChatColor.AQUA + currentPage + ChatColor.GOLD + "/" + ChatColor.AQUA + totalPages))
+                .asGuiItem(event -> {
+                    event.getWhoClicked().sendMessage("Current Page");
+                });
     }
 }
