@@ -12,7 +12,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import us.mkaulfers.hardcoreseasons.HardcoreSeasons;
+import us.mkaulfers.hardcoreseasons.managers.ItemDiffManager;
 import us.mkaulfers.hardcoreseasons.utils.InventoryUtils;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -24,25 +26,47 @@ public class RedeemRewardsGUI {
 
         // Rewards
         PaginatedPane pages = new PaginatedPane(0, 0, 9, 5);
+
         // TODO: Replace with items from the database, that count as rewards.
-        List<ItemStack> guiItems = InventoryUtils.getGUIItemsList(plugin.databaseManager.inventoriesManager.getInventory(playerId, seasonId));
+        ItemStack[] databaseItems = plugin.databaseManager.inventoriesManager.getInventory(playerId, seasonId);
+        List<ItemStack> guiItems = InventoryUtils.getGUIItemsList(databaseItems);
+        ItemDiffManager itemDiffManager = new ItemDiffManager(databaseItems, guiItems);
 
         int itemsPerPage = 5 * 9;
-        int pagesNeeded = (int)Math.max(Math.ceil((double)guiItems.size() / (double)itemsPerPage), 1.0);
+        int pagesNeeded = (int)Math.max(Math.ceil((double) itemDiffManager.getGuiItems().size() / (double)itemsPerPage), 1.0);
 
         for(int i = 0; i < pagesNeeded; ++i) {
             OutlinePane page = new OutlinePane(0, 0, 9, 5);
 
             for(int j = 0; j < itemsPerPage; ++j) {
                 int index = i * itemsPerPage + j;
-                if (index >= guiItems.size()) {
+                if (index >= itemDiffManager.getGuiItems().size()) {
                     break;
                 }
 
-                page.addItem(new GuiItem(guiItems.get(index), event -> {
+                page.addItem(new GuiItem(itemDiffManager.getGuiItems().get(index), event -> {
                     ItemStack item = event.getCurrentItem();
                     Player p = (Player) event.getWhoClicked();
-                    p.getInventory().addItem(item);
+
+                    List<List<ItemStack>> separatedItems = itemDiffManager.fetchItemsOfType(item);
+                    List<ItemStack> fetchedItems = separatedItems.get(0);
+
+                    if (!fetchedItems.isEmpty()) {
+                        p.getInventory().addItem(fetchedItems.toArray(new ItemStack[0]));
+                    } else {
+                        p.sendMessage(ChatColor.RED + "You don't have any more of this item.");
+                    }
+
+                    GuiItem guiItem = page.getItems().get(index);
+                    ItemStack updatedItem = guiItem.getItem();
+                    ItemMeta updatedMeta = updatedItem.getItemMeta();
+                    updatedMeta.setLore(List.of(
+                            ChatColor.GREEN+ "Redeemed"
+                    ));
+                    updatedItem.setItemMeta(updatedMeta);
+                    guiItem.setItem(updatedItem);
+
+                    gui.update();
                 }));
             }
 

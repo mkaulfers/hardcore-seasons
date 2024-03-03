@@ -13,6 +13,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class InventoryUtils {
     /**
@@ -182,5 +183,27 @@ public class InventoryUtils {
 
         // Construct list sorted by display name
         return new ArrayList<>(uniqueItemsMap.values());
+    }
+
+    /**
+     *  Returns a list of items of a specific type
+     *  @param items to be sorted
+     *  @param material to filter items by
+     *  @return two lists where [0] is the items of the specified type
+     *  and [1] is the items that remain after removal.
+     */
+    public static List<List<ItemStack>> getItemsOfType(ItemStack[] items, Material material) {
+        List<ItemStack> itemsOfType = new ArrayList<>();
+        List<ItemStack> remainingItems = new ArrayList<>();
+
+        for (ItemStack item : items) {
+            if (item != null && item.getType() == material) {
+                itemsOfType.add(item);
+            } else {
+                remainingItems.add(item);
+            }
+        }
+
+        return List.of(itemsOfType, remainingItems);
     }
 }
