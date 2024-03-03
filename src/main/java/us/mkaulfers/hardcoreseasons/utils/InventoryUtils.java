@@ -1,10 +1,10 @@
 package us.mkaulfers.hardcoreseasons.utils;
 
-import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
@@ -12,9 +12,7 @@ import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.Map;
+import java.util.*;
 
 public class InventoryUtils {
     /**
@@ -30,7 +28,6 @@ public class InventoryUtils {
     }
 
     /**
-     *
      * A method to serialize an {@link ItemStack} array to Base64 String.
      *
      * @param items to turn into a Base64 String.
@@ -144,5 +141,46 @@ public class InventoryUtils {
         } catch (Exception e) {
             throw new IllegalStateException("Unable to save item stacks.", e);
         }
+    }
+
+    /**
+     *  Returns a list of unique items with lore containing the total count of each material
+     *  @param items to be sorted and counted
+     *  @return list of unique items with lore
+     *
+     */
+    public static List<ItemStack> getGUIItemsList(ItemStack[] items) {
+        // TreeMap to automatically sort items by display name
+        TreeMap<String, ItemStack> uniqueItemsMap = new TreeMap<>();
+
+        // HashMap to store total count of each material
+        HashMap<Material, Integer> itemCount = new HashMap<>();
+
+        for (ItemStack item : items) {
+            if (item != null) {
+                Material material = item.getType();
+                int amount = item.getAmount();
+
+                // Update total count of material
+                itemCount.put(material, itemCount.getOrDefault(material, 0) + amount);
+
+                // Create unique item with lore
+                ItemStack newItem = item.clone();
+                ItemMeta meta = newItem.getItemMeta();
+                if (meta != null) {
+                    meta.setLore(Arrays.asList(
+                            ChatColor.GOLD + "Redeemable: " + ChatColor.AQUA + itemCount.get(material) + "x"
+                    ));
+                    newItem.setItemMeta(meta);
+                    newItem.setAmount(1);
+                }
+
+                // Add unique item to map
+                uniqueItemsMap.put(material.name(), newItem);
+            }
+        }
+
+        // Construct list sorted by display name
+        return new ArrayList<>(uniqueItemsMap.values());
     }
 }
