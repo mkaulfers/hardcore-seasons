@@ -1,7 +1,5 @@
 package us.mkaulfers.hardcoreseasons.models;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.sql.Timestamp;
 import java.util.UUID;
 
@@ -21,7 +19,7 @@ public class Survivor implements Comparable<Survivor> {
     }
 
     @Override
-    public int compareTo(@NotNull Survivor o) {
+    public int compareTo(Survivor o) {
         return this.id.compareTo(o.id);
     }
 }

@@ -42,8 +42,8 @@
                 <configuration>
                     <relocations>
                         <relocation>
-                            <pattern>dev.triumphteam.gui</pattern>
-                            <shadedPattern>us.mkaulfers.hardcoreseasons.HardcoreSeasons.gui</shadedPattern>
+                            <pattern>com.github.stefvanschie.inventoryframework</pattern>
+                            <shadedPattern>us.mkaulfers.hardcoreseasons.HardcoreSeasons.inventoryframework</shadedPattern>
                         </relocation>
                     </relocations>
                     <outputFile>../_minecraft_dev_server/plugins/${project.artifactId}-${project.version}-DEV.jar</outputFile>
@@ -83,9 +83,9 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>dev.triumphteam</groupId>
-            <artifactId>triumph-gui</artifactId>
-            <version>3.1.7</version>
+            <groupId>com.github.stefvanschie.inventoryframework</groupId>
+            <artifactId>IF</artifactId>
+            <version>0.10.13</version>
         </dependency>
     </dependencies>
 </project>

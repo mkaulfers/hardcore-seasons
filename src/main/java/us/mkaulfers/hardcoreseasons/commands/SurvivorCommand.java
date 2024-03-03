@@ -1,18 +1,24 @@
 package us.mkaulfers.hardcoreseasons.commands;
 
-import dev.triumphteam.gui.builder.item.ItemBuilder;
-import dev.triumphteam.gui.guis.Gui;
-import dev.triumphteam.gui.guis.GuiItem;
-import dev.triumphteam.gui.guis.PaginatedGui;
-import net.kyori.adventure.text.Component;
+import com.github.stefvanschie.inventoryframework.gui.GuiItem;
+import com.github.stefvanschie.inventoryframework.gui.type.ChestGui;
+import com.github.stefvanschie.inventoryframework.pane.OutlinePane;
+import com.github.stefvanschie.inventoryframework.pane.PaginatedPane;
+import com.github.stefvanschie.inventoryframework.pane.Pane;
+import com.github.stefvanschie.inventoryframework.pane.StaticPane;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import us.mkaulfers.hardcoreseasons.HardcoreSeasons;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class SurvivorCommand implements TabExecutor {
@@ -46,88 +52,77 @@ public class SurvivorCommand implements TabExecutor {
     }
 
     public void showSurvivorGUI(Player player) {
-        openRewardGUI(player);
-    }
+        ChestGui gui = new ChestGui(6, ChatColor.DARK_BLUE + "Survivor Menu");
 
-    public void openRewardGUI(Player player) {
-        PaginatedGui gui = Gui.paginated()
-                .title(Component.text(ChatColor.DARK_BLUE + "Claim Rewards"))
-                .rows(6)
-                .create();
+        PaginatedPane pages = new PaginatedPane(0, 0, 9, 5);
 
-        gui.setDefaultClickAction(event -> {
-            List<Integer> buttonSlots = List.of(45, 46, 47, 48, 50, 51, 52, 53);
-            if (buttonSlots.contains(event.getSlot())) {
-                event.setCancelled(true);
-            }
-        });
+        ArrayList<ItemStack> items = new ArrayList<ItemStack>();
 
-        // Create a bunch of test items, dirt, to add to the gui.
-        for (int i = 0; i < 100; i++) {
-            GuiItem item = ItemBuilder
-                    .from(Material.DIRT)
-                    .asGuiItem();
-
-            gui.addItem(item);
+        // add 1000 dirt blocks to the items list
+        for (int i = 0; i < 84; i++) {
+            items.add(new ItemStack(Material.DIRT));
         }
 
-        GuiItem goBackPanel = ItemBuilder
-                .from(Material.SPECTRAL_ARROW)
-                .name(Component.text(ChatColor.GOLD + "Go Back"))
-                .asGuiItem(event -> {
-                    player.sendMessage("Go Back");
-                });
+        pages.populateWithItemStacks(items);
+        gui.addPane(pages);
 
-        GuiItem pageBack = ItemBuilder
-                .from(Material.ARROW)
-                .name(Component.text(ChatColor.GOLD + "Previous"))
-                .asGuiItem(event -> {
-                    gui.previous();
-                    gui.updateItem(49, currentPageItem(gui.getCurrentPageNum(), gui.getPagesNum()));
-                    player.sendMessage("Page " + gui.getCurrentPageNum() + "/" + gui.getPagesNum());
-                });
+        OutlinePane backgroundPane = new OutlinePane(0, 5, 9, 1);
 
-        gui.updateItem(49, currentPageItem(gui.getCurrentPageNum(), gui.getPagesNum()));
+        ItemStack blank = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
+        ItemMeta blankMeta = blank.getItemMeta();
+        blankMeta.setDisplayName(" ");
+        blank.setItemMeta(blankMeta);
+        backgroundPane.addItem(new GuiItem(blank));
+        backgroundPane.setRepeat(true);
+        backgroundPane.setPriority(Pane.Priority.LOWEST);
+        gui.addPane(backgroundPane);
 
-        GuiItem pageNext = ItemBuilder
-                .from(Material.ARROW)
-                .name(Component.text(ChatColor.GOLD + "Next"))
-                .asGuiItem(event -> {
-                    gui.next();
-                    gui.updateItem(49, currentPageItem(gui.getCurrentPageNum(), gui.getPagesNum()));
-                    player.sendMessage("Page " + gui.getCurrentPageNum() + "/" + gui.getPagesNum());
-                });
+        StaticPane navigation = new StaticPane(0, 5, 9, 1);
+        navigation.setOnClick(event -> event.setCancelled(true));
 
-        GuiItem close = ItemBuilder
-                .from(Material.BARRIER)
-                .name(Component.text(ChatColor.RED + "Close"))
-                .asGuiItem(event -> {
-                    event.getWhoClicked().closeInventory();
-                });
+        ItemStack previous = new ItemStack(Material.ARROW);
+        ItemMeta previousMeta = previous.getItemMeta();
+        previousMeta.setDisplayName(ChatColor.GOLD + "Previous");
+        previous.setItemMeta(previousMeta);
 
-        GuiItem placeholder = ItemBuilder
-                .from(Material.BLACK_STAINED_GLASS_PANE)
-                .name(Component.text(""))
-                .asGuiItem();
+        ItemStack current = new ItemStack(Material.PAPER);
+        ItemMeta currentMeta = current.getItemMeta();
+        currentMeta.setDisplayName(ChatColor.GOLD + "Page " + ChatColor.AQUA + (pages.getPage() + 1) + ChatColor.GOLD + "/" + ChatColor.AQUA + (pages.getPages()));
+        current.setItemMeta(currentMeta);
 
-        gui.setItem(45, goBackPanel);
-        gui.setItem(46, placeholder);
-        gui.setItem(47, placeholder);
-        gui.setItem(48, pageBack);
-        gui.setItem(50, pageNext);
-        gui.setItem(51, placeholder);
-        gui.setItem(52, placeholder);
-        gui.setItem(53, close);
+        ItemStack next = new ItemStack(Material.ARROW);
+        ItemMeta nextMeta = next.getItemMeta();
+        nextMeta.setDisplayName(ChatColor.GOLD + "Next");
+        next.setItemMeta(nextMeta);
 
-        gui.open(player);
-    }
+        ItemStack close = new ItemStack(Material.BARRIER);
+        ItemMeta closeMeta = close.getItemMeta();
+        closeMeta.setDisplayName(ChatColor.RED + "Close");
+        close.setItemMeta(closeMeta);
 
-    private GuiItem currentPageItem(int currentPage, int totalPages) {
-        return ItemBuilder
-                .from(Material.PAPER)
-                .name(Component.text(ChatColor.GOLD + "Page " + ChatColor.AQUA + currentPage + ChatColor.GOLD + "/" + ChatColor.AQUA + totalPages))
-                .asGuiItem(event -> {
-                    event.getWhoClicked().sendMessage("Current Page");
-                });
+        navigation.addItem(new GuiItem(previous, event -> {
+            if (pages.getPage() > 0) {
+                pages.setPage(pages.getPage() - 1);
+                currentMeta.setDisplayName(ChatColor.GOLD + "Page " + ChatColor.AQUA + (pages.getPage() + 1) + ChatColor.GOLD + "/" + ChatColor.AQUA + (pages.getPages()));
+                current.setItemMeta(currentMeta);
+                gui.update();
+            }
+        }), 3, 0);
+
+        navigation.addItem(new GuiItem(current, event -> {}), 4, 0);
+
+        navigation.addItem(new GuiItem(next, event -> {
+            if (pages.getPage() < pages.getPages() - 1) {
+                pages.setPage(pages.getPage() + 1);
+                currentMeta.setDisplayName(ChatColor.GOLD + "Page " + ChatColor.AQUA + (pages.getPage() + 1) + ChatColor.GOLD + "/" + ChatColor.AQUA + (pages.getPages()));
+                current.setItemMeta(currentMeta);
+                gui.update();
+            }
+        }), 5, 0);
+
+        navigation.addItem(new GuiItem(close, event -> event.getWhoClicked().closeInventory()), 8, 0);
+
+        gui.addPane(navigation);
+        gui.show(player);
     }
 }

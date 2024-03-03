@@ -1,7 +1,5 @@
 package us.mkaulfers.hardcoreseasons.models;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Date;
 
 public class Season implements Comparable<Season> {
@@ -16,7 +14,7 @@ public class Season implements Comparable<Season> {
         this.endDate = endDate;
     }
     @Override
-    public int compareTo(@NotNull Season o) {
+    public int compareTo(Season o) {
         return this.seasonId - o.seasonId;
     }
 }

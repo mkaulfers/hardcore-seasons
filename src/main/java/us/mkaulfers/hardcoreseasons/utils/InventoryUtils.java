@@ -1,6 +1,7 @@
 package us.mkaulfers.hardcoreseasons.utils;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -11,6 +12,7 @@ import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Map;
 
@@ -37,6 +39,11 @@ public class InventoryUtils {
      */
     public static String itemStackArrayToBase64(ItemStack[] items) throws IllegalStateException {
         try {
+            items = Arrays
+                    .stream(items)
+                    .filter(item -> item != null && item.getType() != Material.AIR)
+                    .toArray(ItemStack[]::new);
+
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             BukkitObjectOutputStream dataOutput = new BukkitObjectOutputStream(outputStream);
 
@@ -81,6 +88,12 @@ public class InventoryUtils {
             }
 
             dataInput.close();
+
+            items = Arrays
+                    .stream(items)
+                    .filter(item -> item != null && item.getType() != Material.AIR)
+                    .toArray(ItemStack[]::new);
+
             return items;
         } catch (ClassNotFoundException e) {
             throw new IOException("Unable to decode class type.", e);
@@ -133,4 +146,3 @@ public class InventoryUtils {
         }
     }
 }
-
