@@ -53,9 +53,9 @@ public class HardcoreSeasonsCommand implements TabExecutor {
         plugin.databaseManager.initTables();
         plugin.databaseManager.seasonsManager.loadSeasons();
         plugin.databaseManager.survivorsManager.loadSurvivors();
-        plugin.databaseManager.containersManager.loadContainers();
-        plugin.databaseManager.inventoriesManager.loadInventories();
-        plugin.databaseManager.endChestsManager.loadEndChests();
+        plugin.databaseManager.chestManager.loadContainers();
+        plugin.databaseManager.inventoryManager.loadInventories();
+        plugin.databaseManager.endChestManager.loadEndChests();
         player.sendMessage("HardcoreSeasons configuration reloaded");
     }
 }

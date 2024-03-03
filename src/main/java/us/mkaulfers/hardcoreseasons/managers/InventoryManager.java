@@ -13,11 +13,11 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentSkipListSet;
 
-public class InventoriesManager {
+public class InventoryManager {
     public ConcurrentSkipListSet<SurvivorInventory> inventories;
     private final HardcoreSeasons plugin;
 
-    public InventoriesManager(HardcoreSeasons plugin) {
+    public InventoryManager(HardcoreSeasons plugin) {
         this.plugin = plugin;
         loadInventories();
     }

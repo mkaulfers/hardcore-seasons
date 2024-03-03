@@ -38,10 +38,10 @@ public class PlayerQuit implements Listener {
             String serializedInventory = InventoryUtils.playerInventoryToBase64(inventory);
 
             SurvivorInventory survivorInventory = new SurvivorInventory(playerId, activeSeason, serializedInventory);
-            if (plugin.databaseManager.inventoriesManager.doesInventoryExist(playerId, activeSeason)) {
-                plugin.databaseManager.inventoriesManager.updateInventory(survivorInventory);
+            if (plugin.databaseManager.inventoryManager.doesInventoryExist(playerId, activeSeason)) {
+                plugin.databaseManager.inventoryManager.updateInventory(survivorInventory);
             } else {
-                plugin.databaseManager.inventoriesManager.saveInventory(survivorInventory);
+                plugin.databaseManager.inventoryManager.saveInventory(survivorInventory);
             }
 
         } catch (Exception e) {
@@ -57,10 +57,10 @@ public class PlayerQuit implements Listener {
             String serializedEndChest = InventoryUtils.itemStackArrayToBase64(items);
 
             SurvivorEndChest survivorEndChest = new SurvivorEndChest(playerId, activeSeason, serializedEndChest);
-            if (plugin.databaseManager.endChestsManager.doesEndChestExist(playerId, activeSeason)) {
-                plugin.databaseManager.endChestsManager.updateEndChest(survivorEndChest);
+            if (plugin.databaseManager.endChestManager.doesEndChestExist(playerId, activeSeason)) {
+                plugin.databaseManager.endChestManager.updateEndChest(survivorEndChest);
             } else {
-                plugin.databaseManager.endChestsManager.saveEndChest(survivorEndChest);
+                plugin.databaseManager.endChestManager.saveEndChest(survivorEndChest);
             }
 
         } catch (Exception e) {

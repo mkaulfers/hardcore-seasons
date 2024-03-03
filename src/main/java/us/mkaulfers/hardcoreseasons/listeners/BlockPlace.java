@@ -17,7 +17,7 @@ public class BlockPlace implements Listener {
         if (BlockUtils.isTrackable(block)) {
             int activeSeason = plugin.databaseManager.seasonsManager.getActiveSeason().seasonId;
             SurvivorContainer survivorContainer = new SurvivorContainer(block, activeSeason);
-            plugin.databaseManager.containersManager.saveContainer(survivorContainer);
+            plugin.databaseManager.chestManager.saveContainer(survivorContainer);
         }
     }
 

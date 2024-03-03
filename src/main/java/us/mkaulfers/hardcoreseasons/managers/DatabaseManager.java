@@ -3,17 +3,16 @@ package us.mkaulfers.hardcoreseasons.managers;
 import com.zaxxer.hikari.HikariDataSource;
 import org.bukkit.Bukkit;
 import us.mkaulfers.hardcoreseasons.HardcoreSeasons;
-import us.mkaulfers.hardcoreseasons.managers.*;
 
 import java.sql.Connection;
 
 public class DatabaseManager {
-    public ContainersManager containersManager;
-    public EndChestsManager endChestsManager;
-    public InventoriesManager inventoriesManager;
+    public ChestManager chestManager;
+    public EndChestManager endChestManager;
+    public InventoryManager inventoryManager;
+    public RewardManager rewardManager;
     public SeasonsManager seasonsManager;
     public SurvivorsManager survivorsManager;
-
     public HikariDataSource dataSource;
     public HardcoreSeasons plugin;
 
@@ -118,19 +117,20 @@ public class DatabaseManager {
             if (dataSource != null) {
                 this.seasonsManager.loadSeasons();
                 this.survivorsManager.loadSurvivors();
-                this.containersManager.loadContainers();
-                this.endChestsManager.loadEndChests();
-                this.inventoriesManager.loadInventories();
+                this.chestManager.loadContainers();
+                this.endChestManager.loadEndChests();
+                this.inventoryManager.loadInventories();
             }
         }, (updateInterval * 20L) * 60L, (updateInterval * 20L) * 60L);
     }
 
     public void initManagers() {
+        this.chestManager = new ChestManager(plugin);
+        this.endChestManager = new EndChestManager(plugin);
+        this.inventoryManager = new InventoryManager(plugin);
+        this.rewardManager = new RewardManager(plugin);
         this.seasonsManager = new SeasonsManager(plugin);
         this.survivorsManager = new SurvivorsManager(plugin);
-        this.containersManager = new ContainersManager(plugin);
-        this.endChestsManager = new EndChestsManager(plugin);
-        this.inventoriesManager = new InventoriesManager(plugin);
     }
 
     public void disconnect() {

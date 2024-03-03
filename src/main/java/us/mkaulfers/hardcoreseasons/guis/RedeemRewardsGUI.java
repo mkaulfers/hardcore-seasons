@@ -28,7 +28,7 @@ public class RedeemRewardsGUI {
         PaginatedPane pages = new PaginatedPane(0, 0, 9, 5);
 
         // TODO: Replace with items from the database, that count as rewards.
-        ItemStack[] databaseItems = plugin.databaseManager.inventoriesManager.getInventory(playerId, seasonId);
+        ItemStack[] databaseItems = plugin.databaseManager.rewardManager.getRewards(seasonId).toArray(new ItemStack[0]);
         List<ItemStack> guiItems = InventoryUtils.getGUIItemsList(databaseItems);
         ItemDiffManager itemDiffManager = new ItemDiffManager(databaseItems, guiItems);
 

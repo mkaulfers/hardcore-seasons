@@ -9,11 +9,11 @@ import java.sql.ResultSet;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentSkipListSet;
 
-public class ContainersManager {
+public class ChestManager {
     public ConcurrentSkipListSet<SurvivorContainer> containers;
     private final HardcoreSeasons plugin;
 
-    public ContainersManager(HardcoreSeasons plugin) {
+    public ChestManager(HardcoreSeasons plugin) {
         this.plugin = plugin;
         loadContainers();
     }

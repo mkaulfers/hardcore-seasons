@@ -9,17 +9,15 @@ import us.mkaulfers.hardcoreseasons.utils.InventoryUtils;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentSkipListSet;
 
-public class EndChestsManager {
+public class EndChestManager {
     public ConcurrentSkipListSet<SurvivorEndChest> endChests;
     private final HardcoreSeasons plugin;
 
-    public EndChestsManager(HardcoreSeasons plugin) {
+    public EndChestManager(HardcoreSeasons plugin) {
         this.plugin = plugin;
         loadEndChests();
     }

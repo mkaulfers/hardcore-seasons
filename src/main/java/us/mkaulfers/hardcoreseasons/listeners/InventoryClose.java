@@ -37,13 +37,13 @@ public class InventoryClose implements Listener {
         String world = event.getInventory().getLocation().getWorld().getName();
         String type = event.getInventory().getType().name();
 
-        if (plugin.databaseManager.containersManager.doesContainerExist(seasonId, x, y, z, world, type)) {
+        if (plugin.databaseManager.chestManager.doesContainerExist(seasonId, x, y, z, world, type)) {
             Inventory inventory = event.getInventory();
             ItemStack[] contents = inventory.getContents();
             String contentsString = InventoryUtils.itemStackArrayToBase64(contents);
 
             SurvivorContainer container = new SurvivorContainer(seasonId, x, y, z, world, type, contentsString);
-            plugin.databaseManager.containersManager.updateContainer(container);
+            plugin.databaseManager.chestManager.updateContainer(container);
         }
     }
 }

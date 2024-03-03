@@ -17,7 +17,7 @@ public class BlockBreak implements Listener {
         if (BlockUtils.isTrackable(block)) {
             int activeSeason = plugin.databaseManager.seasonsManager.getActiveSeason().seasonId;
             SurvivorContainer survivorContainer = new SurvivorContainer(block, activeSeason);
-            plugin.databaseManager.containersManager.deleteContainer(survivorContainer);
+            plugin.databaseManager.chestManager.deleteContainer(survivorContainer);
         }
     }
 
