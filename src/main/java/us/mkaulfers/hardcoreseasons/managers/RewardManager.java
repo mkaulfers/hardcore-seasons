@@ -80,5 +80,4 @@ public class RewardManager {
         }
         return new ArrayList<>();
     }
-
 }

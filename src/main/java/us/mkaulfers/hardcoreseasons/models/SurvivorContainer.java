@@ -27,7 +27,31 @@ public class SurvivorContainer implements Comparable<SurvivorContainer> {
 
     @Override
     public int compareTo(SurvivorContainer o) {
-        return this.seasonId - o.seasonId;
+        int diff = Integer.compare(this.seasonId, o.seasonId);
+        if (diff != 0) {
+            return diff;
+        }
+        diff = Integer.compare(this.x, o.x);
+        if (diff != 0) {
+            return diff;
+        }
+        diff = Integer.compare(this.y, o.y);
+        if (diff != 0) {
+            return diff;
+        }
+        diff = Integer.compare(this.z, o.z);
+        if (diff != 0) {
+            return diff;
+        }
+        diff = this.world.compareTo(o.world);
+        if (diff != 0) {
+            return diff;
+        }
+        diff = this.type.compareTo(o.type);
+        if (diff != 0) {
+            return diff;
+        }
+        return this.contents.compareTo(o.contents);
     }
 
     public SurvivorContainer(Block block, int seasonId) {
