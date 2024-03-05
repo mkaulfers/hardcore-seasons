@@ -6,15 +6,15 @@ import org.bukkit.plugin.java.JavaPlugin;
 import us.mkaulfers.hardcoreseasons.commands.HardcoreSeasonsCommand;
 import us.mkaulfers.hardcoreseasons.commands.SurvivorCommand;
 import us.mkaulfers.hardcoreseasons.listeners.*;
+import us.mkaulfers.hardcoreseasons.models.Database;
 import us.mkaulfers.hardcoreseasons.models.MySQLConfig;
 import us.mkaulfers.hardcoreseasons.models.PluginConfig;
-import us.mkaulfers.hardcoreseasons.managers.DatabaseManager;
 
 import java.util.List;
 
 public final class HardcoreSeasons extends JavaPlugin {
     public PluginConfig pluginConfig;
-    public DatabaseManager databaseManager;
+    public Database database;
 
     // Lifecycle methods
     @Override
@@ -27,7 +27,7 @@ public final class HardcoreSeasons extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        databaseManager.disconnect();
+        // Plugin shutdown logic
     }
 
     // Custom methods
@@ -91,20 +91,23 @@ public final class HardcoreSeasons extends JavaPlugin {
         pm.registerEvents(new PlayerDeath(this), this);
         pm.registerEvents(new PlayerQuit(this), this);
         pm.registerEvents(new InventoryClose (this), this);
-
-        //Debugging Event
-        pm.registerEvents(new PlayerJoin(this), this);
     }
 
     private void handleStorage() {
         if (pluginConfig.storageType.equalsIgnoreCase("mysql")) {
-            if (databaseManager == null) {
-                databaseManager = new DatabaseManager(this);
-                databaseManager.connect();
-                databaseManager.initTables();
-                databaseManager.initManagers();
-                databaseManager.scheduleIntervalUpdate();
+            if (database == null) {
+                database = new Database(
+                        pluginConfig.mySQLConfig
+                );
             }
+
+//            if (databaseManager == null) {
+//                databaseManager = new DatabaseManager(this);
+//                databaseManager.connect();
+//                databaseManager.initTables();
+//                databaseManager.initManagers();
+//                databaseManager.scheduleIntervalUpdate();
+//            }
         } else {
             /// Use SQLite
         }

@@ -6,7 +6,8 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import us.mkaulfers.hardcoreseasons.utils.InventoryUtils;
 
-public class SurvivorContainer implements Comparable<SurvivorContainer> {
+public class TrackedChest implements Comparable<TrackedChest> {
+    public int id;
     public int seasonId;
     public int x;
     public int y;
@@ -15,7 +16,8 @@ public class SurvivorContainer implements Comparable<SurvivorContainer> {
     public String type;
     public String contents;
 
-    public SurvivorContainer(int seasonId, int x, int y, int z, String world, String type, String contents) {
+    public TrackedChest(int id, int seasonId, int x, int y, int z, String world, String type, String contents) {
+        this.id = id;
         this.seasonId = seasonId;
         this.x = x;
         this.y = y;
@@ -26,7 +28,7 @@ public class SurvivorContainer implements Comparable<SurvivorContainer> {
     }
 
     @Override
-    public int compareTo(SurvivorContainer o) {
+    public int compareTo(TrackedChest o) {
         int diff = Integer.compare(this.seasonId, o.seasonId);
         if (diff != 0) {
             return diff;
@@ -54,7 +56,7 @@ public class SurvivorContainer implements Comparable<SurvivorContainer> {
         return this.contents.compareTo(o.contents);
     }
 
-    public SurvivorContainer(Block block, int seasonId) {
+    public TrackedChest(Block block, int seasonId) {
         this.seasonId = seasonId;
         this.x = block.getX();
         this.y = block.getY();

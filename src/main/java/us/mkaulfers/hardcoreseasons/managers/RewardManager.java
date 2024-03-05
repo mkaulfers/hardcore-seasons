@@ -41,43 +41,6 @@ public class RewardManager {
     }
 
     public List<ItemStack> getRewards(int seasonId) {
-        String[] encodedContainers = plugin.databaseManager.chestManager.containers.stream()
-                .filter(container -> container.seasonId == seasonId)
-                .map(container -> container.contents)
-                .toArray(String[]::new);
-
-        String[] encodedInventories = plugin.databaseManager.inventoryManager.inventories.stream()
-                .filter(inventory -> inventory.seasonId == seasonId)
-                .map(inventory -> inventory.contents)
-                .toArray(String[]::new);
-
-        String[] encodedEndChests = plugin.databaseManager.endChestManager.endChests.stream()
-                .filter(endChest -> endChest.seasonId == seasonId)
-                .map(endChest -> endChest.contents)
-                .toArray(String[]::new);
-
-        List<ItemStack> mergedContents = new ArrayList<>();
-
-        try {
-            for (String encodedContainer : encodedContainers) {
-                ItemStack[] decodedContainersContents = InventoryUtils.itemStackArrayFromBase64(encodedContainer);
-                mergedContents.addAll(List.of(decodedContainersContents));
-            }
-
-            for (String encodedInventory : encodedInventories) {
-                ItemStack[] decodedInventoryContents = InventoryUtils.itemStackArrayFromBase64(encodedInventory);
-                mergedContents.addAll(List.of(decodedInventoryContents));
-            }
-
-            for (String encodedEndChest : encodedEndChests) {
-                ItemStack[] decodedEndChestContents = InventoryUtils.itemStackArrayFromBase64(encodedEndChest);
-                mergedContents.addAll(List.of(decodedEndChestContents));
-            }
-
-            return mergedContents;
-        } catch (Exception e) {
-            plugin.getLogger().warning("[Hardcore Seasons]: Could not deserialize containers contents while distributing rewards.\n" + e.getMessage());
-        }
         return new ArrayList<>();
     }
 }

@@ -1,10 +1,13 @@
 package us.mkaulfers.hardcoreseasons.listeners;
 
+import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import us.mkaulfers.hardcoreseasons.HardcoreSeasons;
-import us.mkaulfers.hardcoreseasons.models.Survivor;
+import us.mkaulfers.hardcoreseasons.interfaceimpl.PlayerDAOImpl;
+import us.mkaulfers.hardcoreseasons.interfaces.PlayerDAO;
+import us.mkaulfers.hardcoreseasons.models.Player;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -20,24 +23,37 @@ public class PreLogin implements Listener {
     @EventHandler
     public void onAsyncPlayerPreLogin(AsyncPlayerPreLoginEvent event) {
         UUID playerId = event.getUniqueId();
-        int activeSeason = plugin.databaseManager.seasonsManager.getActiveSeason().seasonId;
+        int activeSeason = 1;
 
-        if (!plugin.databaseManager.survivorsManager.doesSurvivorExist(playerId, activeSeason)) {
-            Survivor survivor = new Survivor(
-                    playerId,
-                    activeSeason,
-                    new Timestamp(new Date().getTime()),
-                    new Timestamp(new Date().getTime()),
-                    false
-            );
-            plugin.databaseManager.survivorsManager.saveSurvivor(survivor);
-        } else {
-            if (plugin.databaseManager.survivorsManager.isSurvivorDead(playerId, activeSeason)) {
-                // TODO: Replace this with a config message.
-                // TODO: Make this check the database, not local memory.
-                // Temporary fix implemented by updating at set intervals from config.
+        PlayerDAO playerDAO = new PlayerDAOImpl(plugin.database);
+        Player player;
+
+        try {
+            player = playerDAO.get(playerId, activeSeason);
+
+            if (player.isDead) {
                 String result = String.format("You are dead and cannot join the server until season %d.", activeSeason + 1);
                 event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, result);
+            } else {
+                player.lastOnline = new Timestamp(new Date().getTime());
+                playerDAO.update(player);
+            }
+        } catch (Exception e) {
+            Bukkit.getLogger().severe("Failed to get player from database: " + e.getMessage());
+
+            try {
+                player = new Player(
+                        0,
+                        playerId,
+                        activeSeason,
+                        new Timestamp(new Date().getTime()),
+                        new Timestamp(new Date().getTime()),
+                        false
+                );
+
+                playerDAO.save(player);
+            } catch (Exception ex) {
+                Bukkit.getLogger().severe("Failed to save player to database: " + ex.getMessage());
             }
         }
     }

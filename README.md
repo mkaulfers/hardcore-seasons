@@ -7,13 +7,13 @@ Inventories" from one server, directly to another. The goal of this plugin is to
 takes some inspiration from PubG or similar games where only one can become the victor.
 
 Players will be able to join the server, and play as normal. Any inventory blocks that are placed, such as `chests`, `shulkers`, `enderchests`, 
-`barrels`, etc. will be automatically saved to a database. When all players have died except the configured number of survivors, the server will
+`barrels`, etc. will be automatically saved to a database. When all players have died except the configured number of players, the server will
 automatically reset the world, and player inventories will be available for "Reward Claiming". Any players on a connected server, regardless of 
 game mode, will be able to use the command `/hcclaim` to claim the rewards from the previous season. The rewards that will be claimed are the 
 entirety of all inventories that were saved, from all players who participated in the season. 
 
-Stacked items, such as `DIAMOND` or `DIRT` for example, will be evenly split, between multiple survivors if it's configured in the 
-`pluginConfig.yml` file. In such cases where the number of items cannot be evenly split, the remainder will be distributed to the first survivor
+Stacked items, such as `DIAMOND` or `DIRT` for example, will be evenly split, between multiple players if it's configured in the 
+`pluginConfig.yml` file. In such cases where the number of items cannot be evenly split, the remainder will be distributed to the first player
 in the list, based on survival time, and activity time. 
 
 ### Default Config

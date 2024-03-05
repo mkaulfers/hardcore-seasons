@@ -3,15 +3,17 @@ package us.mkaulfers.hardcoreseasons.models;
 import java.sql.Timestamp;
 import java.util.UUID;
 
-public class Survivor implements Comparable<Survivor> {
-    public UUID id;
+public class Player implements Comparable<Player> {
+    public int id;
+    public UUID playerId;
     public int seasonId;
     public Timestamp joinDate;
     public Timestamp lastOnline;
     public boolean isDead;
 
-    public Survivor(UUID id, int seasonId, Timestamp joinDate, Timestamp lastOnline, boolean isDead) {
+    public Player(int id, UUID playerId, int seasonId, Timestamp joinDate, Timestamp lastOnline, boolean isDead) {
         this.id = id;
+        this.playerId = playerId;
         this.seasonId = seasonId;
         this.joinDate = joinDate;
         this.lastOnline = lastOnline;
@@ -19,7 +21,7 @@ public class Survivor implements Comparable<Survivor> {
     }
 
     @Override
-    public int compareTo(Survivor o) {
-        return this.id.compareTo(o.id);
+    public int compareTo(Player o) {
+        return this.playerId.compareTo(o.playerId);
     }
 }

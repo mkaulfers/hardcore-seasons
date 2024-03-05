@@ -21,14 +21,13 @@ import java.util.UUID;
 public class RedeemRewardsGUI {
     public static void make(Player player, HardcoreSeasons plugin) {
         UUID playerId = player.getUniqueId();
-        int seasonId = plugin.databaseManager.seasonsManager.getActiveSeason().seasonId;
-        ChestGui gui = new ChestGui(6, ChatColor.DARK_BLUE + "Survivor Menu");
+        ChestGui gui = new ChestGui(6, ChatColor.DARK_BLUE + "Player Menu");
 
         // Rewards
         PaginatedPane pages = new PaginatedPane(0, 0, 9, 5);
 
         // TODO: Replace with items from the database, that count as rewards.
-        ItemStack[] databaseItems = plugin.databaseManager.rewardManager.getRewards(seasonId).toArray(new ItemStack[0]);
+        ItemStack[] databaseItems = new ItemStack[0];
         List<ItemStack> guiItems = InventoryUtils.getGUIItemsList(databaseItems);
         ItemDiffManager itemDiffManager = new ItemDiffManager(databaseItems, guiItems);
 
