@@ -2,23 +2,17 @@ package us.mkaulfers.hardcoreseasons.managers;
 
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
-import us.mkaulfers.hardcoreseasons.HardcoreSeasons;
+import us.mkaulfers.hardcoreseasons.enums.RewardItem;
 import us.mkaulfers.hardcoreseasons.interfaceimpl.ChestDAOImpl;
 import us.mkaulfers.hardcoreseasons.interfaceimpl.EndChestDAOImpl;
 import us.mkaulfers.hardcoreseasons.interfaceimpl.InventoryDAOImpl;
 import us.mkaulfers.hardcoreseasons.interfaces.ChestDAO;
 import us.mkaulfers.hardcoreseasons.interfaces.EndChestDAO;
 import us.mkaulfers.hardcoreseasons.interfaces.InventoryDAO;
-import us.mkaulfers.hardcoreseasons.models.Database;
-import us.mkaulfers.hardcoreseasons.models.SurvivorInventory;
-import us.mkaulfers.hardcoreseasons.models.TrackedChest;
-import us.mkaulfers.hardcoreseasons.models.TrackedEndChest;
+import us.mkaulfers.hardcoreseasons.models.*;
 import us.mkaulfers.hardcoreseasons.utils.InventoryUtils;
 
-import javax.xml.crypto.Data;
-import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -29,53 +23,54 @@ public class RewardManager {
         this.db = db;
     }
 
-    public CompletableFuture<List<ItemStack>> getRewards(int seasonId) {
+    public CompletableFuture<List<RewardItem>> getGUIRewardItems(int seasonId) {
         return CompletableFuture.supplyAsync(() -> {
-            List<ItemStack> rewards = new ArrayList<>();
+            List<RewardItem> rewards = new ArrayList<>();
 
-            // Get Chests From Season ID
+            ChestDAO chestDAO = new ChestDAOImpl(db);
+            EndChestDAO endChestDAO = new EndChestDAOImpl(db);
+            InventoryDAO inventoryDAO = new InventoryDAOImpl(db);
+
+            // Create CompletableFuture for each DAO operation
+            CompletableFuture<List<TrackedChest>> chestDAOFuture = chestDAO.getAll(seasonId);
+            CompletableFuture<List<TrackedEndChest>> endChestDAOFuture = endChestDAO.getAll(seasonId);
+            CompletableFuture<List<SurvivorInventory>> inventoryDAOFuture = inventoryDAO.getAll(seasonId);
+
+            // Combine all DAO Futures
+            CompletableFuture<Void> allFutures = CompletableFuture.allOf(chestDAOFuture, endChestDAOFuture, inventoryDAOFuture);
+
             try {
-                ChestDAO chestDAO = new ChestDAOImpl(db);
-                List<TrackedChest> chests = chestDAO.getAll(seasonId).get();
+                // Wait until all futures are complete
+                allFutures.get();
+
+                // After all futures are complete, combine their results into 'rewards'
+                List<TrackedChest> chests = chestDAOFuture.get();
+                List<TrackedEndChest> endChests = endChestDAOFuture.get();
+                List<SurvivorInventory> inventories = inventoryDAOFuture.get();
 
                 for (TrackedChest chest : chests) {
-                    ItemStack[] decodedItems = InventoryUtils.itemStackArrayFromBase64(chest.contents);
-                    rewards.addAll(Arrays.asList(decodedItems));
+                    for (ItemStack item : InventoryUtils.itemStackArrayFromBase64(chest.contents)) {
+                        rewards.add(new RewardItem(item, chest.id, RewardItemType.TRACKED_CHEST));
+                    }
                 }
-
-            } catch (Exception e) {
-                Bukkit.getLogger().severe("[Hardcore Seasons]: Failed to get chest rewards." + e.getMessage());
-            }
-
-            // Get End Chests From Season ID
-            try {
-                EndChestDAO endChestDAO = new EndChestDAOImpl(db);
-                List<TrackedEndChest> endChests = endChestDAO.getAll(seasonId).get();
 
                 for (TrackedEndChest endChest : endChests) {
-                    ItemStack[] decodedItems = InventoryUtils.itemStackArrayFromBase64(endChest.contents);
-                    rewards.addAll(Arrays.asList(decodedItems));
+                    for (ItemStack item : InventoryUtils.itemStackArrayFromBase64(endChest.contents)) {
+                        rewards.add(new RewardItem(item, endChest.id, RewardItemType.TRACKED_END_CHEST));
+                    }
                 }
-
-            } catch (Exception e) {
-                Bukkit.getLogger().severe("[Hardcore Seasons]: Failed to get end chest rewards." + e.getMessage());
-            }
-
-            // Get Inventories From Season ID
-            try {
-                InventoryDAO inventoryDAO = new InventoryDAOImpl(db);
-                List<SurvivorInventory> inventories = inventoryDAO.getAll(seasonId).get();
 
                 for (SurvivorInventory inventory : inventories) {
-                    ItemStack[] decodedItems = InventoryUtils.itemStackArrayFromBase64(inventory.contents);
-                    rewards.addAll(Arrays.asList(decodedItems));
+                    for (ItemStack item : InventoryUtils.itemStackArrayFromBase64(inventory.contents)) {
+                        rewards.add(new RewardItem(item, inventory.id, RewardItemType.SURVIVOR_INVENTORY));
+                    }
                 }
-
             } catch (Exception e) {
-                Bukkit.getLogger().severe("[Hardcore Seasons]: Failed to get inventory rewards." + e.getMessage());
+                Bukkit.getLogger().severe("[Hardcore Seasons]: Failed to get rewards. " + e.getMessage());
             }
 
             return rewards;
         });
+
     }
 }

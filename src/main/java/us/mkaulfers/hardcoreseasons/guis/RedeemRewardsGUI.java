@@ -13,49 +13,80 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import us.mkaulfers.hardcoreseasons.HardcoreSeasons;
-import us.mkaulfers.hardcoreseasons.managers.ItemDiffManager;
-import us.mkaulfers.hardcoreseasons.utils.InventoryUtils;
+import us.mkaulfers.hardcoreseasons.enums.RewardItem;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class RedeemRewardsGUI {
     public static void make(Player player, HardcoreSeasons plugin) {
-        UUID playerId = player.getUniqueId();
+        player.sendMessage(ChatColor.GREEN + "Loading rewards GUI...");
         ChestGui gui = new ChestGui(6, ChatColor.DARK_BLUE + "Player Menu");
 
         // Rewards
         PaginatedPane pages = new PaginatedPane(0, 0, 9, 5);
 
-        // TODO: Replace with items from the database, that count as rewards.
-        plugin.rewardManager.getRewards(1).thenAccept(items -> {
-            List<ItemStack> guiItems = InventoryUtils.getGUIItemsList(items);
-            ItemDiffManager itemDiffManager = new ItemDiffManager(items, guiItems);
-
+        plugin.rewardManager.getGUIRewardItems(1).thenAccept(rewardItems -> {
+            // Generating a map of unique items and their counts
+            Map<ItemStack, Integer> uniqueItemsWithCount = getUniqueItems(rewardItems);
             int itemsPerPage = 5 * 9;
-            int pagesNeeded = (int) Math.max(Math.ceil((double) itemDiffManager.getGuiItems().size() / (double) itemsPerPage), 1.0);
+            List<ItemStack> guiItems = new ArrayList<>(uniqueItemsWithCount.keySet());
+
+            int pagesNeeded = (int) Math.max(Math.ceil((double) guiItems.size() / (double) itemsPerPage), 1.0);
 
             for (int i = 0; i < pagesNeeded; ++i) {
                 OutlinePane page = new OutlinePane(0, 0, 9, 5);
 
                 for (int j = 0; j < itemsPerPage; ++j) {
                     int index = i * itemsPerPage + j;
-                    if (index >= itemDiffManager.getGuiItems().size()) {
+                    if (index >= guiItems.size()) {
                         break;
                     }
 
-                    page.addItem(new GuiItem(itemDiffManager.getGuiItems().get(index), event -> {
-                        ItemStack item = event.getCurrentItem();
+                    ItemStack guiItemStack = guiItems.get(index);
+                    Integer count = uniqueItemsWithCount.get(guiItemStack);
+
+                    // Clone the item to avoid modifying original
+                    ItemStack guiItemStackClone = guiItemStack.clone();
+                    ItemMeta itemMeta = guiItemStackClone.getItemMeta();
+                    itemMeta.setLore(List.of(ChatColor.GOLD + "Amount: " + ChatColor.AQUA + count));
+                    guiItemStackClone.setItemMeta(itemMeta);
+
+                    page.addItem(new GuiItem(guiItemStackClone, event -> {
                         Player p = (Player) event.getWhoClicked();
 
-                        List<List<ItemStack>> separatedItems = itemDiffManager.fetchItemsOfType(item);
-                        List<ItemStack> fetchedItems = separatedItems.get(0);
+                        // Fetch list of rewardItems based on event item
+                        List<RewardItem> matchRewardItems = rewardItems.stream()
+                                .filter(ri -> ri.getItem().getType() == event.getCurrentItem().getType())
+                                .collect(Collectors.toList());
 
-                        if (!fetchedItems.isEmpty()) {
-                            p.getInventory().addItem(fetchedItems.toArray(new ItemStack[0]));
-                        } else {
+                        if (matchRewardItems.isEmpty()) {
                             p.sendMessage(ChatColor.RED + "You don't have any more of this item.");
+                            gui.update();
+                            return;
                         }
+
+                        // Take first matchRewardItem and assuming all matchRewardItems have same id and type
+                        RewardItem rewardItem = matchRewardItems.get(0);
+
+                        // Claim reward first
+                        p.getInventory().addItem(rewardItem.getItem());
+
+                        // Remove reward from the database based on id and type
+                        switch (rewardItem.getType()) {
+                            case TRACKED_CHEST:
+//                      plugin.rewardManager.removeTrackedChest(rewardItem.getId());
+                                break;
+                            case TRACKED_END_CHEST:
+//                      plugin.rewardManager.removeTrackedEndChest(rewardItem.getId());
+                                break;
+                            case SURVIVOR_INVENTORY:
+//                      plugin.rewardManager.removeSurvivorInventory(rewardItem.getId());
+                                break;
+                        }
+
+                        rewardItems.remove(rewardItem);
+
 
                         GuiItem guiItem = page.getItems().get(index);
                         ItemStack updatedItem = guiItem.getItem();
@@ -148,5 +179,32 @@ public class RedeemRewardsGUI {
             Bukkit.getLogger().warning("[Hardcore Seasons]: Failed to get rewards: " + e.getMessage());
             return null;
         });
+    }
+
+    private static Map<ItemStack, Integer> getUniqueItems(List<RewardItem> rewardItems) {
+        Map<ItemStack, Integer> uniqueItemsWithCount = new HashMap<>();
+
+        for (RewardItem rewardItem : rewardItems) {
+            ItemStack reward = rewardItem.getItem();
+
+            // Make a copy to avoid modifying the original
+            ItemStack copy = reward.clone();
+            copy.setAmount(1);
+
+            // Check for existing items that match type and lore
+            Optional<ItemStack> opt = uniqueItemsWithCount.keySet().stream()
+                    .filter(is -> is.getType() == copy.getType() && is.getItemMeta().equals(copy.getItemMeta()))
+                    .findFirst();
+
+            if (opt.isPresent()) {
+                // Existing item found, increment count.
+                ItemStack existing = opt.get();
+                uniqueItemsWithCount.put(existing, uniqueItemsWithCount.get(existing) + reward.getAmount());
+            } else {
+                // No existing item, add the item with count.
+                uniqueItemsWithCount.put(copy, reward.getAmount());
+            }
+        }
+        return uniqueItemsWithCount;
     }
 }
