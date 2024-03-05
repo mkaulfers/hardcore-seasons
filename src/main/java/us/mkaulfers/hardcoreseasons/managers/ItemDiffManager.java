@@ -8,15 +8,15 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class ItemDiffManager {
     private final ReentrantLock lock = new ReentrantLock();
-    private ItemStack[] allItems;
+    private List<ItemStack> allItems;
     private List<ItemStack> guiItems;
 
-    public ItemDiffManager(ItemStack[] allItems, List<ItemStack> guiItems) {
+    public ItemDiffManager(List<ItemStack> allItems, List<ItemStack> guiItems) {
         setAllItems(allItems);
         setGuiItems(guiItems);
     }
 
-    public ItemStack[] getAllItems() {
+    public List<ItemStack> getAllItems() {
         lock.lock();
         try {
             return allItems;
@@ -25,7 +25,7 @@ public class ItemDiffManager {
         }
     }
 
-    public void setAllItems(ItemStack[] allItems) {
+    public void setAllItems(List<ItemStack> allItems) {
         lock.lock();
         try {
             this.allItems = allItems;
@@ -58,8 +58,7 @@ public class ItemDiffManager {
             List<List<ItemStack>> separatedItems = InventoryUtils.getItemsOfType(allItems, item.getType());
             List<ItemStack> fetchedItems = separatedItems.get(0);
             List<ItemStack> remainingItems = separatedItems.get(1);
-            allItems = remainingItems.toArray(new ItemStack[0]);
-            guiItems = InventoryUtils.getGUIItemsList(allItems);
+            guiItems = InventoryUtils.getGUIItemsList(remainingItems);
             return separatedItems;
         } finally {
             lock.unlock();

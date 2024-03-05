@@ -150,7 +150,7 @@ public class InventoryUtils {
      *  @return list of unique items with lore
      *
      */
-    public static List<ItemStack> getGUIItemsList(ItemStack[] items) {
+    public static List<ItemStack> getGUIItemsList(List<ItemStack> items) {
         // TreeMap to automatically sort items by display name
         TreeMap<String, ItemStack> uniqueItemsMap = new TreeMap<>();
 
@@ -192,7 +192,7 @@ public class InventoryUtils {
      *  @return two lists where [0] is the items of the specified type
      *  and [1] is the items that remain after removal.
      */
-    public static List<List<ItemStack>> getItemsOfType(ItemStack[] items, Material material) {
+    public static List<List<ItemStack>> getItemsOfType(List<ItemStack> items, Material material) {
         List<ItemStack> itemsOfType = new ArrayList<>();
         List<ItemStack> remainingItems = new ArrayList<>();
 

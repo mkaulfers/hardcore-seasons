@@ -51,6 +51,35 @@ public class InventoryDAOImpl implements InventoryDAO {
     }
 
     @Override
+    public CompletableFuture<List<SurvivorInventory>> getAll(int seasonId) {
+        return CompletableFuture.supplyAsync(() -> {
+            try (Connection connection = database.getConnection()) {
+                List<SurvivorInventory> survivorInventories = new ArrayList<>();
+
+                String query = "SELECT * FROM inventories WHERE season_id = ?";
+                PreparedStatement ps = connection.prepareStatement(query);
+                ps.setInt(1, seasonId);
+                ResultSet rs = ps.executeQuery();
+
+                while (rs.next()) {
+                    SurvivorInventory survivorInventory = new SurvivorInventory(
+                            rs.getInt("id"),
+                            UUID.fromString(rs.getString("player_id")),
+                            rs.getInt("season_id"),
+                            rs.getString("contents")
+                    );
+                    survivorInventories.add(survivorInventory);
+                }
+
+                return survivorInventories;
+            } catch (SQLException e) {
+                Bukkit.getLogger().severe("[Hardcore Seasons]: Failed to get all inventories." + e.getMessage());
+                return null;
+            }
+        });
+    }
+
+    @Override
     public CompletableFuture<List<SurvivorInventory>> getAll() {
         return CompletableFuture.supplyAsync(() -> {
            try (Connection connection = database.getConnection()) {

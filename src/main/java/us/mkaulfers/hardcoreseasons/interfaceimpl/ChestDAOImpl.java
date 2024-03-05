@@ -89,6 +89,39 @@ public class ChestDAOImpl implements ChestDAO {
     }
 
     @Override
+    public CompletableFuture<List<TrackedChest>> getAll(int seasonId) {
+        return CompletableFuture.supplyAsync(() -> {
+
+            List<TrackedChest> trackedChests = new ArrayList<>();
+            try (Connection connection = database.getConnection()) {
+
+                String query = "SELECT * FROM tracked_chests WHERE season_id = ?";
+                PreparedStatement ps = connection.prepareStatement(query);
+                ps.setInt(1, seasonId);
+                ResultSet rs = ps.executeQuery();
+
+                while (rs.next()) {
+                    TrackedChest trackedChest = new TrackedChest(
+                            rs.getInt("id"),
+                            rs.getInt("season_id"),
+                            rs.getInt("x"),
+                            rs.getInt("y"),
+                            rs.getInt("z"),
+                            rs.getString("world"),
+                            rs.getString("type"),
+                            rs.getString("contents")
+                    );
+                    trackedChests.add(trackedChest);
+                }
+                return trackedChests;
+            } catch (SQLException e) {
+                Bukkit.getLogger().severe("[Hardcore Seasons]: Failed to get all chests." + e.getMessage());
+                return null;
+            }
+        });
+    }
+
+    @Override
     public CompletableFuture<List<TrackedChest>> getAll() {
         return CompletableFuture.supplyAsync(() -> {
 

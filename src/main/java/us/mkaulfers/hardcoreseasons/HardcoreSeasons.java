@@ -8,6 +8,7 @@ import us.mkaulfers.hardcoreseasons.commands.SurvivorCommand;
 import us.mkaulfers.hardcoreseasons.interfaceimpl.SeasonDAOImpl;
 import us.mkaulfers.hardcoreseasons.interfaces.SeasonDAO;
 import us.mkaulfers.hardcoreseasons.listeners.*;
+import us.mkaulfers.hardcoreseasons.managers.RewardManager;
 import us.mkaulfers.hardcoreseasons.models.Database;
 import us.mkaulfers.hardcoreseasons.models.MySQLConfig;
 import us.mkaulfers.hardcoreseasons.models.PluginConfig;
@@ -18,6 +19,7 @@ public final class HardcoreSeasons extends JavaPlugin {
     public PluginConfig pluginConfig;
     public Database database;
     public int activeSeason;
+    public RewardManager rewardManager;
 
     // Lifecycle methods
     @Override
@@ -93,28 +95,20 @@ public final class HardcoreSeasons extends JavaPlugin {
         pm.registerEvents(new PreLogin(this), this);
         pm.registerEvents(new PlayerDeath(this), this);
         pm.registerEvents(new PlayerQuit(this), this);
-        pm.registerEvents(new InventoryClose (this), this);
+        pm.registerEvents(new InventoryClose(this), this);
     }
 
     private void handleStorage() {
         if (pluginConfig.storageType.equalsIgnoreCase("mysql")) {
+            database = new Database(pluginConfig.mySQLConfig);
 
-            try {
-                SeasonDAO seasonDAO = new SeasonDAOImpl(database);
+            SeasonDAO seasonDAO = new SeasonDAOImpl(database);
+            seasonDAO.getActiveSeasonId().thenAccept(seasonId -> {
+                activeSeason = seasonId;
+            });
 
-                seasonDAO.getActiveSeasonId().thenAccept(seasonId -> {
-                    activeSeason = seasonId;
-                });
+            rewardManager = new RewardManager(database);
 
-            } catch (Exception e) {
-                getLogger().severe("Failed to get active season: " + e.getMessage());
-            }
-
-            if (database == null) {
-                database = new Database(
-                        pluginConfig.mySQLConfig
-                );
-            }
         } else {
             /// Use SQLite
         }

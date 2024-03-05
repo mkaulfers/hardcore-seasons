@@ -49,6 +49,36 @@ public class EndChestDAOImpl implements EndChestDAO {
     }
 
     @Override
+    public CompletableFuture<List<TrackedEndChest>> getAll(int seasonId) {
+        return CompletableFuture.supplyAsync(() -> {
+            try (Connection connection = database.getConnection()) {
+                List<TrackedEndChest> endChests = new ArrayList<>();
+
+                String query = "SELECT * FROM end_chests WHERE season_id = ?";
+                PreparedStatement ps = connection.prepareStatement(query);
+                ps.setInt(1, seasonId);
+
+                ResultSet rs = ps.executeQuery();
+
+                while (rs.next()) {
+                    TrackedEndChest endChestDAO = new TrackedEndChest(
+                            rs.getInt("id"),
+                            UUID.fromString(rs.getString("player_id")),
+                            rs.getInt("season_id"),
+                            rs.getString("contents")
+                    );
+                    endChests.add(endChestDAO);
+                }
+
+                return endChests;
+            } catch (SQLException e) {
+                Bukkit.getLogger().severe("[Hardcore Seasons]: Failed to get all endChests." + e.getMessage());
+                return null;
+            }
+        });
+    }
+
+    @Override
     public CompletableFuture<List<TrackedEndChest>> getAll() {
         return CompletableFuture.supplyAsync(() -> {
             try (Connection connection = database.getConnection()) {
