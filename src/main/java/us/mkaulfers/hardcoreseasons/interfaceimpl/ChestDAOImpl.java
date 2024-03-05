@@ -5,8 +5,6 @@ import us.mkaulfers.hardcoreseasons.interfaces.ChestDAO;
 import us.mkaulfers.hardcoreseasons.models.Database;
 import us.mkaulfers.hardcoreseasons.models.TrackedChest;
 
-import javax.sound.midi.Track;
-import javax.xml.crypto.Data;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -154,7 +152,7 @@ public class ChestDAOImpl implements ChestDAO {
 
     @Override
     public CompletableFuture<Integer> insert(TrackedChest trackedChest) {
-        return  CompletableFuture.supplyAsync(() -> {
+        return CompletableFuture.supplyAsync(() -> {
             try (Connection connection = database.getConnection()) {
                 String query = "INSERT INTO tracked_chests (season_id, x, y, z, world, type, contents) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
@@ -177,7 +175,7 @@ public class ChestDAOImpl implements ChestDAO {
 
     @Override
     public CompletableFuture<Integer> update(TrackedChest trackedChest) {
-        return  CompletableFuture.supplyAsync(() -> {
+        return CompletableFuture.supplyAsync(() -> {
             try (Connection connection = database.getConnection()) {
                 String query = "UPDATE tracked_chests SET season_id = ?, x = ?, y = ?, z = ?, world = ?, type = ?, contents = ? WHERE id = ?";
 
@@ -201,7 +199,7 @@ public class ChestDAOImpl implements ChestDAO {
 
     @Override
     public CompletableFuture<Integer> delete(TrackedChest trackedChest) {
-        return  CompletableFuture.supplyAsync(() -> {
+        return CompletableFuture.supplyAsync(() -> {
             try (Connection connection = database.getConnection()) {
                 String query = "DELETE FROM tracked_chests WHERE x = ? AND y = ? AND z = ? AND world = ? AND type = ?";
 

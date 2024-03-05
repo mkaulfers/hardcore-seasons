@@ -1,6 +1,5 @@
 package us.mkaulfers.hardcoreseasons.listeners;
 
-import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -12,7 +11,6 @@ import us.mkaulfers.hardcoreseasons.interfaceimpl.EndChestDAOImpl;
 import us.mkaulfers.hardcoreseasons.interfaceimpl.InventoryDAOImpl;
 import us.mkaulfers.hardcoreseasons.interfaces.EndChestDAO;
 import us.mkaulfers.hardcoreseasons.interfaces.InventoryDAO;
-import us.mkaulfers.hardcoreseasons.models.Player;
 import us.mkaulfers.hardcoreseasons.models.SurvivorInventory;
 import us.mkaulfers.hardcoreseasons.models.TrackedEndChest;
 import us.mkaulfers.hardcoreseasons.utils.InventoryUtils;

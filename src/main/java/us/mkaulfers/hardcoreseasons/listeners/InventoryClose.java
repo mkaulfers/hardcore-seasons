@@ -1,22 +1,14 @@
 package us.mkaulfers.hardcoreseasons.listeners;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.block.BlockState;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 import us.mkaulfers.hardcoreseasons.HardcoreSeasons;
 import us.mkaulfers.hardcoreseasons.interfaceimpl.ChestDAOImpl;
 import us.mkaulfers.hardcoreseasons.interfaces.ChestDAO;
 import us.mkaulfers.hardcoreseasons.models.TrackedChest;
 import us.mkaulfers.hardcoreseasons.utils.InventoryUtils;
-
-import java.sql.SQLException;
-import java.util.List;
 
 public class InventoryClose implements Listener {
     HardcoreSeasons plugin;

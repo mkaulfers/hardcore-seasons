@@ -4,7 +4,6 @@ import org.bukkit.Bukkit;
 import us.mkaulfers.hardcoreseasons.interfaces.PlayerDAO;
 import us.mkaulfers.hardcoreseasons.models.Database;
 import us.mkaulfers.hardcoreseasons.models.Player;
-import us.mkaulfers.hardcoreseasons.models.Season;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

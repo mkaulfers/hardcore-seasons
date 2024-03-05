@@ -169,7 +169,7 @@ public class InventoryUtils {
                 ItemStack newItem = item.clone();
                 ItemMeta meta = newItem.getItemMeta();
                 if (meta != null) {
-                    meta.setLore(Arrays.asList(
+                    meta.setLore(List.of(
                             ChatColor.GOLD + "Redeemable: " + ChatColor.AQUA + itemCount.get(material) + "x"
                     ));
                     newItem.setItemMeta(meta);

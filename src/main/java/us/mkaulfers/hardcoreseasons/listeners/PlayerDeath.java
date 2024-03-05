@@ -1,13 +1,11 @@
 package us.mkaulfers.hardcoreseasons.listeners;
 
-import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import us.mkaulfers.hardcoreseasons.HardcoreSeasons;
 import us.mkaulfers.hardcoreseasons.interfaceimpl.PlayerDAOImpl;
 import us.mkaulfers.hardcoreseasons.interfaces.PlayerDAO;
-import us.mkaulfers.hardcoreseasons.models.Player;
 
 public class PlayerDeath implements Listener {
     HardcoreSeasons plugin;
