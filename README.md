@@ -1,22 +1,28 @@
-# Hardcore Seasons
-Current Version: 1.0.0
+# Hardcore Seasons Minecraft Plugin
+- Current Version: 0.0.1a
+- _Requires Spigot, Paper, or Bukkit 1.20.X_
+- _Release Date: TBD_
 
-## Description
-This plugin adds automation and rewards to hardcore, or limited-life servers in Minecraft. It creates the possibility of transferring "
-Inventories" from one server, directly to another. The goal of this plugin is to encourage more players to try Hardcore, and 
-takes some inspiration from PubG or similar games where only one can become the victor.
+Welcome to Hardcore Seasons! This triumphant plugin takes hardcore servers in Minecraft and kicks the thrilling experience up a notch. With an exciting new layer of automation rewards, this plugin is inspired by the immersive playstyle of battle royales games like PubG, Warzone, or Fortnite but with a quintessential async Minecraft twist.
 
-Players will be able to join the server, and play as normal. Any inventory blocks that are placed, such as `chests`, `shulkers`, `enderchests`, 
-`barrels`, etc. will be automatically saved to a database. When all players have died except the configured number of players, the server will
-automatically reset the world, and player inventories will be available for "Reward Claiming". Any players on a connected server, regardless of 
-game mode, will be able to use the command `/hcclaim` to claim the rewards from the previous season. The rewards that will be claimed are the 
-entirety of all inventories that were saved, from all players who participated in the season. 
+## Feature Overview
 
-Stacked items, such as `DIAMOND` or `DIRT` for example, will be evenly split, between multiple players if it's configured in the 
-`pluginConfig.yml` file. In such cases where the number of items cannot be evenly split, the remainder will be distributed to the first player
-in the list, based on survival time, and activity time. 
+Hardcore Seasons enables your server to host engaging survival games. Throughout the game, players will amass inventories filled with crafted and scavenged goods in typical fashion. These include all inventory blocks such as chests, shulker boxes, ender chests, barrels, and more.
 
-### Default Config
+But here is where the fun begins: Each and every inventory that is kept by players, down to the last diamond or scrap of dirt, is automatically safeguarded in a dedicated database. You heard it right — all loot, treasures, and materials become potential rewards.
+
+Once the survival game concludes, leaving a predetermined number of victors, the world automatically resets. All those saved inventories? They then become available for claiming as rewards. Players across any connected server can unlock these abundant rewards from the previous gaming season with a simple "/hcclaim" command.
+
+## Item Distribution
+
+To make things even more thrilling, the plugin features a fair and balanced item distribution system. Loot like DIAMONDS or DIRT that has been stacked can be configured in the pluginConfig.yml file to evenly split among players.
+
+But what to do when the loot count doesn't divide evenly? No worries, in those cases, the remaining items will be distributed to the top-tier player based on survival duration and activity. It indeed adds an extra incentive for players to strive to outlive and outlast others.
+
+## Encouraging Hardcore Play
+Hardcore Seasons is tailored to stimulate and augment the hardcore gameplay experience. A mix of competition, thrill, and lucrative rewards — this plugin balances challenge with accessibility, promising a captivating experience that lures players back, time and time again. Embrace the hardcore experience like never before! So, gear up and get ready to claim your rewards with Hardcore Seasons!
+
+# Default Config
 ```yaml
 # Set to true for the seasonal server.
 # Set to false for the non-seasonal server.
