@@ -2,7 +2,7 @@ package us.mkaulfers.hardcoreseasons.interfaceimpl;
 
 import us.mkaulfers.hardcoreseasons.interfaces.EndChestDAO;
 import us.mkaulfers.hardcoreseasons.models.Database;
-import us.mkaulfers.hardcoreseasons.models.SurvivorEndChest;
+import us.mkaulfers.hardcoreseasons.models.TrackedEndChest;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -20,9 +20,9 @@ public class EndChestDAOImpl implements EndChestDAO {
     }
 
     @Override
-    public SurvivorEndChest get(int id) throws SQLException {
+    public TrackedEndChest get(int id) throws SQLException {
         try(Connection connection = database.getConnection()) {
-            SurvivorEndChest endChestDAO = null;
+            TrackedEndChest endChestDAO = null;
             String query = "SELECT * FROM end_chests WHERE id = ?";
             PreparedStatement ps = connection.prepareStatement(query);
             ps.setInt(1, id);
@@ -30,7 +30,7 @@ public class EndChestDAOImpl implements EndChestDAO {
             ResultSet rs = ps.executeQuery();
 
             if (rs.next()) {
-                endChestDAO = new SurvivorEndChest(
+                endChestDAO = new TrackedEndChest(
                         rs.getInt("id"),
                         UUID.fromString(rs.getString("player_id")),
                         rs.getInt("season_id"),
@@ -42,9 +42,9 @@ public class EndChestDAOImpl implements EndChestDAO {
     }
 
     @Override
-    public List<SurvivorEndChest> getAll() throws SQLException {
+    public List<TrackedEndChest> getAll() throws SQLException {
         try(Connection connection = database.getConnection()) {
-            List<SurvivorEndChest> endChests = new ArrayList<>();
+            List<TrackedEndChest> endChests = new ArrayList<>();
 
             String query = "SELECT * FROM end_chests";
             PreparedStatement ps = connection.prepareStatement(query);
@@ -52,7 +52,7 @@ public class EndChestDAOImpl implements EndChestDAO {
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
-                SurvivorEndChest endChestDAO = new SurvivorEndChest(
+                TrackedEndChest endChestDAO = new TrackedEndChest(
                         rs.getInt("id"),
                         UUID.fromString(rs.getString("player_id")),
                         rs.getInt("season_id"),
@@ -66,25 +66,33 @@ public class EndChestDAOImpl implements EndChestDAO {
     }
 
     @Override
-    public int save(SurvivorEndChest endChestDAO) throws SQLException {
+    public int save(TrackedEndChest endChestDAO) throws SQLException {
+        String searchQuery = "SELECT * FROM end_chests WHERE player_id = ? AND season_id = ?";
         try(Connection connection = database.getConnection()) {
-            String query = "INSERT INTO end_chests (id, player_id, season_id, contents) VALUES (?, ?, ?, ?) " +
-                    "ON DUPLICATE KEY UPDATE player_id = ?, season_id = ?, contents = ?";
-            PreparedStatement ps = connection.prepareStatement(query);
-            ps.setInt(1, endChestDAO.id);
-            ps.setString(2, endChestDAO.playerId.toString());
-            ps.setInt(3, endChestDAO.seasonId);
-            ps.setString(4, endChestDAO.contents);
-            ps.setString(5, endChestDAO.playerId.toString());
-            ps.setInt(6, endChestDAO.seasonId);
-            ps.setString(7, endChestDAO.contents);
-
-            return ps.executeUpdate();
+            PreparedStatement searchPs = connection.prepareStatement(searchQuery);
+            searchPs.setString(1, endChestDAO.playerId.toString());
+            searchPs.setInt(2, endChestDAO.seasonId);
+            ResultSet rs = searchPs.executeQuery();
+            if(!rs.next()) { // insert
+                String insertQuery = "INSERT INTO end_chests (player_id, season_id, contents) VALUES (?, ?, ?)";
+                PreparedStatement insertPs = connection.prepareStatement(insertQuery);
+                insertPs.setString(1, endChestDAO.playerId.toString());
+                insertPs.setInt(2, endChestDAO.seasonId);
+                insertPs.setString(3, endChestDAO.contents);
+                return insertPs.executeUpdate();
+            } else { // update
+                String updateQuery = "UPDATE end_chests SET contents = ? WHERE player_id = ? AND season_id = ?";
+                PreparedStatement updatePs = connection.prepareStatement(updateQuery);
+                updatePs.setString(1, endChestDAO.contents);
+                updatePs.setString(2, endChestDAO.playerId.toString());
+                updatePs.setInt(3, endChestDAO.seasonId);
+                return updatePs.executeUpdate();
+            }
         }
     }
 
     @Override
-    public int insert(SurvivorEndChest endChestDAO) throws SQLException {
+    public int insert(TrackedEndChest endChestDAO) throws SQLException {
         try(Connection connection = database.getConnection()) {
             String query = "INSERT INTO end_chests (id, player_id, season_id, contents) VALUES (?, ?, ?, ?)";
             PreparedStatement ps = connection.prepareStatement(query);
@@ -98,7 +106,7 @@ public class EndChestDAOImpl implements EndChestDAO {
     }
 
     @Override
-    public int update(SurvivorEndChest endChestDAO) throws SQLException {
+    public int update(TrackedEndChest endChestDAO) throws SQLException {
         try(Connection connection = database.getConnection()) {
             String query = "UPDATE end_chests SET contents = ? WHERE id = ? AND player_id = ? AND season_id = ?";
             PreparedStatement ps = connection.prepareStatement(query);
@@ -112,7 +120,7 @@ public class EndChestDAOImpl implements EndChestDAO {
     }
 
     @Override
-    public int delete(SurvivorEndChest endChestDAO) throws SQLException {
+    public int delete(TrackedEndChest endChestDAO) throws SQLException {
         try(Connection connection = database.getConnection()) {
             String query = "DELETE FROM end_chests WHERE id = ? AND player_id = ? AND season_id = ?";
             PreparedStatement ps = connection.prepareStatement(query);

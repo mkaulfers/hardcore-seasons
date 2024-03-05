@@ -7,13 +7,29 @@ import us.mkaulfers.hardcoreseasons.models.Season;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 public class SeasonDAOImpl implements SeasonDAO {
     Database database;
 
     public SeasonDAOImpl(Database database) {
         this.database = database;
+    }
+
+    @Override
+    public int getActiveSeasonId() throws SQLException {
+        int seasonId = 0;
+        Connection connection = database.getConnection();
+
+        // Get the active season, with the highest season_id
+        String query = "SELECT season_id FROM seasons ORDER BY season_id DESC LIMIT 1";
+        PreparedStatement ps = connection.prepareStatement(query);
+        ResultSet rs = ps.executeQuery();
+
+        if (rs.next()) {
+            seasonId = rs.getInt("season_id");
+        }
+
+        return seasonId;
     }
 
     @Override

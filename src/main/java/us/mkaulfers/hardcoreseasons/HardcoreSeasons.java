@@ -5,6 +5,8 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import us.mkaulfers.hardcoreseasons.commands.HardcoreSeasonsCommand;
 import us.mkaulfers.hardcoreseasons.commands.SurvivorCommand;
+import us.mkaulfers.hardcoreseasons.interfaceimpl.SeasonDAOImpl;
+import us.mkaulfers.hardcoreseasons.interfaces.SeasonDAO;
 import us.mkaulfers.hardcoreseasons.listeners.*;
 import us.mkaulfers.hardcoreseasons.models.Database;
 import us.mkaulfers.hardcoreseasons.models.MySQLConfig;
@@ -15,6 +17,7 @@ import java.util.List;
 public final class HardcoreSeasons extends JavaPlugin {
     public PluginConfig pluginConfig;
     public Database database;
+    public int activeSeason;
 
     // Lifecycle methods
     @Override
@@ -95,19 +98,19 @@ public final class HardcoreSeasons extends JavaPlugin {
 
     private void handleStorage() {
         if (pluginConfig.storageType.equalsIgnoreCase("mysql")) {
+
+            try {
+                SeasonDAO seasonDAO = new SeasonDAOImpl(database);
+                activeSeason = seasonDAO.getActiveSeasonId();
+            } catch (Exception e) {
+                getLogger().severe("Failed to get active season: " + e.getMessage());
+            }
+
             if (database == null) {
                 database = new Database(
                         pluginConfig.mySQLConfig
                 );
             }
-
-//            if (databaseManager == null) {
-//                databaseManager = new DatabaseManager(this);
-//                databaseManager.connect();
-//                databaseManager.initTables();
-//                databaseManager.initManagers();
-//                databaseManager.scheduleIntervalUpdate();
-//            }
         } else {
             /// Use SQLite
         }

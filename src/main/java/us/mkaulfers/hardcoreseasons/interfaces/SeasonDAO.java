@@ -6,4 +6,5 @@ import java.sql.SQLException;
 import java.util.UUID;
 
 public interface SeasonDAO extends DAO<Season>{
+    int getActiveSeasonId() throws SQLException;
 }
