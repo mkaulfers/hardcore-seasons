@@ -18,14 +18,9 @@ public class BlockBreak implements Listener {
     public void onBlockBreak(BlockBreakEvent event) {
         Block block = event.getBlock();
         if (BlockUtils.isTrackable(block)) {
-
-            try {
-                ChestDAO chestDAO = new ChestDAOImpl(plugin.database);
-                TrackedChest trackedChest = new TrackedChest(block, 1);
-                chestDAO.delete(trackedChest);
-            } catch (Exception e) {
-                Bukkit.getLogger().severe("Failed to delete chest from database: " + e.getMessage());
-            }
+            ChestDAO chestDAO = new ChestDAOImpl(plugin.database);
+            TrackedChest trackedChest = new TrackedChest(block, 1);
+            chestDAO.delete(trackedChest);
         }
     }
 

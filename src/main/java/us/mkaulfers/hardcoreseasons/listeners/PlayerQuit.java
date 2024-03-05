@@ -24,33 +24,20 @@ public class PlayerQuit implements Listener {
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
+        UUID playerId = event.getPlayer().getUniqueId();
 
-        try {
-            EndChestDAO endChestDAO = new EndChestDAOImpl(plugin.database);
+        EndChestDAO endChestDAO = new EndChestDAOImpl(plugin.database);
+        Inventory inventory = event.getPlayer().getEnderChest();
+        ItemStack[] endChestContents = inventory.getContents();
+        String serializedEndChest = InventoryUtils.itemStackArrayToBase64(endChestContents);
+        TrackedEndChest survivorEndChest = new TrackedEndChest(0, playerId, 1, serializedEndChest);
+        endChestDAO.save(survivorEndChest);
 
-            UUID playerId = event.getPlayer().getUniqueId();
-            Inventory inventory = event.getPlayer().getEnderChest();
-            ItemStack[] endChestContents = inventory.getContents();
-
-            String serializedInventory = InventoryUtils.itemStackArrayToBase64(endChestContents);
-            TrackedEndChest survivorEndChest = new TrackedEndChest(0, playerId, 1, serializedInventory);
-            endChestDAO.save(survivorEndChest);
-        } catch (Exception e) {
-            Bukkit.getLogger().severe("Failed to save end chest to database: " + e.getMessage());
-        }
-
-        try {
-            InventoryDAO inventoryDAO = new InventoryDAOImpl(plugin.database);
-
-            UUID playerId = event.getPlayer().getUniqueId();
-            PlayerInventory playerInventory = event.getPlayer().getInventory();
-            String serializedInventory = InventoryUtils.playerInventoryToBase64(playerInventory);
-
-            SurvivorInventory survivorInventory = new SurvivorInventory(0, playerId, 1, serializedInventory);
-            inventoryDAO.save(survivorInventory);
-        } catch (Exception e) {
-            Bukkit.getLogger().severe("Failed to save inventory to database: " + e.getMessage());
-        }
+        InventoryDAO inventoryDAO = new InventoryDAOImpl(plugin.database);
+        PlayerInventory playerInventory = event.getPlayer().getInventory();
+        String serializedInventory = InventoryUtils.playerInventoryToBase64(playerInventory);
+        SurvivorInventory survivorInventory = new SurvivorInventory(0, playerId, 1, serializedInventory);
+        inventoryDAO.save(survivorInventory);
     }
 
     public PlayerQuit(HardcoreSeasons plugin) {

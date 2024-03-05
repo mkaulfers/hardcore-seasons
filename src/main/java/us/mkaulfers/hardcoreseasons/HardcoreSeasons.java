@@ -101,7 +101,11 @@ public final class HardcoreSeasons extends JavaPlugin {
 
             try {
                 SeasonDAO seasonDAO = new SeasonDAOImpl(database);
-                activeSeason = seasonDAO.getActiveSeasonId();
+
+                seasonDAO.getActiveSeasonId().thenAccept(seasonId -> {
+                    activeSeason = seasonId;
+                });
+
             } catch (Exception e) {
                 getLogger().severe("Failed to get active season: " + e.getMessage());
             }

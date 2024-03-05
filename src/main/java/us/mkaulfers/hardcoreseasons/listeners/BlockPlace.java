@@ -18,15 +18,9 @@ public class BlockPlace implements Listener {
     public void onBlockPlace(BlockPlaceEvent event) {
         Block block = event.getBlock();
         if (BlockUtils.isTrackable(block)) {
-//            int activeSeason = plugin.databaseManager.seasonsManager.getActiveSeason().seasonId;
-
-            try {
-                ChestDAO chestDAO = new ChestDAOImpl(plugin.database);
-                TrackedChest trackedChest = new TrackedChest(block, 1);
-                chestDAO.save(trackedChest);
-            } catch (Exception e) {
-                Bukkit.getLogger().severe("Failed to save chest to database: " + e.getMessage());
-            }
+            ChestDAO chestDAO = new ChestDAOImpl(plugin.database);
+            TrackedChest trackedChest = new TrackedChest(block, 1);
+            chestDAO.save(trackedChest);
         }
     }
 

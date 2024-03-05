@@ -27,7 +27,7 @@ public class InventoryClose implements Listener {
 
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent event) {
-        if(event.getInventory().getHolder() instanceof BlockState) {
+        if (event.getInventory().getHolder() instanceof BlockState) {
             int x = event.getInventory().getLocation().getBlockX();
             int y = event.getInventory().getLocation().getBlockY();
             int z = event.getInventory().getLocation().getBlockZ();
@@ -35,14 +35,13 @@ public class InventoryClose implements Listener {
             String type = event.getInventory().getType().name();
             String contentsString = InventoryUtils.itemStackArrayToBase64(event.getInventory().getContents());
 
-            try {
-                ChestDAO chestDAO = new ChestDAOImpl(plugin.database);
-                TrackedChest dbChest = chestDAO.get(x, y, z, world, type);
-                TrackedChest updated = new TrackedChest(dbChest.id, 1, x, y, z, world, type, contentsString);
-                chestDAO.update(updated);
-            } catch (SQLException e) {
-                Bukkit.getLogger().severe("Failed to get chest from database: " + e.getMessage());
-            }
+            ChestDAO chestDAO = new ChestDAOImpl(plugin.database);
+
+            chestDAO.get(x, y, z, world, type)
+                    .thenAccept(chest -> {
+                        TrackedChest updated = new TrackedChest(chest.id, 1, x, y, z, world, type, contentsString);
+                        chestDAO.update(updated);
+                    });
         }
     }
 }

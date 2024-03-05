@@ -4,7 +4,8 @@ import us.mkaulfers.hardcoreseasons.models.Season;
 
 import java.sql.SQLException;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public interface SeasonDAO extends DAO<Season>{
-    int getActiveSeasonId() throws SQLException;
+    CompletableFuture<Integer> getActiveSeasonId();
 }

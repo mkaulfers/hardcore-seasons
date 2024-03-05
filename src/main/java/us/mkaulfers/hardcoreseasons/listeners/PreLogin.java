@@ -26,35 +26,28 @@ public class PreLogin implements Listener {
         int activeSeason = 1;
 
         PlayerDAO playerDAO = new PlayerDAOImpl(plugin.database);
-        Player player;
 
-        try {
-            player = playerDAO.get(playerId, activeSeason);
+        playerDAO.get(playerId, activeSeason)
+                .thenAccept(p -> {
+                    if (p == null) {
+                        p = new Player(
+                                0,
+                                playerId,
+                                activeSeason,
+                                new Timestamp(new Date().getTime()),
+                                new Timestamp(new Date().getTime()),
+                                false
+                        );
 
-            if (player.isDead) {
-                String result = String.format("You are dead and cannot join the server until season %d.", activeSeason + 1);
-                event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, result);
-            } else {
-                player.lastOnline = new Timestamp(new Date().getTime());
-                playerDAO.update(player);
-            }
-        } catch (Exception e) {
-            Bukkit.getLogger().severe("Failed to get player from database: " + e.getMessage());
+                        playerDAO.save(p);
 
-            try {
-                player = new Player(
-                        0,
-                        playerId,
-                        activeSeason,
-                        new Timestamp(new Date().getTime()),
-                        new Timestamp(new Date().getTime()),
-                        false
-                );
-
-                playerDAO.save(player);
-            } catch (Exception ex) {
-                Bukkit.getLogger().severe("Failed to save player to database: " + ex.getMessage());
-            }
-        }
+                    } else if (p.isDead) {
+                        String result = String.format("You are dead and cannot join the server until season %d.", activeSeason + 1);
+                        event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, result);
+                    } else {
+                        p.lastOnline = new Timestamp(new Date().getTime());
+                        playerDAO.update(p);
+                    }
+                });
     }
 }

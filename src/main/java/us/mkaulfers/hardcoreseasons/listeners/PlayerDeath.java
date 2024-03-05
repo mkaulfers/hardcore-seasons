@@ -11,6 +11,7 @@ import us.mkaulfers.hardcoreseasons.models.Player;
 
 public class PlayerDeath implements Listener {
     HardcoreSeasons plugin;
+
     public PlayerDeath(HardcoreSeasons plugin) {
         this.plugin = plugin;
     }
@@ -19,15 +20,13 @@ public class PlayerDeath implements Listener {
     public void onPlayerDeath(PlayerDeathEvent event) {
         event.getEntity().spigot().respawn();
 
-        try {
-            PlayerDAO playerDAO = new PlayerDAOImpl(plugin.database);
-            Player player = playerDAO.get(event.getEntity().getUniqueId(), 1);
-            player.isDead = true;
-            playerDAO.update(player);
-        } catch (Exception e) {
-            Bukkit.getLogger().severe("Failed to get player from database: " + e.getMessage());
-        }
-        String result = String.format("You have died, join back in season %d.", 1);
-        event.getEntity().kickPlayer(result);
+        PlayerDAO playerDAO = new PlayerDAOImpl(plugin.database);
+        playerDAO.get(event.getEntity().getUniqueId(), 1)
+                .thenAccept(player -> {
+                    player.isDead = true;
+                    playerDAO.update(player);
+                    String result = String.format("You have died, join back in season %d.", 1);
+                    event.getEntity().kickPlayer(result);
+                });
     }
 }

@@ -2,12 +2,13 @@ package us.mkaulfers.hardcoreseasons.interfaces;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public interface DAO<T> {
-    T get(int id) throws SQLException;
-    List<T> getAll() throws SQLException;
-    int save(T t) throws SQLException;
-    int insert(T t) throws SQLException;
-    int update(T t) throws SQLException;
-    int delete(T t) throws SQLException;
+    CompletableFuture<T> get(int id);
+    CompletableFuture<List<T>> getAll();
+    CompletableFuture<Integer> save(T t);
+    CompletableFuture<Integer> insert(T t);
+    CompletableFuture<Integer> update(T t);
+    CompletableFuture<Integer> delete(T t);
 }
