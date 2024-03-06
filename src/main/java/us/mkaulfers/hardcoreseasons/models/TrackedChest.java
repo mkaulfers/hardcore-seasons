@@ -1,12 +1,22 @@
 package us.mkaulfers.hardcoreseasons.models;
 
+import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.block.Container;
+import org.bukkit.entity.Item;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import us.mkaulfers.hardcoreseasons.interfaceimpl.ChestDAOImpl;
+import us.mkaulfers.hardcoreseasons.interfaces.ChestDAO;
+import us.mkaulfers.hardcoreseasons.interfaces.RewardSource;
 import us.mkaulfers.hardcoreseasons.utils.InventoryUtils;
 
-public class TrackedChest implements Comparable<TrackedChest> {
+import java.sql.Array;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+
+public class TrackedChest implements Comparable<TrackedChest>, RewardSource {
     public int id;
     public int seasonId;
     public int x;
@@ -25,6 +35,24 @@ public class TrackedChest implements Comparable<TrackedChest> {
         this.world = world;
         this.type = type;
         this.contents = contents;
+    }
+
+    public TrackedChest(Block block, int seasonId) {
+        this.seasonId = seasonId;
+        this.x = block.getX();
+        this.y = block.getY();
+        this.z = block.getZ();
+        this.world = block.getWorld().getName();
+        this.type = block.getType().toString();
+
+        try {
+            Container container = (Container) block.getState();
+            Inventory inventory = container.getInventory();
+            ItemStack[] contents = inventory.getContents();
+            this.contents = InventoryUtils.itemStackArrayToBase64(contents);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Block is not a container");
+        }
     }
 
     @Override
@@ -56,21 +84,41 @@ public class TrackedChest implements Comparable<TrackedChest> {
         return this.contents.compareTo(o.contents);
     }
 
-    public TrackedChest(Block block, int seasonId) {
-        this.seasonId = seasonId;
-        this.x = block.getX();
-        this.y = block.getY();
-        this.z = block.getZ();
-        this.world = block.getWorld().getName();
-        this.type = block.getType().toString();
+    @Override
+    public String getContents() {
+        return contents;
+    }
 
-        try {
-            Container container = (Container) block.getState();
-            Inventory inventory = container.getInventory();
-            ItemStack[] contents = inventory.getContents();
-            this.contents = InventoryUtils.itemStackArrayToBase64(contents);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Block is not a container");
-        }
+    @Override
+    public int getId() {
+        return id;
+    }
+
+    @Override
+    public CompletableFuture<List<ItemStack>> redeemReward(Database db) {
+        return CompletableFuture.supplyAsync(() -> {
+            List<ItemStack> items = new ArrayList<>();
+            ChestDAO chestDAO = new ChestDAOImpl(db);
+
+            try {
+                TrackedChest chest = chestDAO.get(id).get();
+                items = List.of(InventoryUtils.itemStackArrayFromBase64(chest.contents));
+                chestDAO.delete(chest);
+                return items;
+            } catch (Exception e) {
+                Bukkit.getLogger().severe("[Hardcore Seasons]: Failed to redeem tracked chest reward. " + e.getMessage());
+            }
+
+            return items;
+        });
+    }
+
+    @Override
+    public CompletableFuture<Boolean> updateRewardContents(List<ItemStack> items, Database db) {
+        return CompletableFuture.supplyAsync(() -> {
+
+
+            return null;
+        });
     }
 }

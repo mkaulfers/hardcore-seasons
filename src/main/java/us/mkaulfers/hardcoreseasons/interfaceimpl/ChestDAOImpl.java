@@ -157,25 +157,42 @@ public class ChestDAOImpl implements ChestDAO {
     public CompletableFuture<Integer> save(TrackedChest trackedChest) {
         return CompletableFuture.supplyAsync(() -> {
             try (Connection connection = database.getConnection()) {
-                String query = "INSERT INTO tracked_chests (season_id, x, y, z, world, type, contents) VALUES (?, ?, ?, ?, ?, ?, ?) " +
-                        "ON DUPLICATE KEY UPDATE season_id = ?, x = ?, y = ?, z = ?, world = ?, type = ?, contents = ?";
-
-                PreparedStatement ps = connection.prepareStatement(query);
-                ps.setInt(1, trackedChest.seasonId);
-                ps.setInt(2, trackedChest.x);
-                ps.setInt(3, trackedChest.y);
-                ps.setInt(4, trackedChest.z);
-                ps.setString(5, trackedChest.world);
-                ps.setString(6, trackedChest.type);
-                ps.setString(7, trackedChest.contents);
-                ps.setInt(8, trackedChest.seasonId);
-                ps.setInt(9, trackedChest.x);
-                ps.setInt(10, trackedChest.y);
-                ps.setInt(11, trackedChest.z);
-                ps.setString(12, trackedChest.world);
-                ps.setString(13, trackedChest.type);
-                ps.setString(14, trackedChest.contents);
-                return ps.executeUpdate();
+                String searchQuery = "SELECT * FROM tracked_chests WHERE x = ? AND y = ? AND z = ? AND world = ? AND type = ?";
+                PreparedStatement searchPs = connection.prepareStatement(searchQuery);
+                searchPs.setInt(1, trackedChest.x);
+                searchPs.setInt(2, trackedChest.y);
+                searchPs.setInt(3, trackedChest.z);
+                searchPs.setString(4, trackedChest.world);
+                searchPs.setString(5, trackedChest.type);
+                ResultSet rs = searchPs.executeQuery();
+                if (!rs.next()) { // insert
+                    String insertQuery = "INSERT INTO tracked_chests (season_id, x, y, z, world, type, contents) VALUES (?, ?, ?, ?, ?, ?, ?)";
+                    PreparedStatement insertPs = connection.prepareStatement(insertQuery);
+                    insertPs.setInt(1, trackedChest.seasonId);
+                    insertPs.setInt(2, trackedChest.x);
+                    insertPs.setInt(3, trackedChest.y);
+                    insertPs.setInt(4, trackedChest.z);
+                    insertPs.setString(5, trackedChest.world);
+                    insertPs.setString(6, trackedChest.type);
+                    insertPs.setString(7, trackedChest.contents);
+                    return insertPs.executeUpdate();
+                } else { // update
+                    String updateQuery = "UPDATE tracked_chests SET season_id = ?, x = ?, y = ?, z = ?, world = ?, type = ?, contents = ? WHERE x = ? AND y = ? AND z = ? AND world = ? AND type = ?";
+                    PreparedStatement updatePs = connection.prepareStatement(updateQuery);
+                    updatePs.setInt(1, trackedChest.seasonId);
+                    updatePs.setInt(2, trackedChest.x);
+                    updatePs.setInt(3, trackedChest.y);
+                    updatePs.setInt(4, trackedChest.z);
+                    updatePs.setString(5, trackedChest.world);
+                    updatePs.setString(6, trackedChest.type);
+                    updatePs.setString(7, trackedChest.contents);
+                    updatePs.setInt(8, trackedChest.x);
+                    updatePs.setInt(9, trackedChest.y);
+                    updatePs.setInt(10, trackedChest.z);
+                    updatePs.setString(11, trackedChest.world);
+                    updatePs.setString(12, trackedChest.type);
+                    return updatePs.executeUpdate();
+                }
             } catch (SQLException e) {
                 Bukkit.getLogger().severe("[Hardcore Seasons]: Failed to save chest." + e.getMessage());
                 return null;

@@ -5,7 +5,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import us.mkaulfers.hardcoreseasons.HardcoreSeasons;
-import us.mkaulfers.hardcoreseasons.guis.RedeemRewardsGUI;
+import us.mkaulfers.hardcoreseasons.guis.SelectSeasonRewardGUI;
 
 import java.util.List;
 
@@ -25,7 +25,7 @@ public class SurvivorCommand implements TabExecutor {
 
             if (strings.length == 0) {
                 if (s.equalsIgnoreCase("survivor") || s.equalsIgnoreCase("surv")) {
-                    RedeemRewardsGUI.make(player, plugin);
+                    SelectSeasonRewardGUI.make(player, plugin);
                     return true;
                 }
             }

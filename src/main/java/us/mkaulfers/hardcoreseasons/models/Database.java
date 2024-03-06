@@ -96,6 +96,18 @@ public class Database {
                         );
                         """;
             connection.prepareStatement(INIT_INVENTORIES).execute();
+
+            String INIT_REWARDS = """
+                        CREATE TABLE IF NOT EXISTS `season_rewards` (
+                          id INT AUTO_INCREMENT,
+                          player_id VARCHAR(36),
+                          season_id INT,
+                          contents LONGTEXT,
+                          redeemed BOOLEAN,
+                          PRIMARY KEY (id)
+                        );
+                        """;
+            connection.prepareStatement(INIT_REWARDS).execute();
         }
     }
 
