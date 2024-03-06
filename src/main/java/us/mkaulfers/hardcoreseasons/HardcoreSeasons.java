@@ -100,7 +100,7 @@ public final class HardcoreSeasons extends JavaPlugin {
 
     private void handleStorage() {
         if (pluginConfig.storageType.equalsIgnoreCase("mysql")) {
-            database = new Database(pluginConfig.mySQLConfig);
+            database = new Database(pluginConfig.mySQLConfig, pluginConfig);
 
             SeasonDAO seasonDAO = new SeasonDAOImpl(database);
             seasonDAO.getActiveSeasonId().thenAccept(seasonId -> {

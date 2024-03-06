@@ -57,7 +57,8 @@ public class SeasonDAOImpl implements SeasonDAO {
                             rs.getInt("id"),
                             rs.getInt("season_id"),
                             rs.getDate("start_date"),
-                            rs.getDate("end_date")
+                            rs.getDate("soft_end_date"),
+                            rs.getDate("hard_end_date")
                     );
                 }
 
@@ -84,7 +85,8 @@ public class SeasonDAOImpl implements SeasonDAO {
                             rs.getInt("id"),
                             rs.getInt("season_id"),
                             rs.getDate("start_date"),
-                            rs.getDate("end_date")
+                            rs.getDate("soft_end_date"),
+                            rs.getDate("hard_end_date")
                     );
                     seasons.add(season);
                 }
@@ -101,14 +103,17 @@ public class SeasonDAOImpl implements SeasonDAO {
     public CompletableFuture<Integer> save(Season season) {
         return CompletableFuture.supplyAsync(() -> {
             try(Connection connection = database.getConnection()) {
-                String query = "INSERT INTO seasons (id, start_date, end_date) VALUES (?, ?, ?) " +
-                        "ON DUPLICATE KEY UPDATE start_date = ?, end_date = ?";
+                String query = "INSERT INTO seasons (season_id, start_date, soft_end_date, hard_end_date) VALUES (?, ?, ?, ?) " +
+                        "ON DUPLICATE KEY UPDATE season_id = ?, start_date = ?, soft_end_date = ?, hard_end_date = ?";
                 PreparedStatement ps = connection.prepareStatement(query);
                 ps.setInt(1, season.seasonId);
                 ps.setDate(2, (Date) season.startDate);
-                ps.setDate(3, (Date) season.endDate);
-                ps.setDate(4, (Date) season.startDate);
-                ps.setDate(5, (Date) season.endDate);
+                ps.setDate(3, (Date) season.softEndDate);
+                ps.setDate(4, (Date) season.hardEndDate);
+                ps.setInt(5, season.seasonId);
+                ps.setDate(6, (Date) season.startDate);
+                ps.setDate(7, (Date) season.softEndDate);
+                ps.setDate(8, (Date) season.hardEndDate);
 
                 return ps.executeUpdate();
             } catch (SQLException e) {
@@ -122,11 +127,13 @@ public class SeasonDAOImpl implements SeasonDAO {
     public CompletableFuture<Integer> insert(Season season) {
         return CompletableFuture.supplyAsync(() -> {
             try(Connection connection = database.getConnection()) {
-                String query = "INSERT INTO seasons (id, start_date, end_date) VALUES (?, ?, ?)";
+                String query = "INSERT INTO seasons (id, season_id, start_date, soft_end_date, hard_end_date) VALUES (?, ?, ?, ?, ?)";
                 PreparedStatement ps = connection.prepareStatement(query);
-                ps.setInt(1, season.seasonId);
-                ps.setDate(2, (Date) season.startDate);
-                ps.setDate(3, (Date) season.endDate);
+                ps.setInt(1, season.id);
+                ps.setInt(2, season.seasonId);
+                ps.setDate(3, (Date) season.startDate);
+                ps.setDate(4, (Date) season.softEndDate);
+                ps.setDate(5, (Date) season.hardEndDate);
 
                 return ps.executeUpdate();
             } catch (SQLException e) {
@@ -140,12 +147,13 @@ public class SeasonDAOImpl implements SeasonDAO {
     public CompletableFuture<Integer> update(Season season) {
         return CompletableFuture.supplyAsync(() -> {
             try(Connection connection = database.getConnection()) {
-                String query = "UPDATE seasons SET start_date = ?, end_date = ? WHERE id = ?";
-
+                String query = "UPDATE seasons SET season_id = ?, start_date = ?, soft_end_date = ?, hard_end_date = ? WHERE id = ?";
                 PreparedStatement ps = connection.prepareStatement(query);
-                ps.setDate(1, (Date) season.startDate);
-                ps.setDate(2, (Date) season.endDate);
-                ps.setInt(3, season.seasonId);
+                ps.setInt(1, season.seasonId);
+                ps.setDate(2, (Date) season.startDate);
+                ps.setDate(3, (Date) season.softEndDate);
+                ps.setDate(4, (Date) season.hardEndDate);
+                ps.setInt(5, season.id);
 
                 return ps.executeUpdate();
             } catch (SQLException e) {

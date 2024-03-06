@@ -27,7 +27,7 @@ public class SeasonRewardDAOImpl implements SeasonRewardDAO {
             try (Connection connection = database.getConnection()) {
                 List<SeasonReward> seasonRewards = new ArrayList<>();
 
-                String query = "SELECT * FROM seasonRewards WHERE player_id = ?";
+                String query = "SELECT * FROM season_rewards WHERE player_id = ?";
                 PreparedStatement ps = connection.prepareStatement(query);
                 ps.setString(1, playerId);
 
@@ -87,7 +87,7 @@ public class SeasonRewardDAOImpl implements SeasonRewardDAO {
             try (Connection connection = database.getConnection()) {
                 List<SeasonReward> seasonRewards = null;
 
-                String query = "SELECT * FROM seasonRewards";
+                String query = "SELECT * FROM season_rewards";
                 PreparedStatement ps = connection.prepareStatement(query);
                 ResultSet rs = ps.executeQuery();
 

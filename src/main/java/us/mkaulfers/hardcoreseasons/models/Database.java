@@ -15,8 +15,9 @@ public class Database {
     private static String password;
     private static final HikariConfig config = new HikariConfig();
     private static HikariDataSource ds;
+    private PluginConfig pluginConfig;
 
-    public Database(MySQLConfig mySQLConfig) {
+    public Database(MySQLConfig mySQLConfig, PluginConfig pluginConfig) {
         Database.host = mySQLConfig.host;
         Database.port = mySQLConfig.port;
         Database.database = mySQLConfig.database;
@@ -26,6 +27,8 @@ public class Database {
         config.setUsername(username);
         config.setPassword(password);
         ds = new HikariDataSource(config);
+
+        this.pluginConfig = pluginConfig;
 
         try {
             initTables();
@@ -41,11 +44,33 @@ public class Database {
                             id INT AUTO_INCREMENT,
                             season_id INT,
                             start_date DATETIME,
-                            end_date DATETIME,
+                            soft_end_date DATETIME,
+                            hard_end_date DATETIME,
                             PRIMARY KEY (id)
                         );
                         """;
             connection.prepareStatement(CREATE_SEASONS_TABLE).execute();
+
+            int minimumLength = pluginConfig.minSeasonLength;
+            int maximumLength = pluginConfig.maxSeasonLength;
+
+            if (minimumLength < 1) {
+                minimumLength = 1;
+            }
+
+            if (minimumLength > maximumLength) {
+                maximumLength = minimumLength;
+            }
+
+            String INIT_FIRST_SEASON = String.format(
+                    "INSERT INTO seasons (season_id, start_date, soft_end_date, hard_end_date)\n"  +
+                            "SELECT 1, NOW(), DATE_ADD(NOW(), INTERVAL %d DAY),\n" +
+                            "CASE WHEN %d = -1 THEN NULL ELSE DATE_ADD(NOW(), INTERVAL %d DAY) END\n" +
+                            "FROM (SELECT 1 AS a) tempTable\n" +
+                            "WHERE NOT EXISTS (SELECT 1 FROM seasons WHERE season_id = 1);",
+                    minimumLength, maximumLength, maximumLength
+            );
+            connection.prepareStatement(INIT_FIRST_SEASON).execute();
 
             String INIT_PLAYERS = """
                         CREATE TABLE IF NOT EXISTS players (
