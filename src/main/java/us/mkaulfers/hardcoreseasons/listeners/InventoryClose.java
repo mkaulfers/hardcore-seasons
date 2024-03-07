@@ -1,9 +1,10 @@
 package us.mkaulfers.hardcoreseasons.listeners;
 
-import org.bukkit.block.BlockState;
+import org.bukkit.block.DoubleChest;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.inventory.BlockInventoryHolder;
 import us.mkaulfers.hardcoreseasons.HardcoreSeasons;
 import us.mkaulfers.hardcoreseasons.interfaceimpl.ChestDAOImpl;
 import us.mkaulfers.hardcoreseasons.interfaces.ChestDAO;
@@ -19,7 +20,8 @@ public class InventoryClose implements Listener {
 
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent event) {
-        if (event.getInventory().getHolder() instanceof BlockState) {
+        if (event.getInventory().getHolder() instanceof BlockInventoryHolder ||
+                event.getInventory().getHolder() instanceof DoubleChest) {
             int x = event.getInventory().getLocation().getBlockX();
             int y = event.getInventory().getLocation().getBlockY();
             int z = event.getInventory().getLocation().getBlockZ();

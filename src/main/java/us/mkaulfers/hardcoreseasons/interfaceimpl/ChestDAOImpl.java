@@ -1,6 +1,7 @@
 package us.mkaulfers.hardcoreseasons.interfaceimpl;
 
 import org.bukkit.Bukkit;
+import org.bukkit.block.Block;
 import us.mkaulfers.hardcoreseasons.interfaces.ChestDAO;
 import us.mkaulfers.hardcoreseasons.models.Database;
 import us.mkaulfers.hardcoreseasons.models.TrackedChest;
@@ -10,7 +11,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 public class ChestDAOImpl implements ChestDAO {
@@ -85,6 +88,17 @@ public class ChestDAOImpl implements ChestDAO {
                 Bukkit.getLogger().severe("[Hardcore Seasons]: Failed to get chest." + e.getMessage());
                 return null;
             }
+        });
+    }
+
+    @Override
+    public CompletableFuture<Map<String, TrackedChest>> getAllForSeasonMap(int seasonId) {
+        return CompletableFuture.supplyAsync(() -> {
+            Map<String, TrackedChest> chests = new HashMap<>();
+            getAll().thenAccept(list -> list.forEach(chest ->
+                    chests.put(chest.world + ":" + chest.x + ":" + chest.y + ":" + chest.z, chest)
+            ));
+            return chests;
         });
     }
 
@@ -243,6 +257,37 @@ public class ChestDAOImpl implements ChestDAO {
             } catch (SQLException e) {
                 Bukkit.getLogger().severe("[Hardcore Seasons]: Failed to update chest." + e.getMessage());
                 return null;
+            }
+        });
+    }
+
+    @Override
+    public CompletableFuture<Void> updateBatch(List<TrackedChest> chestsToUpdate) {
+        return CompletableFuture.runAsync(() -> {
+            try (Connection connection = database.getConnection()) {
+                String query = "UPDATE tracked_chests SET season_id = ?, x = ?, y = ?, z = ?, world = ?, type = ?, contents = ? WHERE id = ?";
+                PreparedStatement ps = connection.prepareStatement(query);
+
+                int i = 0;
+                for (TrackedChest trackedChest : chestsToUpdate) {
+                    ps.setInt(1, trackedChest.seasonId);
+                    ps.setInt(2, trackedChest.x);
+                    ps.setInt(3, trackedChest.y);
+                    ps.setInt(4, trackedChest.z);
+                    ps.setString(5, trackedChest.world);
+                    ps.setString(6, trackedChest.type);
+                    ps.setString(7, trackedChest.contents);
+                    ps.setInt(8, trackedChest.id);
+                    ps.addBatch();
+                    i++;
+
+                    // execute every 1000 items or when it's the last item.
+                    if (i % 1000 == 0 || i == chestsToUpdate.size()) {
+                        ps.executeBatch(); // Execute every 1000 items.
+                    }
+                }
+            } catch (SQLException e) {
+                Bukkit.getLogger().severe("[Hardcore Seasons]: Failed to update chest." + e.getMessage());
             }
         });
     }

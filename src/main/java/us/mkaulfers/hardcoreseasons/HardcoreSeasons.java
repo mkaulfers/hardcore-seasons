@@ -96,6 +96,7 @@ public final class HardcoreSeasons extends JavaPlugin {
         pm.registerEvents(new PlayerDeath(this), this);
         pm.registerEvents(new PlayerQuit(this), this);
         pm.registerEvents(new InventoryClose(this), this);
+        pm.registerEvents(new ChunkLoad(this), this);
     }
 
     private void handleStorage() {
