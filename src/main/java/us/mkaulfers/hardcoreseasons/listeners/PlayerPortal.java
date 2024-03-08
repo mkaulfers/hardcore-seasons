@@ -22,9 +22,8 @@ public class PlayerPortal implements Listener {
         Player player = event.getPlayer();
 
         if (event.getCause() == PlayerTeleportEvent.TeleportCause.NETHER_PORTAL) {
-            int seasonNum = plugin.currentSeasonNum;
-            World mainWorld = getMainWorld(seasonNum);
-            World netherWorld = getNetherWorld(seasonNum);
+            World mainWorld = plugin.worldManager.seasonMainWorld;
+            World netherWorld = plugin.worldManager.seasonNetherWorld;
 
             if (player.getWorld() == mainWorld) {
                 event.setTo(netherWorld.getSpawnLocation());
@@ -34,9 +33,8 @@ public class PlayerPortal implements Listener {
         }
 
         if (event.getCause() == PlayerTeleportEvent.TeleportCause.END_GATEWAY) {
-            int seasonNum = plugin.currentSeasonNum;
-            World mainWorld = getMainWorld(seasonNum);
-            World endWorld = getEndWorld(seasonNum);
+            World mainWorld = plugin.worldManager.seasonMainWorld;
+            World endWorld = plugin.worldManager.seasonEndWorld;
 
             if (player.getWorld() == endWorld) {
                 event.setTo(mainWorld.getSpawnLocation());
@@ -44,17 +42,5 @@ public class PlayerPortal implements Listener {
                 event.setTo(endWorld.getSpawnLocation());
             }
         }
-    }
-
-    private World getMainWorld(int seasonNum) {
-        return getWorld("season_" + seasonNum);
-    }
-
-    private World getNetherWorld(int seasonNum) {
-        return getWorld("season_" + seasonNum + "_nether");
-    }
-
-    private World getEndWorld(int seasonNum) {
-        return getWorld("season_" + seasonNum + "_the_end");
     }
 }
