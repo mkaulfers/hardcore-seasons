@@ -1,6 +1,5 @@
 package us.mkaulfers.hardcoreseasons.managers;
 
-import org.bukkit.entity.Player;
 import us.mkaulfers.hardcoreseasons.HardcoreSeasons;
 import us.mkaulfers.hardcoreseasons.interfaceimpl.PlayerDAOImpl;
 import us.mkaulfers.hardcoreseasons.interfaceimpl.SeasonDAOImpl;
@@ -77,28 +76,6 @@ public class SeasonManager {
         int lastLoginThreshold = plugin.pluginConfig.lastLoginThreshold;
         Date lastLoginThresholdDate = new Date(System.currentTimeMillis() - ((long) lastLoginThreshold * 24 * 60 * 60 * 1000));
         participants.removeIf(player -> player.lastOnline.before(lastLoginThresholdDate));
-        return participants;
-    }
-
-    /**
-     * Returns a list of participants, trimmed to only include participants who are alive, joined the earliest, and have been online the most recently
-     * and does not exceed the maxSurvivorsRemaining
-     *
-     * @param participants
-     * @return List<Participant> endOfSeasonPlayers
-     */
-    private List<Participant> getEndOfSeasonPlayers(List<Participant> participants) {
-        int maxSurvivorsRemaining = plugin.pluginConfig.maxSurvivorsRemaining;
-        participants.sort((p1, p2) -> {
-            if (p1.joinDate.equals(p2.joinDate)) {
-                return p1.lastOnline.compareTo(p2.lastOnline);
-            }
-            return p1.joinDate.compareTo(p2.joinDate);
-        });
-        participants.removeIf(player -> player.isDead);
-        if (participants.size() > maxSurvivorsRemaining) {
-            participants = participants.subList(0, maxSurvivorsRemaining);
-        }
         return participants;
     }
 
