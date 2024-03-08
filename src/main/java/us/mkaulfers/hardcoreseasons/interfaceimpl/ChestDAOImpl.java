@@ -93,13 +93,15 @@ public class ChestDAOImpl implements ChestDAO {
 
     @Override
     public CompletableFuture<Map<String, TrackedChest>> getAllForSeasonMap(int seasonId) {
-        return CompletableFuture.supplyAsync(() -> {
-            Map<String, TrackedChest> chests = new HashMap<>();
-            getAll().thenAccept(list -> list.forEach(chest ->
-                    chests.put(chest.world + ":" + chest.x + ":" + chest.y + ":" + chest.z, chest)
-            ));
-            return chests;
-        });
+        return CompletableFuture
+                .supplyAsync(() -> getAll(seasonId))
+                .thenCompose(listFuture -> listFuture.thenApply(list -> {
+                    Map<String, TrackedChest> chests = new HashMap<>();
+                    list.forEach(chest ->
+                            chests.put(chest.world + ":" + chest.x + ":" + chest.y + ":" + chest.z, chest)
+                    );
+                    return chests;
+                }));
     }
 
     @Override

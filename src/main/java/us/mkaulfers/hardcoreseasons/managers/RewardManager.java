@@ -10,6 +10,7 @@ import us.mkaulfers.hardcoreseasons.interfaceimpl.InventoryDAOImpl;
 import us.mkaulfers.hardcoreseasons.models.*;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -21,16 +22,15 @@ public class RewardManager {
     }
 
     public CompletableFuture<List<SeasonReward>> getWonSeasonalRewardsForPlayer(Player player) {
-        return CompletableFuture.supplyAsync(() -> {
-            List<SeasonReward> seasonRewards = new ArrayList<>();
-            try {
-                SeasonRewardDAO seasonRewardDAO = new SeasonRewardDAOImpl(db);
-                seasonRewards = seasonRewardDAO.getPlayerRewards(player.getUniqueId().toString()).get();
-                return seasonRewards;
-            } catch (Exception e) {
-                Bukkit.getLogger().severe("[Hardcore Seasons]: Failed to get seasonRewards for player. " + e.getMessage());
-                return seasonRewards;
-            }
+        // Async operation to obtain SeasonRewardDAO
+        CompletableFuture<SeasonRewardDAO> seasonRewardDAOFuture = CompletableFuture.supplyAsync(() -> new SeasonRewardDAOImpl(db));
+
+        // Use thenCompose to chain the async operation of getting player rewards
+        return seasonRewardDAOFuture.thenCompose(seasonRewardDAO ->
+                seasonRewardDAO.getPlayerRewards(player.getUniqueId().toString())
+        ).exceptionally(ex -> {
+            Bukkit.getLogger().severe("[Hardcore Seasons]: Failed to get seasonRewards for player. " + ex.getMessage());
+            return Collections.emptyList(); // Provide an empty list in case of failure
         });
     }
 
