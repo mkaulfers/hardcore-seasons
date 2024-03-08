@@ -4,11 +4,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 import us.mkaulfers.hardcoreseasons.HardcoreSeasons;
 import us.mkaulfers.hardcoreseasons.interfaceimpl.ChestDAOImpl;
 import us.mkaulfers.hardcoreseasons.interfaces.ChestDAO;
-import us.mkaulfers.hardcoreseasons.models.Database;
 import us.mkaulfers.hardcoreseasons.models.TrackedChest;
 import us.mkaulfers.hardcoreseasons.utils.InventoryUtils;
 
@@ -26,7 +24,7 @@ public class InventoryMoveItem implements Listener {
 
         ChestDAO chestDAO = new ChestDAOImpl(plugin.database);
 
-        chestDAO.getAllForSeasonMap(plugin.activeSeason).thenAccept(trackedChests -> {
+        chestDAO.getAllForSeasonMap(plugin.currentSeasonNum).thenAccept(trackedChests -> {
             String world = source.getLocation().getWorld().getName();
             String sourceType = source.getType().name();
             String destinationType = destination.getType().name();

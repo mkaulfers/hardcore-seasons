@@ -28,13 +28,13 @@ public class PlayerQuit implements Listener {
         Inventory inventory = event.getPlayer().getEnderChest();
         ItemStack[] endChestContents = inventory.getContents();
         String serializedEndChest = InventoryUtils.itemStackArrayToBase64(endChestContents);
-        TrackedEndChest survivorEndChest = new TrackedEndChest(0, playerId, 1, serializedEndChest);
+        TrackedEndChest survivorEndChest = new TrackedEndChest(0, playerId, plugin.currentSeasonNum, serializedEndChest);
         endChestDAO.save(survivorEndChest);
 
         InventoryDAO inventoryDAO = new InventoryDAOImpl(plugin.database);
         PlayerInventory playerInventory = event.getPlayer().getInventory();
         String serializedInventory = InventoryUtils.playerInventoryToBase64(playerInventory);
-        SurvivorInventory survivorInventory = new SurvivorInventory(0, playerId, 1, serializedInventory);
+        SurvivorInventory survivorInventory = new SurvivorInventory(0, playerId, plugin.currentSeasonNum, serializedInventory);
         inventoryDAO.save(survivorInventory);
     }
 

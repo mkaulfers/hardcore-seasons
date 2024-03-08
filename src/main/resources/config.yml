@@ -5,10 +5,13 @@ seasonalServer: true
 
 # This is the minimum length for the season.
 # End of season rewards, world will not be reset until this number of days has elapsed.
+# Regardless of the number of players remaining, the season will not end until this number of days has elapsed,
+# unless there are no active players remaining.
 minSeasonLength: 14 #Default is 14
 
 # This is the maximum length for the season.
-# World will be reset, player rewards will be split among all players.
+# World will be reset, player rewards will be split among all surviving players.
+# This only applies to players who are not inactive defined by `lastLoginThreshold`.
 maxSeasonLength: -1 # Default is -1, which means no maximum length.
 
 # Whenever a season is beyond it's `minSeasonLength` and there are
@@ -18,7 +21,7 @@ maxSurvivorsRemaining: 1
 
 # This is the minimum number of votes required to end the season.
 # This only applies if there are more than 1 `maxSurvivorsRemaining` players.
-minVotesToEndSeason: 5
+minVotesToEndSeason: 50 # In percentage
 
 # This is the number of days a player can be offline before they are considered inactive.
 # Inactive players will not be counted towards the `maxSurvivorsRemaining` count.

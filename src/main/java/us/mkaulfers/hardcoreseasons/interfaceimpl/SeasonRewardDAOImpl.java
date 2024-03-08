@@ -57,7 +57,7 @@ public class SeasonRewardDAOImpl implements SeasonRewardDAO {
             try (Connection connection = database.getConnection()) {
                 SeasonReward seasonReward = null;
 
-                String query = "SELECT * FROM rewards WHERE id = ?";
+                String query = "SELECT * FROM season_rewards WHERE id = ?";
                 PreparedStatement ps = connection.prepareStatement(query);
                 ps.setInt(1, id);
 
@@ -113,20 +113,20 @@ public class SeasonRewardDAOImpl implements SeasonRewardDAO {
     public CompletableFuture<Integer> save(SeasonReward seasonReward) {
         return CompletableFuture.supplyAsync(() -> {
             try (Connection connection = database.getConnection()) {
-                String searchQuery = "SELECT * FROM rewards WHERE player_id = ? AND season_id = ?";
+                String searchQuery = "SELECT * FROM season_rewards WHERE player_id = ? AND season_id = ?";
                 PreparedStatement searchPs = connection.prepareStatement(searchQuery);
                 searchPs.setString(1, seasonReward.getPlayerId().toString());
                 searchPs.setInt(2, seasonReward.getSeasonId());
                 ResultSet rs = searchPs.executeQuery();
                 if(!rs.next()) { //insert
-                    String insertQuery = "INSERT INTO rewards (season_id, player_id, contents) VALUES (?, ?, ?)";
+                    String insertQuery = "INSERT INTO season_rewards (season_id, player_id, contents) VALUES (?, ?, ?)";
                     PreparedStatement insertPs = connection.prepareStatement(insertQuery);
                     insertPs.setInt(1, seasonReward.getSeasonId());
                     insertPs.setString(2, seasonReward.getPlayerId().toString());
                     insertPs.setString(3, seasonReward.getContents());
                     return insertPs.executeUpdate();
                 } else { //update
-                    String updateQuery = "UPDATE rewards SET contents = ? WHERE player_id = ? AND season_id = ?";
+                    String updateQuery = "UPDATE season_rewards SET contents = ? WHERE player_id = ? AND season_id = ?";
                     PreparedStatement updatePs = connection.prepareStatement(updateQuery);
                     updatePs.setString(1, seasonReward.getContents());
                     updatePs.setString(2, seasonReward.getPlayerId().toString());
@@ -144,7 +144,7 @@ public class SeasonRewardDAOImpl implements SeasonRewardDAO {
     public CompletableFuture<Integer> insert(SeasonReward seasonReward) {
         return CompletableFuture.supplyAsync(() -> {
             try (Connection connection = database.getConnection()) {
-                String query = "INSERT INTO rewards (season_id, player_id, contents) VALUES (?, ?, ?)";
+                String query = "INSERT INTO season_rewards (season_id, player_id, contents) VALUES (?, ?, ?)";
                 PreparedStatement ps = connection.prepareStatement(query);
                 ps.setInt(1, seasonReward.getSeasonId());
                 ps.setString(2, seasonReward.getPlayerId().toString());
@@ -161,7 +161,7 @@ public class SeasonRewardDAOImpl implements SeasonRewardDAO {
     public CompletableFuture<Integer> update(SeasonReward seasonReward) {
         return CompletableFuture.supplyAsync(() -> {
             try (Connection connection = database.getConnection()) {
-                String query = "UPDATE rewards SET season_id = ?, player_id = ?, contents = ? WHERE id = ?";
+                String query = "UPDATE season_rewards SET season_id = ?, player_id = ?, contents = ? WHERE id = ?";
                 PreparedStatement ps = connection.prepareStatement(query);
                 ps.setInt(1, seasonReward.getSeasonId());
                 ps.setString(2, seasonReward.getPlayerId().toString());
@@ -179,7 +179,7 @@ public class SeasonRewardDAOImpl implements SeasonRewardDAO {
     public CompletableFuture<Integer> delete(SeasonReward seasonReward) {
         return CompletableFuture.supplyAsync(() -> {
             try (Connection connection = database.getConnection()) {
-                String query = "DELETE FROM rewards WHERE id = ?";
+                String query = "DELETE FROM season_rewards WHERE id = ?";
                 PreparedStatement ps = connection.prepareStatement(query);
                 ps.setInt(1, seasonReward.getId());
                 return ps.executeUpdate();

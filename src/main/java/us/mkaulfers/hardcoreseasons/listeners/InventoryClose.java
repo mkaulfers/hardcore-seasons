@@ -36,7 +36,7 @@ public class InventoryClose implements Listener {
 
             chestDAO.get(x, y, z, world, type)
                     .thenAccept(chest -> {
-                        TrackedChest updated = new TrackedChest(chest.id, 1, x, y, z, world, type, contentsString);
+                        TrackedChest updated = new TrackedChest(chest.id, plugin.currentSeasonNum, x, y, z, world, type, contentsString);
                         chestDAO.update(updated);
                     });
         }
@@ -64,13 +64,13 @@ public class InventoryClose implements Listener {
 
             chestDAO.get(leftX, leftY, leftZ, world, type)
                     .thenAccept(chest -> {
-                        TrackedChest updated = new TrackedChest(chest.id, 1, leftX, leftY, leftZ, world, type, leftContentsString);
+                        TrackedChest updated = new TrackedChest(chest.id, plugin.currentSeasonNum, leftX, leftY, leftZ, world, type, leftContentsString);
                         chestDAO.update(updated);
                     });
 
             chestDAO.get(rightX, rightY, rightZ, world, type)
                     .thenAccept(chest -> {
-                        TrackedChest updated = new TrackedChest(chest.id, 1, rightX, rightY, rightZ, world, type, rightContentsString);
+                        TrackedChest updated = new TrackedChest(chest.id, plugin.currentSeasonNum, rightX, rightY, rightZ, world, type, rightContentsString);
                         chestDAO.update(updated);
                     });
         }

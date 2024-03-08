@@ -72,8 +72,8 @@ public class Database {
             );
             connection.prepareStatement(INIT_FIRST_SEASON).execute();
 
-            String INIT_PLAYERS = """
-                        CREATE TABLE IF NOT EXISTS players (
+            String INIT_PARTICIPANTS = """
+                        CREATE TABLE IF NOT EXISTS participants (
                             id INT AUTO_INCREMENT,
                             player_id VARCHAR(36),
                             season_id INT,
@@ -83,7 +83,7 @@ public class Database {
                             PRIMARY KEY (id)
                         );
                         """;
-            connection.prepareStatement(INIT_PLAYERS).execute();
+            connection.prepareStatement(INIT_PARTICIPANTS).execute();
 
             String INIT_TRACKED_CHESTS = """
                         CREATE TABLE IF NOT EXISTS `tracked_chests` (
@@ -133,6 +133,18 @@ public class Database {
                         );
                         """;
             connection.prepareStatement(INIT_REWARDS).execute();
+
+            String INIT_VOTES = """
+                        CREATE TABLE IF NOT EXISTS `votes` (
+                          id INT AUTO_INCREMENT,
+                          season_id INT,
+                          player_name VARCHAR(36),
+                          last_notification DATETIME,
+                          should_end_season BOOLEAN,
+                          PRIMARY KEY (id)
+                        );
+                        """;
+            connection.prepareStatement(INIT_VOTES).execute();
         }
     }
 

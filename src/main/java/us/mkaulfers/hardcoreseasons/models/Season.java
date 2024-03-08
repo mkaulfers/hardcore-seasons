@@ -1,6 +1,6 @@
 package us.mkaulfers.hardcoreseasons.models;
 
-import java.util.Date;
+import java.sql.Date;
 
 public class Season implements Comparable<Season> {
     public int id;
@@ -13,6 +13,7 @@ public class Season implements Comparable<Season> {
         this.id = id;
         this.seasonId = seasonId;
         this.startDate = startDate;
+        this.softEndDate = softEndDate;
         this.hardEndDate = hardEndDate;
     }
     @Override

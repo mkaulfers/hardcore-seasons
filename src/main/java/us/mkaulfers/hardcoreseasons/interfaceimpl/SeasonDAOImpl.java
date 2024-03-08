@@ -46,7 +46,7 @@ public class SeasonDAOImpl implements SeasonDAO {
             try (Connection connection = database.getConnection()) {
                 Season season = null;
 
-                String query = "SELECT * FROM seasons WHERE id = ?";
+                String query = "SELECT * FROM seasons WHERE season_id = ?";
                 PreparedStatement ps = connection.prepareStatement(query);
                 ps.setInt(1, id);
 

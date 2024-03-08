@@ -1,5 +1,6 @@
 package us.mkaulfers.hardcoreseasons;
 
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -9,16 +10,20 @@ import us.mkaulfers.hardcoreseasons.interfaceimpl.SeasonDAOImpl;
 import us.mkaulfers.hardcoreseasons.interfaces.SeasonDAO;
 import us.mkaulfers.hardcoreseasons.listeners.*;
 import us.mkaulfers.hardcoreseasons.managers.RewardManager;
-import us.mkaulfers.hardcoreseasons.models.Database;
-import us.mkaulfers.hardcoreseasons.models.MySQLConfig;
-import us.mkaulfers.hardcoreseasons.models.PluginConfig;
+import us.mkaulfers.hardcoreseasons.managers.SeasonManager;
+import us.mkaulfers.hardcoreseasons.managers.WorldManager;
+import us.mkaulfers.hardcoreseasons.models.*;
 
+import java.util.Date;
 import java.util.List;
 
 public final class HardcoreSeasons extends JavaPlugin {
     public PluginConfig pluginConfig;
     public Database database;
-    public int activeSeason;
+    public int currentSeasonNum;
+    public boolean shouldRequestSeasonEnd;
+    public SeasonManager seasonManager;
+    public WorldManager worldManager;
     public RewardManager rewardManager;
 
     // Lifecycle methods
@@ -105,10 +110,14 @@ public final class HardcoreSeasons extends JavaPlugin {
 
             SeasonDAO seasonDAO = new SeasonDAOImpl(database);
             seasonDAO.getActiveSeasonId().thenAccept(seasonId -> {
-                activeSeason = seasonId;
-            });
+                currentSeasonNum = seasonId;
 
-            rewardManager = new RewardManager(database);
+                Bukkit.getScheduler().runTask(this, () -> {
+                    worldManager = new WorldManager(this);
+                    seasonManager = new SeasonManager(this);
+                    rewardManager = new RewardManager(this);
+                });
+            });
 
         } else {
             /// Use SQLite

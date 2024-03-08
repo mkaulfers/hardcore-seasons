@@ -8,7 +8,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import us.mkaulfers.hardcoreseasons.HardcoreSeasons;
 import us.mkaulfers.hardcoreseasons.interfaceimpl.PlayerDAOImpl;
 import us.mkaulfers.hardcoreseasons.interfaces.PlayerDAO;
-import us.mkaulfers.hardcoreseasons.models.Player;
+import us.mkaulfers.hardcoreseasons.models.Participant;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -27,13 +27,13 @@ public class PlayerJoin implements Listener {
 
         PlayerDAO playerDAO = new PlayerDAOImpl(plugin.database);
 
-        playerDAO.get(playerId, plugin.activeSeason)
+        playerDAO.get(playerId, plugin.currentSeasonNum)
                 .thenAccept(p -> {
                     if (p == null) {
-                        p = new Player(
+                        p = new Participant(
                                 0,
                                 playerId,
-                                plugin.activeSeason,
+                                plugin.currentSeasonNum,
                                 new Timestamp(new Date().getTime()),
                                 new Timestamp(new Date().getTime()),
                                 false
@@ -43,7 +43,7 @@ public class PlayerJoin implements Listener {
 
                     } else if (p.isDead) {
                         Bukkit.getScheduler().runTask(plugin, () -> {
-                            String result = ChatColor.DARK_RED + "You have died and must wait until"+ ChatColor.GOLD +" Season " + ChatColor.AQUA + (plugin.activeSeason + 1) + ChatColor.DARK_RED + ".";
+                            String result = ChatColor.DARK_RED + "You have died and must wait until"+ ChatColor.GOLD +" Season " + ChatColor.AQUA + (plugin.currentSeasonNum + 1) + ChatColor.DARK_RED + ".";
                             event.getPlayer().kickPlayer(result);
                         });
                     } else {
@@ -51,5 +51,12 @@ public class PlayerJoin implements Listener {
                         playerDAO.update(p);
                     }
                 });
+
+        if(plugin.shouldRequestSeasonEnd) {
+            Bukkit.getScheduler().runTask(plugin, () -> {
+                event.getPlayer().sendMessage(ChatColor.DARK_RED + "The server is requesting a vote to end the season.");
+                event.getPlayer().sendMessage(ChatColor.DARK_RED + "Please type " + ChatColor.GOLD + "/season <end|continue>" + ChatColor.DARK_RED + " to vote.");
+            });
+        }
     }
 }

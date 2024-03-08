@@ -18,11 +18,11 @@ public class PlayerDeath implements Listener {
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
         event.getEntity().spigot().respawn();
-        String result = ChatColor.DARK_RED + "You have died and must wait until"+ ChatColor.GOLD +" Season " + ChatColor.AQUA + (plugin.activeSeason + 1) + ChatColor.DARK_RED + ".";
+        String result = ChatColor.DARK_RED + "You have died and must wait until"+ ChatColor.GOLD +" Season " + ChatColor.AQUA + (plugin.currentSeasonNum + 1) + ChatColor.DARK_RED + ".";
         event.getEntity().kickPlayer(result);
 
         PlayerDAO playerDAO = new PlayerDAOImpl(plugin.database);
-        playerDAO.get(event.getEntity().getUniqueId(), plugin.activeSeason)
+        playerDAO.get(event.getEntity().getUniqueId(), plugin.currentSeasonNum)
                 .thenAccept(player -> {
                     player.isDead = true;
                     playerDAO.update(player);

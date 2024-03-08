@@ -19,7 +19,7 @@ public class BlockBreak implements Listener {
         Block block = event.getBlock();
         if (BlockUtils.isTrackable(block)) {
             ChestDAO chestDAO = new ChestDAOImpl(plugin.database);
-            TrackedChest trackedChest = new TrackedChest(block, 1);
+            TrackedChest trackedChest = new TrackedChest(block, plugin.currentSeasonNum);
             chestDAO.delete(trackedChest);
         }
     }

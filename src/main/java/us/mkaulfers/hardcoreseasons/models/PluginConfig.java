@@ -4,13 +4,13 @@ import java.util.List;
 
 public class PluginConfig {
     boolean seasonalServer;
-    int minSeasonLength;
-    int maxSeasonLength;
-    int maxSurvivorsRemaining;
-    int lastLoginThreshold;
-    int confirmationIntervalDays;
-    int confirmationIntervalHours;
-    int confirmationIntervalMinutes;
+    public int minSeasonLength;
+    public int maxSeasonLength;
+    public int maxSurvivorsRemaining;
+    public int lastLoginThreshold;
+    public int confirmationIntervalDays;
+    public int confirmationIntervalHours;
+    public int confirmationIntervalMinutes;
     List<String> endOfSeasonCommands;
     public String storageType;
     public MySQLConfig mySQLConfig;
