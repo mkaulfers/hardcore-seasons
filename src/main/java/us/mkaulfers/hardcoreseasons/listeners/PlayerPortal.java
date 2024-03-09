@@ -8,8 +8,6 @@ import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import us.mkaulfers.hardcoreseasons.HardcoreSeasons;
 
-import static org.bukkit.Bukkit.getWorld;
-
 public class PlayerPortal implements Listener {
     HardcoreSeasons plugin;
 

@@ -9,7 +9,6 @@ import java.util.List;
 
 public class WorldManager {
     HardcoreSeasons plugin;
-
     public World seasonMainWorld;
     public World seasonNetherWorld;
     public World seasonEndWorld;
@@ -20,6 +19,12 @@ public class WorldManager {
     }
 
     private void initWorlds(int seasonNum) {
+        seasonMainWorld = initializeWorld(seasonNum, World.Environment.NORMAL, "season_", "");
+        seasonNetherWorld = initializeWorld(seasonNum, World.Environment.NETHER, "season_", "_nether");
+        seasonEndWorld = initializeWorld(seasonNum, World.Environment.THE_END, "season_", "_end");
+    }
+
+    private World initializeWorld(int seasonNum, World.Environment environment, String namePrefix, String nameSuffix) {
         String baseDir = "./seasonal_worlds/";
         List<World> officialWorlds = plugin.getServer().getWorlds();
 
@@ -30,37 +35,13 @@ public class WorldManager {
         }
 
         // Check and set or create the main world
-        World officialWorld = officialWorlds.stream().filter(w -> w.getEnvironment() == World.Environment.NORMAL).findFirst().orElse(null);
+        World officialWorld = officialWorlds.stream().filter(w -> w.getEnvironment() == environment).findFirst().orElse(null);
         if (officialWorld != null) {
-            WorldCreator worldCreator = new WorldCreator(baseDir + "season_" + seasonNum);
+            WorldCreator worldCreator = new WorldCreator(baseDir + namePrefix + seasonNum + nameSuffix);
             worldCreator.copy(officialWorld);
             worldCreator.seed(System.currentTimeMillis());
-            seasonMainWorld = plugin.getServer().createWorld(worldCreator);
-            plugin.getLogger().info("Is main world null? " + (seasonMainWorld == null));
+            return worldCreator.createWorld();
         }
-
-        // Check and set or create the Nether world
-        World officialNetherWorld = officialWorlds.stream().filter(w -> w.getEnvironment() == World.Environment.NETHER).findFirst().orElse(null);
-        if (officialNetherWorld != null) {
-            WorldCreator worldCreator = new WorldCreator(baseDir + "season_" + seasonNum + "_nether");
-            worldCreator.copy(officialNetherWorld);
-            worldCreator.seed(System.currentTimeMillis());
-            seasonNetherWorld = plugin.getServer().createWorld(worldCreator);
-            plugin.getLogger().info("Is nether world null? " + (seasonNetherWorld == null));
-        }
-
-        // Check and set or create the End world
-        World officialEndWorld = officialWorlds.stream().filter(w -> w.getEnvironment() == World.Environment.THE_END).findFirst().orElse(null);
-        if (officialEndWorld != null) {
-            WorldCreator worldCreator = new WorldCreator(baseDir + "season_" + seasonNum + "_end");
-            worldCreator.copy(officialEndWorld);
-            worldCreator.seed(System.currentTimeMillis());
-            seasonEndWorld = plugin.getServer().createWorld(worldCreator);
-            plugin.getLogger().info("Is end world null? " + (seasonEndWorld == null));
-        }
-    }
-
-    private boolean doesDirectoryExist(String path) {
-        return new File(path).exists();
+        return null;
     }
 }
