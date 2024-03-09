@@ -3,6 +3,7 @@ package us.mkaulfers.hardcoreseasons.managers;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import us.mkaulfers.hardcoreseasons.HardcoreSeasons;
+import us.mkaulfers.hardcoreseasons.models.Localization;
 import us.mkaulfers.hardcoreseasons.models.MySQLConfig;
 import us.mkaulfers.hardcoreseasons.models.PluginConfig;
 
@@ -14,49 +15,12 @@ public class ConfigManager {
     HardcoreSeasons plugin;
 
     public PluginConfig config;
+    public Localization localization;
 
     public ConfigManager(HardcoreSeasons plugin) {
         this.plugin = plugin;
         loadConfig(plugin);
-    }
-
-    // TODO: Fix this so it doesn't break the plugin
-    public void updateConfig(HardcoreSeasons plugin) {
-        File configFile = new File(plugin.getDataFolder(), "config.yml");
-        if (!configFile.exists()) {
-            plugin.saveDefaultConfig();
-        } else {
-            try {
-                // Load the existing configuration
-                FileConfiguration config = YamlConfiguration.loadConfiguration(configFile);
-
-                // Save the default configuration to a temporary file
-                File tempFile = new File(plugin.getDataFolder(), "temp.yml");
-                if (tempFile.exists()) {
-                    tempFile.delete();
-                }
-                plugin.saveResource("config.yml", true);
-                FileConfiguration defaultConfig = YamlConfiguration.loadConfiguration(tempFile);
-
-                // Merge the existing configuration with the defaults
-                for (String key : defaultConfig.getKeys(true)) {
-                    if (!config.contains(key)) {
-                        config.set(key, defaultConfig.get(key));
-                    }
-                }
-
-                // Save the updated configuration
-                config.save(configFile);
-
-                // Cleanup the temporary file
-                tempFile.delete();
-
-            } catch (IOException e) {
-                plugin.getLogger().severe("[Hardcore Seasons]: Failed to update the configuration file.");
-            }
-        }
-
-        loadConfig(plugin);
+        loadLocalization(plugin);
     }
 
     public void loadConfig(HardcoreSeasons plugin) {
@@ -103,6 +67,70 @@ public class ConfigManager {
                 endOfSeasonCommands,
                 storageType,
                 mySQLConfig
+        );
+    }
+
+    // Load the localization.yml from the same directory as the config.yml
+    private void loadLocalization(HardcoreSeasons plugin) {
+        File localizationFile = new File(plugin.getDataFolder(), "localization.yml");
+        plugin.saveResource("localization.yml", false);
+        FileConfiguration rawLocalization = YamlConfiguration.loadConfiguration(localizationFile);
+
+        // System Messages
+        String configReloaded = rawLocalization.getString("configReloaded");
+        String mustBeAPlayer = rawLocalization.getString("mustBeAPlayer");
+        String noPermission = rawLocalization.getString("noPermission");
+        String invalidCommand = rawLocalization.getString("invalidCommand");
+
+        // Redeeming Rewards GUI
+        String loadingRewards = rawLocalization.getString("loadingRewards");
+        String rewardGoBack = rawLocalization.getString("rewardGoBack");
+        String rewardPrevious = rawLocalization.getString("rewardPrevious");
+        String rewardPage = rawLocalization.getString("rewardPage");
+        String rewardNext = rawLocalization.getString("rewardNext");
+        String rewardClose = rawLocalization.getString("rewardClose");
+        String rewardPageCounter = rawLocalization.getString("rewardPageCounter");
+
+        // Selecting Season GUI
+        String loadingSeasons = rawLocalization.getString("loadingSeasons");
+        String selectSeasonTitle = rawLocalization.getString("selectSeasonTitle");
+        String seasonItemName = rawLocalization.getString("seasonItemName");
+        String seasonPrevious = rawLocalization.getString("seasonPrevious");
+        String seasonNext = rawLocalization.getString("seasonNext");
+        String seasonClose = rawLocalization.getString("seasonClose");
+        String seasonPageCounter = rawLocalization.getString("seasonPageCounter");
+
+        // Player Join Messages
+        String haveDied = rawLocalization.getString("haveDied");
+        String requestingVoteTop = rawLocalization.getString("requestingVoteTop");
+        String requestingVoteBottom = rawLocalization.getString("requestingVoteBottom");
+
+        // Player Death Messages
+        String deathMessage = rawLocalization.getString("deathMessage");
+
+        localization = new Localization(
+                configReloaded,
+                mustBeAPlayer,
+                noPermission,
+                invalidCommand,
+                loadingRewards,
+                rewardGoBack,
+                rewardPrevious,
+                rewardPage,
+                rewardNext,
+                rewardClose,
+                rewardPageCounter,
+                loadingSeasons,
+                selectSeasonTitle,
+                seasonItemName,
+                seasonPrevious,
+                seasonNext,
+                seasonClose,
+                seasonPageCounter,
+                haveDied,
+                requestingVoteTop,
+                requestingVoteBottom,
+                deathMessage
         );
     }
 }

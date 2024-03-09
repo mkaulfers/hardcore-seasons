@@ -21,10 +21,12 @@ import us.mkaulfers.hardcoreseasons.utils.InventoryUtils;
 import java.io.IOException;
 import java.util.*;
 
+import static us.mkaulfers.hardcoreseasons.models.LocalizationKey.*;
+
 public class RedeemRewardsForSeasonGUI {
     public static void make(Player player, int seasonId, HardcoreSeasons plugin) {
-        player.sendMessage(ChatColor.BLUE + "Loading rewards for season " + ChatColor.AQUA + seasonId);
-        ChestGui gui = new ChestGui(6, ChatColor.BLUE + "Season " + ChatColor.AQUA + seasonId);
+        player.sendMessage(plugin.configManager.localization.getLocalized(LOADING_REWARDS));
+        ChestGui gui = new ChestGui(6, plugin.configManager.localization.getLocalized(SEASON_ITEM_NAME) + " " + seasonId);
 
         // Rewards
         PaginatedPane pages = new PaginatedPane(0, 0, 9, 5);
@@ -42,6 +44,7 @@ public class RedeemRewardsForSeasonGUI {
                 }
             }
 
+            // TODO: Replace with Reward Manager
             packRewardsIntoShulkerBoxes(new LinkedList<>(rewards), shulkerBoxes);
 
             pages.populateWithItemStacks(shulkerBoxes);
@@ -66,32 +69,32 @@ public class RedeemRewardsForSeasonGUI {
             // Go Back
             ItemStack goBack = new ItemStack(Material.SPECTRAL_ARROW);
             ItemMeta goBackMeta = goBack.getItemMeta();
-            goBackMeta.setDisplayName(ChatColor.GOLD + "Go Back");
+            goBackMeta.setDisplayName(plugin.configManager.localization.getLocalized(REWARD_GO_BACK));
             goBack.setItemMeta(goBackMeta);
 
 
             // Previous
             ItemStack previous = new ItemStack(Material.ARROW);
             ItemMeta previousMeta = previous.getItemMeta();
-            previousMeta.setDisplayName(ChatColor.GOLD + "Previous");
+            previousMeta.setDisplayName(plugin.configManager.localization.getLocalized(REWARD_PREVIOUS));
             previous.setItemMeta(previousMeta);
 
             // Current
             ItemStack current = new ItemStack(Material.PAPER);
             ItemMeta currentMeta = current.getItemMeta();
-            currentMeta.setDisplayName(ChatColor.GOLD + "Page " + ChatColor.AQUA + (pages.getPage() + 1) + ChatColor.GOLD + "/" + ChatColor.AQUA + (pages.getPages()));
+            currentMeta.setDisplayName(plugin.configManager.localization.getLocalized(REWARD_PAGE)  + " " + ChatColor.AQUA + (pages.getPage() + 1) + ChatColor.GOLD + "/" + ChatColor.AQUA + (pages.getPages()));
             current.setItemMeta(currentMeta);
 
             // Next
             ItemStack next = new ItemStack(Material.ARROW);
             ItemMeta nextMeta = next.getItemMeta();
-            nextMeta.setDisplayName(ChatColor.GOLD + "Next");
+            nextMeta.setDisplayName(plugin.configManager.localization.getLocalized(REWARD_NEXT));
             next.setItemMeta(nextMeta);
 
             // Close
             ItemStack close = new ItemStack(Material.BARRIER);
             ItemMeta closeMeta = close.getItemMeta();
-            closeMeta.setDisplayName(ChatColor.RED + "Close");
+            closeMeta.setDisplayName(plugin.configManager.localization.getLocalized(REWARD_CLOSE));
             close.setItemMeta(closeMeta);
 
             navigation.addItem(new GuiItem(goBack, event -> {
@@ -101,7 +104,7 @@ public class RedeemRewardsForSeasonGUI {
             navigation.addItem(new GuiItem(previous, event -> {
                 if (pages.getPage() > 0) {
                     pages.setPage(pages.getPage() - 1);
-                    currentMeta.setDisplayName(ChatColor.GOLD + "Page " + ChatColor.AQUA + (pages.getPage() + 1) + ChatColor.GOLD + "/" + ChatColor.AQUA + (pages.getPages()));
+                    currentMeta.setDisplayName(plugin.configManager.localization.getLocalized(REWARD_PAGE)  + " "  + ChatColor.AQUA + (pages.getPage() + 1) + ChatColor.GOLD + "/" + ChatColor.AQUA + (pages.getPages()));
                     current.setItemMeta(currentMeta);
                     gui.update();
                 }
@@ -113,7 +116,7 @@ public class RedeemRewardsForSeasonGUI {
             navigation.addItem(new GuiItem(next, event -> {
                 if (pages.getPage() < pages.getPages() - 1) {
                     pages.setPage(pages.getPage() + 1);
-                    currentMeta.setDisplayName(ChatColor.GOLD + "Page " + ChatColor.AQUA + (pages.getPage() + 1) + ChatColor.GOLD + "/" + ChatColor.AQUA + (pages.getPages()));
+                    currentMeta.setDisplayName(plugin.configManager.localization.getLocalized(REWARD_PAGE)  + " " + ChatColor.AQUA + (pages.getPage() + 1) + ChatColor.GOLD + "/" + ChatColor.AQUA + (pages.getPages()));
                     current.setItemMeta(currentMeta);
                     gui.update();
                 }

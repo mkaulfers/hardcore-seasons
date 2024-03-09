@@ -1,7 +1,6 @@
 package us.mkaulfers.hardcoreseasons.listeners;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -13,6 +12,8 @@ import us.mkaulfers.hardcoreseasons.models.Participant;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.UUID;
+
+import static us.mkaulfers.hardcoreseasons.models.LocalizationKey.*;
 
 public class PlayerJoin implements Listener {
     HardcoreSeasons plugin;
@@ -43,7 +44,7 @@ public class PlayerJoin implements Listener {
 
                     } else if (p.isDead) {
                         Bukkit.getScheduler().runTask(plugin, () -> {
-                            String result = ChatColor.DARK_RED + "You have died and must wait until"+ ChatColor.GOLD +" Season " + ChatColor.AQUA + (plugin.currentSeasonNum + 1) + ChatColor.DARK_RED + ".";
+                            String result = plugin.configManager.localization.getLocalized(DEATH_MESSAGE) + " " + (plugin.currentSeasonNum + 1);
                             event.getPlayer().kickPlayer(result);
                         });
                     } else {
@@ -54,8 +55,8 @@ public class PlayerJoin implements Listener {
 
         if(plugin.shouldRequestSeasonEnd) {
             Bukkit.getScheduler().runTask(plugin, () -> {
-                event.getPlayer().sendMessage(ChatColor.DARK_RED + "The server is requesting a vote to end the season.");
-                event.getPlayer().sendMessage(ChatColor.DARK_RED + "Please type " + ChatColor.GOLD + "/season <end|continue>" + ChatColor.DARK_RED + " to vote.");
+                event.getPlayer().sendMessage(plugin.configManager.localization.getLocalized(REQUESTING_VOTE_TOP));
+                event.getPlayer().sendMessage(plugin.configManager.localization.getLocalized(REQUESTING_VOTE_BOTTOM));
             });
         }
     }

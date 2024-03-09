@@ -1,6 +1,7 @@
 package us.mkaulfers.hardcoreseasons.interfaceimpl;
 
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import us.mkaulfers.hardcoreseasons.interfaces.EndChestDAO;
 import us.mkaulfers.hardcoreseasons.models.Database;
 import us.mkaulfers.hardcoreseasons.models.TrackedEndChest;

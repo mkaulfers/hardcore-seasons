@@ -14,6 +14,8 @@ import us.mkaulfers.hardcoreseasons.models.CommandNode;
 import java.util.ArrayList;
 import java.util.List;
 
+import static us.mkaulfers.hardcoreseasons.models.LocalizationKey.*;
+
 public class SeasonCommand implements TabExecutor {
     private CommandNode root;
     private HardcoreSeasons plugin;
@@ -29,7 +31,7 @@ public class SeasonCommand implements TabExecutor {
                 Player player = (Player) sender;
                         SelectSeasonRewardGUI.make(player, plugin);
             } else {
-                sender.sendMessage("You must be a player to execute this command.");
+                sender.sendMessage(plugin.configManager.localization.getLocalized(MUST_BE_A_PLAYER));
             }
         }));
 
@@ -38,7 +40,7 @@ public class SeasonCommand implements TabExecutor {
 
         CommandNode reload = new CommandNode("reload", "admin", (sender -> {
             plugin.reloadConfig();
-            sender.sendMessage(ChatColor.BLUE + "Config reloaded.");
+            sender.sendMessage(plugin.configManager.localization.getLocalized(CONFIG_RELOADED));
         }));
 
         root.addArg(claim);
@@ -83,13 +85,13 @@ public class SeasonCommand implements TabExecutor {
 
             // Handle the case where a permission issue was detected
             if (permissionDenied) {
-                commandSender.sendMessage("You do not have permission to execute this command.");
+                commandSender.sendMessage(plugin.configManager.localization.getLocalized(NO_PERMISSION));
                 return false;
             }
 
             // No matching node found after checking all children
             if (nextNode == null) {
-                commandSender.sendMessage("Invalid command.");
+                commandSender.sendMessage(plugin.configManager.localization.getLocalized(INVALID_COMMAND));
                 return false;
             }
 

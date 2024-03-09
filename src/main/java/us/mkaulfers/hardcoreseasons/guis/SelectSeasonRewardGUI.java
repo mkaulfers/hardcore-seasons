@@ -18,10 +18,12 @@ import us.mkaulfers.hardcoreseasons.models.SeasonReward;
 import java.util.ArrayList;
 import java.util.List;
 
+import static us.mkaulfers.hardcoreseasons.models.LocalizationKey.*;
+
 public class SelectSeasonRewardGUI {
     public static void make(Player player, HardcoreSeasons plugin) {
-        player.sendMessage(ChatColor.BLUE + "Loading seasonal rewards.");
-        ChestGui gui = new ChestGui(6, ChatColor.BLUE + "Select Season");
+        player.sendMessage(plugin.configManager.localization.getLocalized(LOADING_SEASONS));
+        ChestGui gui = new ChestGui(6, plugin.configManager.localization.getLocalized(SELECT_SEASON_TITLE));
 
         // Rewards
         PaginatedPane pages = new PaginatedPane(0, 0, 9, 5);
@@ -32,7 +34,7 @@ public class SelectSeasonRewardGUI {
             for (SeasonReward seasonReward : rewards) {
                 ItemStack guiChestItem = new ItemStack(Material.CHEST);
                 ItemMeta guiChestItemMeta = guiChestItem.getItemMeta();
-                guiChestItemMeta.setDisplayName(ChatColor.GOLD + "Season " + ChatColor.AQUA + seasonReward.getSeasonId());
+                guiChestItemMeta.setDisplayName(plugin.configManager.localization.getLocalized(SEASON_ITEM_NAME)  + " " + ChatColor.AQUA + seasonReward.getSeasonId());
                 guiChestItem.setItemMeta(guiChestItemMeta);
 
                 guiItems.add(new GuiItem(guiChestItem, event -> {
@@ -63,31 +65,31 @@ public class SelectSeasonRewardGUI {
             // Previous
             ItemStack previous = new ItemStack(Material.ARROW);
             ItemMeta previousMeta = previous.getItemMeta();
-            previousMeta.setDisplayName(ChatColor.GOLD + "Previous");
+            previousMeta.setDisplayName(plugin.configManager.localization.getLocalized(SEASON_PREVIOUS));
             previous.setItemMeta(previousMeta);
 
             // Current
             ItemStack current = new ItemStack(Material.PAPER);
             ItemMeta currentMeta = current.getItemMeta();
-            currentMeta.setDisplayName(ChatColor.GOLD + "Page " + ChatColor.AQUA + (pages.getPage() + 1) + ChatColor.GOLD + "/" + ChatColor.AQUA + (pages.getPages()));
+            currentMeta.setDisplayName(plugin.configManager.localization.getLocalized(SEASON_PAGE_COUNTER)  + " "  + ChatColor.AQUA + (pages.getPage() + 1) + ChatColor.GOLD + "/" + ChatColor.AQUA + (pages.getPages()));
             current.setItemMeta(currentMeta);
 
             // Next
             ItemStack next = new ItemStack(Material.ARROW);
             ItemMeta nextMeta = next.getItemMeta();
-            nextMeta.setDisplayName(ChatColor.GOLD + "Next");
+            nextMeta.setDisplayName(plugin.configManager.localization.getLocalized(SEASON_NEXT));
             next.setItemMeta(nextMeta);
 
             // Close
             ItemStack close = new ItemStack(Material.BARRIER);
             ItemMeta closeMeta = close.getItemMeta();
-            closeMeta.setDisplayName(ChatColor.RED + "Close");
+            closeMeta.setDisplayName(plugin.configManager.localization.getLocalized(SEASON_CLOSE));
             close.setItemMeta(closeMeta);
 
             navigation.addItem(new GuiItem(previous, event -> {
                 if (pages.getPage() > 0) {
                     pages.setPage(pages.getPage() - 1);
-                    currentMeta.setDisplayName(ChatColor.GOLD + "Page " + ChatColor.AQUA + (pages.getPage() + 1) + ChatColor.GOLD + "/" + ChatColor.AQUA + (pages.getPages()));
+                    currentMeta.setDisplayName(plugin.configManager.localization.getLocalized(SEASON_PAGE_COUNTER)  + " "  + ChatColor.AQUA + (pages.getPage() + 1) + ChatColor.GOLD + "/" + ChatColor.AQUA + (pages.getPages()));
                     current.setItemMeta(currentMeta);
                     gui.update();
                 }
@@ -99,7 +101,7 @@ public class SelectSeasonRewardGUI {
             navigation.addItem(new GuiItem(next, event -> {
                 if (pages.getPage() < pages.getPages() - 1) {
                     pages.setPage(pages.getPage() + 1);
-                    currentMeta.setDisplayName(ChatColor.GOLD + "Page " + ChatColor.AQUA + (pages.getPage() + 1) + ChatColor.GOLD + "/" + ChatColor.AQUA + (pages.getPages()));
+                    currentMeta.setDisplayName(plugin.configManager.localization.getLocalized(SEASON_PAGE_COUNTER)  + " "  + ChatColor.AQUA + (pages.getPage() + 1) + ChatColor.GOLD + "/" + ChatColor.AQUA + (pages.getPages()));
                     current.setItemMeta(currentMeta);
                     gui.update();
                 }

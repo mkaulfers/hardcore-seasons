@@ -1,0 +1,31 @@
+# System Messages
+configReloaded: "Config reloaded."
+mustBeAPlayer: "You must be a player to use this command."
+noPermission: "You do not have permission to use this command."
+invalidCommand: "Invalid command."
+
+# Redeeming Rewards GUI
+loadingRewards: "Loading rewards for season"
+rewardGoBack: "Go Back"
+rewardPrevious: "Previous"
+rewardPage: "Page"
+rewardNext: "Next"
+rewardClose: "Close"
+rewardPageCounter: "Page" # The suffix is attached automatically (EG : Page 1/3)
+
+# Selecting Season GUI
+loadingSeasons: "Loading seasonal rewards."
+selectSeasonTitle: "Select Season"
+seasonItemName: "Season" # The suffix is attached automatically (EG : Season 1)
+seasonPrevious: "Previous"
+seasonNext: "Next"
+seasonClose: "Close"
+seasonPageCounter: "Page" # The suffix is attached automatically (EG : Page 1/3)
+
+# Player Join Messages
+haveDied: "You have died and must wait until Season" # The suffix is attached automatically (EG : ... Season 1.)
+requestingVoteTop: "The server is requesting a vote to end the season"
+requestingVoteBottom: "Please type /season < end or continue > to vote"
+
+# Player Death Messages
+deathMessage: "You have died and must wait until Season" # The suffix is attached automatically (EG : ... Season 1.)

@@ -1,12 +1,13 @@
 package us.mkaulfers.hardcoreseasons.listeners;
 
-import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import us.mkaulfers.hardcoreseasons.HardcoreSeasons;
 import us.mkaulfers.hardcoreseasons.interfaceimpl.PlayerDAOImpl;
 import us.mkaulfers.hardcoreseasons.interfaces.PlayerDAO;
+
+import static us.mkaulfers.hardcoreseasons.models.LocalizationKey.DEATH_MESSAGE;
 
 public class PlayerDeath implements Listener {
     HardcoreSeasons plugin;
@@ -18,7 +19,7 @@ public class PlayerDeath implements Listener {
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
         event.getEntity().spigot().respawn();
-        String result = ChatColor.DARK_RED + "You have died and must wait until"+ ChatColor.GOLD +" Season " + ChatColor.AQUA + (plugin.currentSeasonNum + 1) + ChatColor.DARK_RED + ".";
+        String result = plugin.configManager.localization.getLocalized(DEATH_MESSAGE) + " " + (plugin.currentSeasonNum + 1);
         event.getEntity().kickPlayer(result);
 
         PlayerDAO playerDAO = new PlayerDAOImpl(plugin.database);
