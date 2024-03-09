@@ -1,31 +1,31 @@
 # System Messages
-configReloaded: "Config reloaded."
-mustBeAPlayer: "You must be a player to use this command."
-noPermission: "You do not have permission to use this command."
+configReloaded: "&9Config reloaded."
+mustBeAPlayer: "&9You must be a player to use this command."
+noPermission: "&9You do not have permission to use this command."
 invalidCommand: "Invalid command."
 
 # Redeeming Rewards GUI
-loadingRewards: "Loading rewards for season"
-rewardGoBack: "Go Back"
-rewardPrevious: "Previous"
-rewardPage: "Page"
-rewardNext: "Next"
-rewardClose: "Close"
-rewardPageCounter: "Page" # The suffix is attached automatically (EG : Page 1/3)
+loadingRewards: "&9Loading rewards for season"
+rewardGoBack: "&9Go Back"
+rewardPrevious: "&9Previous"
+rewardPage: "&9Page"
+rewardNext: "&9Next"
+rewardClose: "&4Close"
+rewardPageCounter: "&9Page" # The suffix is attached automatically (EG : Page 1/3)
 
 # Selecting Season GUI
-loadingSeasons: "Loading seasonal rewards."
-selectSeasonTitle: "Select Season"
-seasonItemName: "Season" # The suffix is attached automatically (EG : Season 1)
-seasonPrevious: "Previous"
-seasonNext: "Next"
-seasonClose: "Close"
-seasonPageCounter: "Page" # The suffix is attached automatically (EG : Page 1/3)
+loadingSeasons: "&9Loading seasonal rewards."
+selectSeasonTitle: "&9Select Season"
+seasonItemName: "&9Season" # The suffix is attached automatically (EG : Season 1)
+seasonPrevious: "&9Previous"
+seasonNext: "&9Next"
+seasonClose: "&9Close"
+seasonPageCounter: "&9Page" # The suffix is attached automatically (EG : Page 1/3)
 
 # Player Join Messages
-haveDied: "You have died and must wait until Season" # The suffix is attached automatically (EG : ... Season 1.)
-requestingVoteTop: "The server is requesting a vote to end the season"
-requestingVoteBottom: "Please type /season < end or continue > to vote"
+haveDied: "&cYou have died and must wait until &bSeason" # The suffix is attached automatically (EG : ... Season 1.)
+requestingVoteTop: "&9The server is requesting a vote to end the season"
+requestingVoteBottom: "&9Please type &b/season < end or continue > &9to vote"
 
 # Player Death Messages
-deathMessage: "You have died and must wait until Season" # The suffix is attached automatically (EG : ... Season 1.)
+deathMessage: "&cYou have died and must wait until &bSeason" # The suffix is attached automatically (EG : ... Season 1.)

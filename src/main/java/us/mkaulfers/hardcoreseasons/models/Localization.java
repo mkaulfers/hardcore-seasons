@@ -92,27 +92,27 @@ public class Localization {
 
     public String getLocalized(LocalizationKey key) {
         return switch (key) {
-            case CONFIG_RELOADED -> unTranslateAlternateColorCodes(configReloaded);
-            case MUST_BE_A_PLAYER -> unTranslateAlternateColorCodes(mustBeAPlayer);
-            case NO_PERMISSION -> unTranslateAlternateColorCodes(noPermission);
-            case INVALID_COMMAND -> unTranslateAlternateColorCodes(invalidCommand);
-            case LOADING_REWARDS -> unTranslateAlternateColorCodes(loadingRewards);
-            case REWARD_GO_BACK -> unTranslateAlternateColorCodes(rewardGoBack);
-            case REWARD_PREVIOUS -> unTranslateAlternateColorCodes(rewardPrevious);
-            case REWARD_PAGE -> unTranslateAlternateColorCodes(rewardPage);
-            case REWARD_NEXT -> unTranslateAlternateColorCodes(rewardNext);
-            case REWARD_CLOSE -> unTranslateAlternateColorCodes(rewardClose);
-            case REWARD_PAGE_COUNTER -> unTranslateAlternateColorCodes(rewardPageCounter);
-            case LOADING_SEASONS -> unTranslateAlternateColorCodes(loadingSeasons);
-            case SELECT_SEASON_TITLE -> unTranslateAlternateColorCodes(selectSeasonTitle);
-            case SEASON_ITEM_NAME -> unTranslateAlternateColorCodes(seasonItemName);
-            case SEASON_PREVIOUS -> unTranslateAlternateColorCodes(seasonPrevious);
-            case SEASON_NEXT -> unTranslateAlternateColorCodes(seasonNext);
-            case SEASON_CLOSE -> unTranslateAlternateColorCodes(seasonClose);
-            case SEASON_PAGE_COUNTER -> unTranslateAlternateColorCodes(seasonPageCounter);
+            case CONFIG_RELOADED -> translateAlternateColorCodes(configReloaded);
+            case MUST_BE_A_PLAYER -> translateAlternateColorCodes(mustBeAPlayer);
+            case NO_PERMISSION -> translateAlternateColorCodes(noPermission);
+            case INVALID_COMMAND -> translateAlternateColorCodes(invalidCommand);
+            case LOADING_REWARDS -> translateAlternateColorCodes(loadingRewards);
+            case REWARD_GO_BACK -> translateAlternateColorCodes(rewardGoBack);
+            case REWARD_PREVIOUS -> translateAlternateColorCodes(rewardPrevious);
+            case REWARD_PAGE -> translateAlternateColorCodes(rewardPage);
+            case REWARD_NEXT -> translateAlternateColorCodes(rewardNext);
+            case REWARD_CLOSE -> translateAlternateColorCodes(rewardClose);
+            case REWARD_PAGE_COUNTER -> translateAlternateColorCodes(rewardPageCounter);
+            case LOADING_SEASONS -> translateAlternateColorCodes(loadingSeasons);
+            case SELECT_SEASON_TITLE -> translateAlternateColorCodes(selectSeasonTitle);
+            case SEASON_ITEM_NAME -> translateAlternateColorCodes(seasonItemName);
+            case SEASON_PREVIOUS -> translateAlternateColorCodes(seasonPrevious);
+            case SEASON_NEXT -> translateAlternateColorCodes(seasonNext);
+            case SEASON_CLOSE -> translateAlternateColorCodes(seasonClose);
+            case SEASON_PAGE_COUNTER -> translateAlternateColorCodes(seasonPageCounter);
             case HAVE_DIED -> translateAlternateColorCodes(haveDied);
-            case REQUESTING_VOTE_TOP -> unTranslateAlternateColorCodes(requestingVoteTop);
-            case REQUESTING_VOTE_BOTTOM -> unTranslateAlternateColorCodes(requestingVoteBottom);
+            case REQUESTING_VOTE_TOP -> translateAlternateColorCodes(requestingVoteTop);
+            case REQUESTING_VOTE_BOTTOM -> translateAlternateColorCodes(requestingVoteBottom);
             case DEATH_MESSAGE -> deathMessage;
         };
     }
@@ -121,17 +121,6 @@ public class Localization {
         String translated = ChatColor.translateAlternateColorCodes('&', text);
         Bukkit.getLogger().info("Translated: " + translated);
         return translated;
-    }
-
-    private static String unTranslateAlternateColorCodes(String text) {
-        char[] array = text.toCharArray();
-        for (int i = 0; i < array.length - 1; i++) {
-            if (array[i] == ChatColor.COLOR_CHAR && "0123456789AaBbCcDdEeFfKkLlMmNnOoRr".indexOf(array[i + 1]) != -1) {
-                array[i] = '&';
-                array[i + 1] = Character.toLowerCase(array[i + 1]);
-            }
-        }
-        return new String(array);
     }
 }
 
