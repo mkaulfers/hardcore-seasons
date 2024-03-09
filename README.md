@@ -24,54 +24,64 @@ Hardcore Seasons is tailored to stimulate and augment the hardcore gameplay expe
 
 # Default Config
 ```yaml
-# Set to true for the seasonal server.
-# Set to false for the non-seasonal server.
-# The non-seasonal server will be capable of receiving seasonRewards.
-seasonalServer: true
+# Enables /season claim command for this server.
+# This command will allow players to claim rewards
+# from previous seasons. If you're using MySQL, then
+# the rewards can be claimed on any server running this
+# plugin.
+seasonalServer: true # Default | true
 
 # This is the minimum length for the season.
-# End of season seasonRewards, world will not be reset until this number of days has elapsed.
-minSeasonLength: 14 #Default is 14
+# Season cannot end before this length of time
+# unless there are no players alive.
+minSeasonLength: 14 #Default | 14
 
 # This is the maximum length for the season.
-# World will be reset, participant seasonRewards will be split among all participants.
-maxSeasonLength: -1 # Default is -1, which means no maximum length.
+# Season will end if it reaches this length of time.
+# Rewards will be distributed among all players,
+# based on maxSurvivorsRemaining and player activity.
+maxSeasonLength: -1 # Default | -1 (Disabled)
 
-# Whenever a season is beyond it's `minSeasonLength` and there are
-# less or equal to `maxSurvivorsRemaining` participants, the season will end.
-# World will be reset, participant seasonRewards will be split among all participants.
-maxSurvivorsRemaining: 1
+# If the minSeasonLength is reached, and the player
+# count is less than or equal to this value, it will
+# trigger a vote to end the season. If the vote passes,
+# the season will end and rewards will be distributed.
+maxSurvivorsRemaining: 1 # Default | 1
 
-# This is the minimum number of votes required to end the season.
-# This only applies if there are more than 1 `maxSurvivorsRemaining` participants.
-minVotesToEndSeason: 5
+# This is the minimum % of votes required to end the season.
+# It will only apply if the maxSurvivorsRemaining condition is met.
+minVotesToEndSeason: 50 # Default | 50 (%)
 
-# This is the number of days a participant can be offline before they are considered inactive.
-# Inactive participants will not be counted towards the `maxSurvivorsRemaining` count.
-# Inactive participants will not receive seasonal seasonRewards.
-lastLoginThreshold: 3 # In days
+# The lastLoginThreshold is the number of days a player
+# must be inactive before they are considered to have
+# fallen off due to inactivity. If a player falls off,
+# they will not be eligible for rewards, and their
+# vote will not be counted.
+lastLoginThreshold: 3 # Default | 3 (Days)
 
-# This is the frequency for which the plugin will prompt participants to
-# vote to end the season, or continue the season.
-# Always applies, except when the last surviving participant(s) falls off due to inactivity.
-confirmationIntervalDays: 0 # In days
-confirmationIntervalHours: 24 # In hours
-confirmationIntervalMinutes: 0 # In minutes
+# This is the interval that Hardcore Seasons
+# will notify players to vote to end the season,
+# or to continue the season whenever minSeasonLength
+# and maxSurvivorsRemaining conditions are met.
+confirmationIntervalDays: 0 # Default | 0 (Days)
+confirmationIntervalHours: 24 # Default | 24 (Hours)
+confirmationIntervalMinutes: 0 # Default | 0 (Minutes)
 
+# These commands will be executed when the season ends.
+# The commands will only be executed on the non-seasonal server.
 endOfSeasonCommands:
-  - "say Season has ended! The world will be reset and seasonRewards will be split among all participants."
+  - "say Season has ended! The world will be reset and rewards will be split among all players."
   - "server [playerName] survival"
 
-# Storage Settings
-# Not Recommended: SQLite
-# It will require manual intervention to reset the database.
-# In addition to manual intervention, to seasonReward participants, you will need to move the database file to the server
-# and inform participants when it is acceptable to run the command.
-storageType: "SQLite"
+# The storageType can be either SQLite or MySQL.
+# SQLite will ignore the seasonalServer setting.
+# You can manually move the db file to another server
+# if you want to share the rewards across multiple servers.
+storageType: "SQLite" # Default | SQLite
 
-# Recommended: MySQL
-# The entire process is fully automated, and participants will be rewarded whenever the season ends.
-# Worlds will be reset automatically.
+# If you're using MySQL, you must set the storageType to MySQL.
+# The plugin will create the tables for you.
+# If you're using SQLite, you can ignore these settings.
 MySQL:
   host: 0.0.0.0
   port: 3306
@@ -79,5 +89,8 @@ MySQL:
   username: ''
   password: ''
   # Determines the frequency for which the plugin will update the database.
-  updateInterval: 5 # In minutes
+  # Setting this to a lower value will only impact server performance slightly.
+  # Most operations that this adjusts, are done asynchronously, and are not
+  # critical to the function of the plugin.
+  updateInterval: 5 # Default | 5 (Minutes)
 ```
