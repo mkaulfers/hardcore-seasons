@@ -15,14 +15,14 @@ public class Database {
     private static String password;
     private static final HikariConfig config = new HikariConfig();
     private static HikariDataSource ds;
-    private PluginConfig pluginConfig;
+    private final PluginConfig pluginConfig;
 
-    public Database(MySQLConfig mySQLConfig, PluginConfig pluginConfig) {
-        Database.host = mySQLConfig.host;
-        Database.port = mySQLConfig.port;
-        Database.database = mySQLConfig.database;
-        Database.username = mySQLConfig.username;
-        Database.password = mySQLConfig.password;
+    public Database(PluginConfig pluginConfig) {
+        Database.host = pluginConfig.mySQLConfig.host;
+        Database.port = pluginConfig.mySQLConfig.port;
+        Database.database = pluginConfig.mySQLConfig.database;
+        Database.username = pluginConfig.mySQLConfig.username;
+        Database.password = pluginConfig.mySQLConfig.password;
         config.setJdbcUrl("jdbc:mysql://" + host + ":" + port + "/" + database);
         config.setUsername(username);
         config.setPassword(password);

@@ -45,7 +45,7 @@ public class SeasonManager {
                     List<Participant> activePlayers = getActivePlayers(participants);
                     Date currentDate = new Date(System.currentTimeMillis());
 
-                    if (plugin.pluginConfig.maxSeasonLength != -1) {
+                    if (plugin.configManager.config.maxSeasonLength != -1) {
                         if (activeSeason.hardEndDate.before(currentDate)) {
                             endSeason(activePlayers);
                         }
@@ -56,14 +56,14 @@ public class SeasonManager {
                             endSeason(activePlayers);
                         }
 
-                        if (activePlayers.size() <= plugin.pluginConfig.maxSurvivorsRemaining) {
+                        if (activePlayers.size() <= plugin.configManager.config.maxSurvivorsRemaining) {
                             plugin.shouldRequestSeasonEnd = true;
                         }
                     }
 
 
-                }, plugin.pluginConfig.mySQLConfig.updateInterval * 20L * 60L, // Delay config * 20 ticks * 60 seconds = minutes
-                plugin.pluginConfig.mySQLConfig.updateInterval * 20L * 60L); // Period config * 20 ticks * 60 seconds = minutes
+                }, plugin.configManager.config.mySQLConfig.updateInterval * 20L * 60L, // Delay config * 20 ticks * 60 seconds = minutes
+                plugin.configManager.config.mySQLConfig.updateInterval * 20L * 60L); // Period config * 20 ticks * 60 seconds = minutes
     }
 
     /**
@@ -73,7 +73,7 @@ public class SeasonManager {
      * @return List<Participant> activePlayers
      */
     private List<Participant> getActivePlayers(List<Participant> participants) {
-        int lastLoginThreshold = plugin.pluginConfig.lastLoginThreshold;
+        int lastLoginThreshold = plugin.configManager.config.lastLoginThreshold;
         Date lastLoginThresholdDate = new Date(System.currentTimeMillis() - ((long) lastLoginThreshold * 24 * 60 * 60 * 1000));
         participants.removeIf(player -> player.lastOnline.before(lastLoginThresholdDate));
         return participants;
@@ -93,11 +93,11 @@ public class SeasonManager {
         SeasonDAO seasonDAO = new SeasonDAOImpl(plugin.database);
 
         Date seasonStartDate = new Date(System.currentTimeMillis());
-        Date seasonSoftEndDate = new Date(System.currentTimeMillis() + (long) plugin.pluginConfig.minSeasonLength * 24 * 60 * 60 * 1000);
+        Date seasonSoftEndDate = new Date(System.currentTimeMillis() + (long) plugin.configManager.config.minSeasonLength * 24 * 60 * 60 * 1000);
         Date seasonHardEndDate = null;
 
-        if (plugin.pluginConfig.maxSeasonLength != -1) {
-            seasonHardEndDate = new Date(System.currentTimeMillis() + (long) plugin.pluginConfig.maxSeasonLength * 24 * 60 * 60 * 1000);
+        if (plugin.configManager.config.maxSeasonLength != -1) {
+            seasonHardEndDate = new Date(System.currentTimeMillis() + (long) plugin.configManager.config.maxSeasonLength * 24 * 60 * 60 * 1000);
         }
 
         Season newSeason = new Season(
