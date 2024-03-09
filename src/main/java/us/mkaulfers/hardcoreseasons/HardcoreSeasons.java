@@ -3,8 +3,7 @@ package us.mkaulfers.hardcoreseasons;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import us.mkaulfers.hardcoreseasons.commands.HardcoreSeasonsCommand;
-import us.mkaulfers.hardcoreseasons.commands.SurvivorCommand;
+import us.mkaulfers.hardcoreseasons.commands.SeasonCommand;
 import us.mkaulfers.hardcoreseasons.interfaceimpl.SeasonDAOImpl;
 import us.mkaulfers.hardcoreseasons.interfaces.SeasonDAO;
 import us.mkaulfers.hardcoreseasons.listeners.*;
@@ -33,8 +32,7 @@ public final class HardcoreSeasons extends JavaPlugin {
     }
 
     private void registerCommands() {
-        this.getCommand("hardcoreseasons").setExecutor(new HardcoreSeasonsCommand(this));
-        this.getCommand("survivor").setExecutor(new SurvivorCommand(this));
+        this.getCommand("season").setExecutor(new SeasonCommand(this));
     }
 
     private void handleStorage() {

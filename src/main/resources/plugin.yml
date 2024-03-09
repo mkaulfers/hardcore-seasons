@@ -3,20 +3,5 @@ version: ${project.version}
 main: us.mkaulfers.hardcoreseasons.HardcoreSeasons
 api-version: "1.20"
 commands:
-  hardcoreseasons:
-    usage: /<command> [reload|vote]
-    aliases: [hcs]
-    permission: hardcoreseasons.reload
-    permission-message: You do not have permission.
-  survivor:
-    usage: /<command>
-    aliases: [surv]
-    permission: hardcoreseasons.survivor
-    permission-message: You do not have permission.
-permissions:
-  hardcoreseasons.survivor:
-    description: Opens Hardcore Seasons GUI.
-    default: true
-  hardcoreseasons.reload:
-    description: HardcoreSeasons command
-    default: op
+  season:
+    aliases: [sn]
