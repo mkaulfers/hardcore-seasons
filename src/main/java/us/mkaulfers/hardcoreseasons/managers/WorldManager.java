@@ -28,26 +28,26 @@ public class WorldManager {
         String baseDir = "./seasonal_worlds/";
         List<World> officialWorlds = plugin.getServer().getWorlds();
 
-        if (!plugin.configManager.config.persistSeasonWorlds) {
-            // Correctly determining the names for the current season's worlds
+        if (plugin.configManager.config.unloadPastSeasons) {
+
             String currentSeasonMainWorldName = baseDir + namePrefix + seasonNum;
             String currentSeasonNetherWorldName = baseDir + namePrefix + seasonNum + "_nether";
             String currentSeasonEndWorldName = baseDir + namePrefix + seasonNum + "_end";
 
-            // Get all worlds and filter out the current season's worlds
             List<World> worlds = plugin.getServer().getWorlds();
             for (World world : worlds) {
                 String worldName = world.getName();
-                // If the world does not belong to the current season, unload and delete it
+
                 if (!worldName.equals(currentSeasonMainWorldName) &&
                         !worldName.equals(currentSeasonNetherWorldName) &&
-                        !worldName.equals(currentSeasonEndWorldName)) {
+                        !worldName.equals(currentSeasonEndWorldName) &&
+                        worldName.contains("./seasonal_worlds/")) {
 
-                    if (worldName.contains("./seasonal_worlds/")) {
-                        plugin.getServer().unloadWorld(world, true);
+                    plugin.getServer().unloadWorld(world, true);
+
+                    if (!plugin.configManager.config.persistSeasonWorlds) {
                         deleteRecursive(new File(world.getName())); // Ensure path is correctly specified
                     }
-
                 }
             }
         }

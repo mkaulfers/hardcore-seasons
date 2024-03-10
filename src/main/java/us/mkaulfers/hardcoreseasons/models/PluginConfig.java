@@ -6,6 +6,7 @@ public class PluginConfig {
     public boolean claimingEnabled;
     public boolean trackingEnabled;
     public boolean persistSeasonWorlds;
+    public boolean unloadPastSeasons;
     public int minSeasonLength;
     public int maxSeasonLength;
     public int maxSurvivorsRemaining;
@@ -20,6 +21,7 @@ public class PluginConfig {
     public PluginConfig(boolean claimingEnabled,
                         boolean trackingEnabled,
                         boolean persistSeasonWorlds,
+                        boolean unloadPastSeasons,
                         int minSeasonLength,
                         int maxSeasonLength,
                         int maxSurvivorsRemaining,
@@ -33,6 +35,7 @@ public class PluginConfig {
         this.claimingEnabled = claimingEnabled;
         this.trackingEnabled = trackingEnabled;
         this.persistSeasonWorlds = persistSeasonWorlds;
+        this.unloadPastSeasons = unloadPastSeasons;
         this.minSeasonLength = minSeasonLength;
         this.maxSeasonLength = maxSeasonLength;
         this.maxSurvivorsRemaining = maxSurvivorsRemaining;

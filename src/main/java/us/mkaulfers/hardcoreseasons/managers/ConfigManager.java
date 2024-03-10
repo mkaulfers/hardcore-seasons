@@ -31,6 +31,7 @@ public class ConfigManager {
         boolean claimingEnabled = rawConfig.getBoolean("claimingEnabled");
         boolean trackingEnabled = rawConfig.getBoolean("trackingEnabled");
         boolean persistSeasonWorlds = rawConfig.getBoolean("persistSeasonWorlds");
+        boolean unloadPastSeasons = rawConfig.getBoolean("unloadPastSeasons");
         int minSeasonLength = rawConfig.getInt("minSeasonLength");
         int maxSeasonLength = rawConfig.getInt("maxSeasonLength");
         int maxSurvivorsRemaining = rawConfig.getInt("maxSurvivorsRemaining");
@@ -61,6 +62,7 @@ public class ConfigManager {
                 claimingEnabled,
                 trackingEnabled,
                 persistSeasonWorlds,
+                unloadPastSeasons,
                 minSeasonLength,
                 maxSeasonLength,
                 maxSurvivorsRemaining,

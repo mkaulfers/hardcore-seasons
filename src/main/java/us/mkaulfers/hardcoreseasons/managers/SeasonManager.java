@@ -115,4 +115,13 @@ public class SeasonManager {
         // Generate New Worlds
         plugin.worldManager = new WorldManager(plugin);
     }
+
+    private void clearOfflinePlayerData() {
+        // Get all worlds, delete ender chest data and player inventory data by destroying /playerdata directory in the world folder
+
+    }
+
+    private void clearOnlinePlayerData() {
+
+    }
 }

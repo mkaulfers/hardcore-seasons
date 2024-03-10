@@ -31,6 +31,12 @@ trackingEnabled: true # Default | true
 # world.
 persistSeasonWorlds: true # Default | true
 
+# This will unload the previous seasons' worlds
+# when the season ends. It will not delete them.
+# It's useful to disable if you want to allow
+# players to spectate the previous season's world.
+unloadPastSeasons: true # Default | true
+
 # This is the minimum length for the season.
 # Season cannot end before this length of time
 # unless there are no players alive.
