@@ -22,6 +22,10 @@ public class PlayerQuit implements Listener {
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
+        if (!plugin.configManager.config.trackingEnabled) {
+            return;
+        }
+
         UUID playerId = event.getPlayer().getUniqueId();
 
         EndChestDAO endChestDAO = new EndChestDAOImpl(plugin.database);

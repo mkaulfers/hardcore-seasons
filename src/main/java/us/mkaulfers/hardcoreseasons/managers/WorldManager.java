@@ -28,6 +28,30 @@ public class WorldManager {
         String baseDir = "./seasonal_worlds/";
         List<World> officialWorlds = plugin.getServer().getWorlds();
 
+        if (!plugin.configManager.config.persistSeasonWorlds) {
+            // Correctly determining the names for the current season's worlds
+            String currentSeasonMainWorldName = baseDir + namePrefix + seasonNum;
+            String currentSeasonNetherWorldName = baseDir + namePrefix + seasonNum + "_nether";
+            String currentSeasonEndWorldName = baseDir + namePrefix + seasonNum + "_end";
+
+            // Get all worlds and filter out the current season's worlds
+            List<World> worlds = plugin.getServer().getWorlds();
+            for (World world : worlds) {
+                String worldName = world.getName();
+                // If the world does not belong to the current season, unload and delete it
+                if (!worldName.equals(currentSeasonMainWorldName) &&
+                        !worldName.equals(currentSeasonNetherWorldName) &&
+                        !worldName.equals(currentSeasonEndWorldName)) {
+
+                    if (worldName.contains("./seasonal_worlds/")) {
+                        plugin.getServer().unloadWorld(world, true);
+                        deleteRecursive(new File(world.getName())); // Ensure path is correctly specified
+                    }
+
+                }
+            }
+        }
+
         // Ensure the base directory exists
         File baseDirectory = new File(baseDir);
         if (!baseDirectory.exists()) {
@@ -43,5 +67,17 @@ public class WorldManager {
             return worldCreator.createWorld();
         }
         return null;
+    }
+
+    private void deleteRecursive(File file) {
+        if (file.isDirectory()) {
+            File[] files = file.listFiles();
+            if (files != null) {
+                for (File subFile : files) {
+                    deleteRecursive(subFile);
+                }
+            }
+        }
+        file.delete();
     }
 }

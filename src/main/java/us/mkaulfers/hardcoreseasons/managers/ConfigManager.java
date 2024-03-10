@@ -28,7 +28,9 @@ public class ConfigManager {
         plugin.saveDefaultConfig();
 
         FileConfiguration rawConfig = plugin.getConfig();
-        boolean seasonalServer = rawConfig.getBoolean("seasonalServer");
+        boolean claimingEnabled = rawConfig.getBoolean("claimingEnabled");
+        boolean trackingEnabled = rawConfig.getBoolean("trackingEnabled");
+        boolean persistSeasonWorlds = rawConfig.getBoolean("persistSeasonWorlds");
         int minSeasonLength = rawConfig.getInt("minSeasonLength");
         int maxSeasonLength = rawConfig.getInt("maxSeasonLength");
         int maxSurvivorsRemaining = rawConfig.getInt("maxSurvivorsRemaining");
@@ -56,7 +58,9 @@ public class ConfigManager {
         );
 
         config = new PluginConfig(
-                seasonalServer,
+                claimingEnabled,
+                trackingEnabled,
+                persistSeasonWorlds,
                 minSeasonLength,
                 maxSeasonLength,
                 maxSurvivorsRemaining,

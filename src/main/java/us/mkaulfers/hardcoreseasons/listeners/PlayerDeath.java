@@ -18,6 +18,10 @@ public class PlayerDeath implements Listener {
 
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
+        if (!plugin.configManager.config.trackingEnabled) {
+            return;
+        }
+
         event.getEntity().spigot().respawn();
         String result = plugin.configManager.localization.getLocalized(DEATH_MESSAGE) + " " + (plugin.currentSeasonNum + 1);
         event.getEntity().kickPlayer(result);

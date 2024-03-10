@@ -15,6 +15,10 @@ public class PlayerSpawnLocation implements Listener {
 
     @EventHandler
     public void onPlayerSpawnLocation(PlayerSpawnLocationEvent event) {
+        if (!plugin.configManager.config.trackingEnabled) {
+            return;
+        }
+
         World mainWorld = plugin.worldManager.seasonMainWorld;
         event.setSpawnLocation(mainWorld.getSpawnLocation());
     }

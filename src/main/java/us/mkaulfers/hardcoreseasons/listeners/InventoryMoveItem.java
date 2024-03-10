@@ -19,6 +19,10 @@ public class InventoryMoveItem implements Listener {
 
     @EventHandler
     public void inventoryMoveItemEvent(InventoryMoveItemEvent event) {
+        if (!plugin.configManager.config.trackingEnabled) {
+            return;
+        }
+
         Inventory source = event.getSource();
         Inventory destination = event.getDestination();
 

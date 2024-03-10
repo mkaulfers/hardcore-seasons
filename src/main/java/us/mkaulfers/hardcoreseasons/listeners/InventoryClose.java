@@ -22,6 +22,10 @@ public class InventoryClose implements Listener {
 
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent event) {
+        if (!plugin.configManager.config.trackingEnabled) {
+            return;
+        }
+
         InventoryHolder holder = event.getInventory().getHolder();
 
         if (holder instanceof BlockInventoryHolder) {

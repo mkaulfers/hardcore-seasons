@@ -15,6 +15,10 @@ public class BlockPlace implements Listener {
 
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent event) {
+        if (!plugin.configManager.config.trackingEnabled) {
+            return;
+        }
+
         Block block = event.getBlock();
         if (BlockUtils.isTrackable(block)) {
             ChestDAO chestDAO = new ChestDAOImpl(plugin.database);

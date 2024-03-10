@@ -36,6 +36,10 @@ public final class HardcoreSeasons extends JavaPlugin {
     }
 
     private void handleStorage() {
+        if (!configManager.config.trackingEnabled) {
+            return;
+        }
+
         if (configManager.config.storageType.equalsIgnoreCase("mysql")) {
             database = new Database(configManager.config);
 

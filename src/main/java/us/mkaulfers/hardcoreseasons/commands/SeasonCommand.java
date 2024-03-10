@@ -35,15 +35,28 @@ public class SeasonCommand implements TabExecutor {
             }
         }));
 
-        CommandNode start = new CommandNode("start", "admin", (sender -> {}));
-        CommandNode end = new CommandNode("end", "admin", (sender -> {}));
+        CommandNode start = new CommandNode("start", "admin", (sender -> {
+            if (!plugin.configManager.config.trackingEnabled) {
+                return;
+            }
+        }));
+
+        CommandNode end = new CommandNode("end", "admin", (sender -> {
+            if (plugin.configManager.config.trackingEnabled) {
+                return;
+            }
+
+        }));
 
         CommandNode reload = new CommandNode("reload", "admin", (sender -> {
             plugin.reloadConfig();
             sender.sendMessage(plugin.configManager.localization.getLocalized(CONFIG_RELOADED));
         }));
 
-        root.addArg(claim);
+        if (plugin.configManager.config.claimingEnabled) {
+            root.addArg(claim);
+        }
+
         root.addArg(start);
         root.addArg(end);
         root.addArg(reload);

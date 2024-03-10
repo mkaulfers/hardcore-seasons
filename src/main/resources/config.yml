@@ -2,8 +2,34 @@
 # This command will allow players to claim rewards
 # from previous seasons. If you're using MySQL, then
 # the rewards can be claimed on any server running this
-# plugin.
-seasonalServer: true # Default | true
+# plugin when this is enabled.
+claimingEnabled: true # Default | true
+
+# This enables the tracking of player actions and
+# statistics. If you disable this, the plugin will
+# not act as a seasonal server. It will only allow
+# players to claim rewards from previous seasons
+# if claimingEnabled is set to true. Otherwise,
+# the plugin will not do anything.
+
+# --------------------- WARNING ----------------------
+# This setting is critical to the function of the plugin.
+# ONLY enable it on a server that you want to be a seasonal server.
+# For example, if you want your rewards to go to a survival server,
+# from a hardcore server, then you should disable this setting on
+# the survival server, and enable it on the hardcore server.
+# This setting has destructive capabilities, and can delete
+# player inventories, end-chests, and worlds while enabled.
+trackingEnabled: true # Default | true
+
+# Disabling this will delete previous worlds
+# when the season ends. It will not delete the
+# rewards or database entries. It's useful to
+# save space on your server, as well as to
+# enable the option to spectate the previous
+# season's world, or convert to a non-seasonal
+# world.
+persistSeasonWorlds: true # Default | true
 
 # This is the minimum length for the season.
 # Season cannot end before this length of time

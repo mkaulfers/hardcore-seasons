@@ -17,6 +17,10 @@ public class PlayerPortal implements Listener {
 
     @EventHandler
     public void onPlayerPortal(PlayerPortalEvent event) {
+        if (!plugin.configManager.config.trackingEnabled) {
+            return;
+        }
+
         Player player = event.getPlayer();
 
         if (event.getCause() == PlayerTeleportEvent.TeleportCause.NETHER_PORTAL) {

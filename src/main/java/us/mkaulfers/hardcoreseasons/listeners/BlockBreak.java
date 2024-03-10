@@ -15,6 +15,11 @@ public class BlockBreak implements Listener {
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
+        if (!plugin.configManager.config.trackingEnabled) {
+            return;
+        }
+
+
         Block block = event.getBlock();
         if (BlockUtils.isTrackable(block)) {
             ChestDAO chestDAO = new ChestDAOImpl(plugin.database);

@@ -24,6 +24,10 @@ public class PlayerJoin implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
+        if (!plugin.configManager.config.trackingEnabled) {
+            return;
+        }
+
         UUID playerId = event.getPlayer().getUniqueId();
 
         PlayerDAO playerDAO = new PlayerDAOImpl(plugin.database);

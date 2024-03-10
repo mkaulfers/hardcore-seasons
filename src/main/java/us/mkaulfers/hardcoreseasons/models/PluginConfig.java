@@ -3,7 +3,9 @@ package us.mkaulfers.hardcoreseasons.models;
 import java.util.List;
 
 public class PluginConfig {
-    boolean seasonalServer;
+    public boolean claimingEnabled;
+    public boolean trackingEnabled;
+    public boolean persistSeasonWorlds;
     public int minSeasonLength;
     public int maxSeasonLength;
     public int maxSurvivorsRemaining;
@@ -15,7 +17,9 @@ public class PluginConfig {
     public String storageType;
     public MySQLConfig mySQLConfig;
 
-    public PluginConfig(boolean seasonalServer,
+    public PluginConfig(boolean claimingEnabled,
+                        boolean trackingEnabled,
+                        boolean persistSeasonWorlds,
                         int minSeasonLength,
                         int maxSeasonLength,
                         int maxSurvivorsRemaining,
@@ -26,7 +30,9 @@ public class PluginConfig {
                         List<String> endOfSeasonCommands,
                         String storageType,
                         MySQLConfig mySQLConfig) {
-        this.seasonalServer = seasonalServer;
+        this.claimingEnabled = claimingEnabled;
+        this.trackingEnabled = trackingEnabled;
+        this.persistSeasonWorlds = persistSeasonWorlds;
         this.minSeasonLength = minSeasonLength;
         this.maxSeasonLength = maxSeasonLength;
         this.maxSurvivorsRemaining = maxSurvivorsRemaining;

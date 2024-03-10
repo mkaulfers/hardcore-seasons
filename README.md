@@ -3,15 +3,15 @@
 - _Requires Spigot, Paper, or Bukkit 1.20.X_
 - _Release Date: TBD_
 
-Welcome to Hardcore Seasons! This triumphant plugin takes hardcore servers in Minecraft and kicks the thrilling experience up a notch. With an exciting new layer of automation seasonRewards, this plugin is inspired by the immersive playstyle of battle royales games like PubG, Warzone, or Fortnite but with a quintessential async Minecraft twist.
+Welcome to Hardcore Seasons! This triumphant plugin takes hardcore servers in Minecraft and kicks the thrilling experience up a notch. With an exciting new layer of automation seasonal rewards, this plugin is inspired by the immersive playstyle of battle royales games like PubG, Warzone, or Fortnite but with a quintessential async Minecraft twist.
 
 ## Feature Overview
 
 Hardcore Seasons enables your server to host engaging survival games. Throughout the game, participants will amass inventories filled with crafted and scavenged goods in typical fashion. These include all inventory blocks such as chests, shulker boxes, ender chests, barrels, and more.
 
-But here is where the fun begins: Each and every inventory that is kept by participants, down to the last diamond or scrap of dirt, is automatically safeguarded in a dedicated database. You heard it right — all loot, treasures, and materials become potential seasonRewards.
+But here is where the fun begins: Each and every inventory that is kept by participants, down to the last diamond or scrap of dirt, is automatically safeguarded in a dedicated database. You heard it right — all loot, treasures, and materials become potential seasonal rewards.
 
-Once the survival game concludes, leaving a predetermined number of victors, the world automatically resets. All those saved inventories? They then become available for claiming as seasonRewards. Players across any connected server can unlock these abundant seasonRewards from the previous gaming season with a simple "/hcclaim" command.
+Once the survival game concludes, leaving a predetermined number of victors, the world automatically resets. All those saved inventories? They then become available for claiming as seasonal rewards. Players across any connected server can unlock these abundant seasonal rewards from the previous gaming season with a simple "/season claim" command.
 
 ## Item Distribution
 
@@ -20,7 +20,7 @@ To make things even more thrilling, the plugin features a fair and balanced item
 But what to do when the loot count doesn't divide evenly? No worries, in those cases, the remaining items will be distributed to the top-tier participant based on survival duration and activity. It indeed adds an extra incentive for participants to strive to outlive and outlast others.
 
 ## Encouraging Hardcore Play
-Hardcore Seasons is tailored to stimulate and augment the hardcore gameplay experience. A mix of competition, thrill, and lucrative seasonRewards — this plugin balances challenge with accessibility, promising a captivating experience that lures participants back, time and time again. Embrace the hardcore experience like never before! So, gear up and get ready to claim your seasonRewards with Hardcore Seasons!
+Hardcore Seasons is tailored to stimulate and augment the hardcore gameplay experience. A mix of competition, thrill, and lucrative seasonal rewards — this plugin balances challenge with accessibility, promising a captivating experience that lures participants back, time and time again. Embrace the hardcore experience like never before! So, gear up and get ready to claim your seasonal rewards with Hardcore Seasons!
 
 # Default Config
 ```yaml
@@ -28,8 +28,34 @@ Hardcore Seasons is tailored to stimulate and augment the hardcore gameplay expe
 # This command will allow players to claim rewards
 # from previous seasons. If you're using MySQL, then
 # the rewards can be claimed on any server running this
-# plugin.
-seasonalServer: true # Default | true
+# plugin when this is enabled.
+claimingEnabled: true # Default | true
+
+# This enables the tracking of player actions and
+# statistics. If you disable this, the plugin will
+# not act as a seasonal server. It will only allow
+# players to claim rewards from previous seasons
+# if claimingEnabled is set to true. Otherwise,
+# the plugin will not do anything.
+
+# --------------------- WARNING ----------------------
+# This setting is critical to the function of the plugin.
+# ONLY enable it on a server that you want to be a seasonal server.
+# For example, if you want your rewards to go to a survival server,
+# from a hardcore server, then you should disable this setting on
+# the survival server, and enable it on the hardcore server.
+# This setting has destructive capabilities, and can delete
+# player inventories, end-chests, and worlds while enabled.
+trackingEnabled: true # Default | true
+
+# Disabling this will delete previous worlds
+# when the season ends. It will not delete the
+# rewards or database entries. It's useful to
+# save space on your server, as well as to
+# enable the option to spectate the previous
+# season's world, or convert to a non-seasonal
+# world.
+persistSeasonWorlds: true # Default | true
 
 # This is the minimum length for the season.
 # Season cannot end before this length of time
