@@ -12,6 +12,7 @@ rewardPage: "&9Page"
 rewardNext: "&9Next"
 rewardClose: "&4Close"
 rewardPageCounter: "&9Page" # The suffix is attached automatically (EG : Page 1/3)
+inventoryFull: "&9Your inventory is full. Please make room to claim the remaining rewards."
 
 # Selecting Season GUI
 loadingSeasons: "&9Loading seasonal rewards."

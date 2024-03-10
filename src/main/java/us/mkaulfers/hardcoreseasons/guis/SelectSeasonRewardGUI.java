@@ -29,7 +29,7 @@ public class SelectSeasonRewardGUI {
         PaginatedPane pages = new PaginatedPane(0, 0, 9, 5);
 
         plugin.rewardManager.getWonSeasonalRewardsForPlayer(player).thenAccept(rewards -> {
-            List<GuiItem> guiItems = new ArrayList<>();
+            List<GuiItem> seasonChestItem = new ArrayList<>();
 
             for (SeasonReward seasonReward : rewards) {
                 ItemStack guiChestItem = new ItemStack(Material.CHEST);
@@ -37,87 +37,95 @@ public class SelectSeasonRewardGUI {
                 guiChestItemMeta.setDisplayName(plugin.configManager.localization.getLocalized(SEASON_ITEM_NAME)  + " " + ChatColor.AQUA + seasonReward.getSeasonId());
                 guiChestItem.setItemMeta(guiChestItemMeta);
 
-                guiItems.add(new GuiItem(guiChestItem, event -> {
+                seasonChestItem.add(new GuiItem(guiChestItem, event -> {
                     event.setCancelled(true);
                     RedeemRewardsForSeasonGUI.make(player, seasonReward.getSeasonId(), plugin);
                 }));
             }
 
-            pages.populateWithGuiItems(guiItems);
-
-            // Background
-            OutlinePane backgroundPane = new OutlinePane(0, 5, 9, 1);
-
-            ItemStack blank = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
-            ItemMeta blankMeta = blank.getItemMeta();
-            blankMeta.setDisplayName(" ");
-            blank.setItemMeta(blankMeta);
-
-            backgroundPane.addItem(new GuiItem(blank));
-            backgroundPane.setRepeat(true);
-            backgroundPane.setPriority(Pane.Priority.LOWEST);
-            gui.addPane(backgroundPane);
-
-            // Navigation
-            StaticPane navigation = new StaticPane(0, 5, 9, 1);
-            navigation.setOnClick(event -> event.setCancelled(true));
-
-            // Previous
-            ItemStack previous = new ItemStack(Material.ARROW);
-            ItemMeta previousMeta = previous.getItemMeta();
-            previousMeta.setDisplayName(plugin.configManager.localization.getLocalized(SEASON_PREVIOUS));
-            previous.setItemMeta(previousMeta);
-
-            // Current
-            ItemStack current = new ItemStack(Material.PAPER);
-            ItemMeta currentMeta = current.getItemMeta();
-            currentMeta.setDisplayName(plugin.configManager.localization.getLocalized(SEASON_PAGE_COUNTER)  + " "  + ChatColor.AQUA + (pages.getPage() + 1) + ChatColor.GOLD + "/" + ChatColor.AQUA + (pages.getPages()));
-            current.setItemMeta(currentMeta);
-
-            // Next
-            ItemStack next = new ItemStack(Material.ARROW);
-            ItemMeta nextMeta = next.getItemMeta();
-            nextMeta.setDisplayName(plugin.configManager.localization.getLocalized(SEASON_NEXT));
-            next.setItemMeta(nextMeta);
-
-            // Close
-            ItemStack close = new ItemStack(Material.BARRIER);
-            ItemMeta closeMeta = close.getItemMeta();
-            closeMeta.setDisplayName(plugin.configManager.localization.getLocalized(SEASON_CLOSE));
-            close.setItemMeta(closeMeta);
-
-            navigation.addItem(new GuiItem(previous, event -> {
-                if (pages.getPage() > 0) {
-                    pages.setPage(pages.getPage() - 1);
-                    currentMeta.setDisplayName(plugin.configManager.localization.getLocalized(SEASON_PAGE_COUNTER)  + " "  + ChatColor.AQUA + (pages.getPage() + 1) + ChatColor.GOLD + "/" + ChatColor.AQUA + (pages.getPages()));
-                    current.setItemMeta(currentMeta);
-                    gui.update();
-                }
-            }), 3, 0);
-
-            navigation.addItem(new GuiItem(current, event -> {
-            }), 4, 0);
-
-            navigation.addItem(new GuiItem(next, event -> {
-                if (pages.getPage() < pages.getPages() - 1) {
-                    pages.setPage(pages.getPage() + 1);
-                    currentMeta.setDisplayName(plugin.configManager.localization.getLocalized(SEASON_PAGE_COUNTER)  + " "  + ChatColor.AQUA + (pages.getPage() + 1) + ChatColor.GOLD + "/" + ChatColor.AQUA + (pages.getPages()));
-                    current.setItemMeta(currentMeta);
-                    gui.update();
-                }
-            }), 5, 0);
-
-            navigation.addItem(new GuiItem(close, event -> event.getWhoClicked().closeInventory()), 8, 0);
+            pages.populateWithGuiItems(seasonChestItem);
+            gui.addPane(getBackground());
 
             // Must operate on the main thread
             Bukkit.getScheduler().runTask(plugin, () -> {
                 gui.addPane(pages);
-                gui.addPane(navigation);
+                gui.addPane(getNavigation(plugin, gui, pages));
                 gui.show(player);
             });
         }).exceptionally(e -> {
-            Bukkit.getLogger().warning("[Hardcore Seasons]: Failed to get rewards: " + e.getMessage());
+            Bukkit.getLogger().warning("[Hardcore Seasons]: Failed to get rewards: \n" + e.getMessage());
             return null;
         });
+    }
+
+    private static OutlinePane getBackground() {
+        // Background
+        OutlinePane backgroundPane = new OutlinePane(0, 5, 9, 1);
+
+        ItemStack blank = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
+        ItemMeta blankMeta = blank.getItemMeta();
+        blankMeta.setDisplayName(" ");
+        blank.setItemMeta(blankMeta);
+
+        backgroundPane.addItem(new GuiItem(blank));
+        backgroundPane.setRepeat(true);
+        backgroundPane.setPriority(Pane.Priority.LOWEST);
+
+        return backgroundPane;
+    }
+
+    private static StaticPane getNavigation(HardcoreSeasons plugin, ChestGui gui, PaginatedPane pages) {
+        // Navigation
+        StaticPane navigation = new StaticPane(0, 5, 9, 1);
+        navigation.setOnClick(event -> event.setCancelled(true));
+
+        // Previous
+        ItemStack previous = new ItemStack(Material.ARROW);
+        ItemMeta previousMeta = previous.getItemMeta();
+        previousMeta.setDisplayName(plugin.configManager.localization.getLocalized(SEASON_PREVIOUS));
+        previous.setItemMeta(previousMeta);
+
+        // Current
+        ItemStack current = new ItemStack(Material.PAPER);
+        ItemMeta currentMeta = current.getItemMeta();
+        currentMeta.setDisplayName(plugin.configManager.localization.getLocalized(SEASON_PAGE_COUNTER)  + " "  + ChatColor.AQUA + (pages.getPage() + 1) + ChatColor.GOLD + "/" + ChatColor.AQUA + (pages.getPages()));
+        current.setItemMeta(currentMeta);
+
+        // Next
+        ItemStack next = new ItemStack(Material.ARROW);
+        ItemMeta nextMeta = next.getItemMeta();
+        nextMeta.setDisplayName(plugin.configManager.localization.getLocalized(SEASON_NEXT));
+        next.setItemMeta(nextMeta);
+
+        // Close
+        ItemStack close = new ItemStack(Material.BARRIER);
+        ItemMeta closeMeta = close.getItemMeta();
+        closeMeta.setDisplayName(plugin.configManager.localization.getLocalized(SEASON_CLOSE));
+        close.setItemMeta(closeMeta);
+
+        navigation.addItem(new GuiItem(previous, event -> {
+            if (pages.getPage() > 0) {
+                pages.setPage(pages.getPage() - 1);
+                currentMeta.setDisplayName(plugin.configManager.localization.getLocalized(SEASON_PAGE_COUNTER)  + " "  + ChatColor.AQUA + (pages.getPage() + 1) + ChatColor.GOLD + "/" + ChatColor.AQUA + (pages.getPages()));
+                current.setItemMeta(currentMeta);
+                gui.update();
+            }
+        }), 3, 0);
+
+        navigation.addItem(new GuiItem(current, event -> {
+        }), 4, 0);
+
+        navigation.addItem(new GuiItem(next, event -> {
+            if (pages.getPage() < pages.getPages() - 1) {
+                pages.setPage(pages.getPage() + 1);
+                currentMeta.setDisplayName(plugin.configManager.localization.getLocalized(SEASON_PAGE_COUNTER)  + " "  + ChatColor.AQUA + (pages.getPage() + 1) + ChatColor.GOLD + "/" + ChatColor.AQUA + (pages.getPages()));
+                current.setItemMeta(currentMeta);
+                gui.update();
+            }
+        }), 5, 0);
+
+        navigation.addItem(new GuiItem(close, event -> event.getWhoClicked().closeInventory()), 8, 0);
+
+        return navigation;
     }
 }

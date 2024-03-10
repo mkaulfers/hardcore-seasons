@@ -96,6 +96,7 @@ public class ConfigManager {
         String rewardNext = rawLocalization.getString("rewardNext");
         String rewardClose = rawLocalization.getString("rewardClose");
         String rewardPageCounter = rawLocalization.getString("rewardPageCounter");
+        String inventoryFull = rawLocalization.getString("inventoryFull");
 
         // Selecting Season GUI
         String loadingSeasons = rawLocalization.getString("loadingSeasons");
@@ -126,6 +127,7 @@ public class ConfigManager {
                 rewardNext,
                 rewardClose,
                 rewardPageCounter,
+                inventoryFull,
                 loadingSeasons,
                 selectSeasonTitle,
                 seasonItemName,

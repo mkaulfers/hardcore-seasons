@@ -12,6 +12,7 @@ public enum LocalizationKey {
     REWARD_NEXT("rewardNext"),
     REWARD_CLOSE("rewardClose"),
     REWARD_PAGE_COUNTER("rewardPageCounter"),
+    INVENTORY_FULL("inventoryFull"),
     LOADING_SEASONS("loadingSeasons"),
     SELECT_SEASON_TITLE("selectSeasonTitle"),
     SEASON_ITEM_NAME("seasonItemName"),

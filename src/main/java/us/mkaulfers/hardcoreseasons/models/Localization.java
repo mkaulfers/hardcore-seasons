@@ -19,6 +19,7 @@ public class Localization {
     public final String rewardNext;
     public final String rewardClose;
     public final String rewardPageCounter;
+    public final String inventoryFull;
 
     // Selecting Season GUI
     public final String loadingSeasons;
@@ -48,7 +49,7 @@ public class Localization {
             String rewardPage,
             String rewardNext,
             String rewardClose,
-            String rewardPageCounter,
+            String rewardPageCounter, String inventoryFull,
             String loadingSeasons,
             String selectSeasonTitle,
             String seasonItemName,
@@ -74,6 +75,7 @@ public class Localization {
         this.rewardNext = rewardNext;
         this.rewardClose = rewardClose;
         this.rewardPageCounter = rewardPageCounter;
+        this.inventoryFull = inventoryFull;
 
         this.loadingSeasons = loadingSeasons;
         this.selectSeasonTitle = selectSeasonTitle;
@@ -103,6 +105,7 @@ public class Localization {
             case REWARD_NEXT -> translateAlternateColorCodes(rewardNext);
             case REWARD_CLOSE -> translateAlternateColorCodes(rewardClose);
             case REWARD_PAGE_COUNTER -> translateAlternateColorCodes(rewardPageCounter);
+            case INVENTORY_FULL -> translateAlternateColorCodes(inventoryFull);
             case LOADING_SEASONS -> translateAlternateColorCodes(loadingSeasons);
             case SELECT_SEASON_TITLE -> translateAlternateColorCodes(selectSeasonTitle);
             case SEASON_ITEM_NAME -> translateAlternateColorCodes(seasonItemName);
