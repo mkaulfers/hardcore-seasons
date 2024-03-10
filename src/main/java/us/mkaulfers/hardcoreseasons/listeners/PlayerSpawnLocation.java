@@ -19,7 +19,9 @@ public class PlayerSpawnLocation implements Listener {
             return;
         }
 
-        World mainWorld = plugin.worldManager.seasonMainWorld;
-        event.setSpawnLocation(mainWorld.getSpawnLocation());
+        if (!event.getSpawnLocation().getWorld().getName().contains("season_" + plugin.currentSeasonNum)) {
+            World mainWorld = plugin.worldManager.seasonMainWorld;
+            event.setSpawnLocation(mainWorld.getSpawnLocation());
+        }
     }
 }
