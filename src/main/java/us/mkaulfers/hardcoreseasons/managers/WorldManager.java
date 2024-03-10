@@ -3,6 +3,7 @@ package us.mkaulfers.hardcoreseasons.managers;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import us.mkaulfers.hardcoreseasons.HardcoreSeasons;
+import us.mkaulfers.hardcoreseasons.utils.FileUtils;
 
 import java.io.File;
 import java.util.List;
@@ -46,7 +47,7 @@ public class WorldManager {
                     plugin.getServer().unloadWorld(world, true);
 
                     if (!plugin.configManager.config.persistSeasonWorlds) {
-                        deleteRecursive(new File(world.getName())); // Ensure path is correctly specified
+                        FileUtils.deleteRecursive(new File(world.getName())); // Ensure path is correctly specified
                     }
                 }
             }
@@ -67,17 +68,5 @@ public class WorldManager {
             return worldCreator.createWorld();
         }
         return null;
-    }
-
-    private void deleteRecursive(File file) {
-        if (file.isDirectory()) {
-            File[] files = file.listFiles();
-            if (files != null) {
-                for (File subFile : files) {
-                    deleteRecursive(subFile);
-                }
-            }
-        }
-        file.delete();
     }
 }

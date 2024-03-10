@@ -1,5 +1,7 @@
 package us.mkaulfers.hardcoreseasons.managers;
 
+import org.bukkit.World;
+import org.bukkit.entity.Player;
 import us.mkaulfers.hardcoreseasons.HardcoreSeasons;
 import us.mkaulfers.hardcoreseasons.interfaceimpl.PlayerDAOImpl;
 import us.mkaulfers.hardcoreseasons.interfaceimpl.SeasonDAOImpl;
@@ -7,8 +9,12 @@ import us.mkaulfers.hardcoreseasons.interfaces.PlayerDAO;
 import us.mkaulfers.hardcoreseasons.interfaces.SeasonDAO;
 import us.mkaulfers.hardcoreseasons.models.Participant;
 import us.mkaulfers.hardcoreseasons.models.Season;
+import us.mkaulfers.hardcoreseasons.utils.FileUtils;
 
+import java.io.File;
+import java.io.IOException;
 import java.sql.Date;
+import java.util.Collection;
 import java.util.List;
 
 public class SeasonManager {
@@ -114,14 +120,25 @@ public class SeasonManager {
 
         // Generate New Worlds
         plugin.worldManager = new WorldManager(plugin);
+        clearOfflinePlayerData();
+        clearOnlinePlayerData();
     }
 
     private void clearOfflinePlayerData() {
-        // Get all worlds, delete ender chest data and player inventory data by destroying /playerdata directory in the world folder
-
+        List<World> worlds = plugin.getServer().getWorlds();
+        for (World world : worlds) {
+            File playerData = new File(world.getName() + "/playerdata");
+            if (playerData.exists()) {
+                FileUtils.deleteRecursive(playerData);
+            }
+        }
     }
 
     private void clearOnlinePlayerData() {
-
+        Collection<? extends Player> players = plugin.getServer().getOnlinePlayers();
+        for (Player player : players) {
+            player.getInventory().clear();
+            player.getEnderChest().clear();
+        }
     }
 }
