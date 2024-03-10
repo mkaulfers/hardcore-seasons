@@ -17,7 +17,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import us.mkaulfers.hardcoreseasons.HardcoreSeasons;
+import us.mkaulfers.hardcoreseasons.interfaceimpl.SeasonRewardDAOImpl;
 import us.mkaulfers.hardcoreseasons.interfaces.RewardSource;
+import us.mkaulfers.hardcoreseasons.interfaces.SeasonRewardDAO;
 import us.mkaulfers.hardcoreseasons.models.SeasonReward;
 import us.mkaulfers.hardcoreseasons.utils.InventoryUtils;
 
@@ -65,7 +67,7 @@ public class RedeemRewardsForSeasonGUI {
                         GuiItem guiItem = new GuiItem(shulkerBoxes.get(index));
 
                         guiItem.setAction(event1 -> {
-                            handleGuiItemAction(plugin, event1, gui, guiItem, index, page, shulkerBoxes, player);
+                            handleGuiItemAction(seasonId, plugin, event1, gui, guiItem, index, page, shulkerBoxes, player);
                         });
 
                         page.addItem(guiItem);
@@ -90,7 +92,17 @@ public class RedeemRewardsForSeasonGUI {
     }
 
     // Method to handle the action logic
-    private static void handleGuiItemAction(HardcoreSeasons plugin, InventoryClickEvent event, ChestGui gui, GuiItem guiItem, int index, OutlinePane page, List<ItemStack> shulkerBoxes, Player player) {
+    private static void handleGuiItemAction(
+            int seasonId,
+            HardcoreSeasons plugin,
+            InventoryClickEvent event,
+            ChestGui gui,
+            GuiItem guiItem,
+            int index,
+            OutlinePane page,
+            List<ItemStack> shulkerBoxes,
+            Player player
+    ) {
         event.setCancelled(true);
 
         // Your existing logic
@@ -109,7 +121,7 @@ public class RedeemRewardsForSeasonGUI {
             page.removeItem(guiItem);
 
             guiItem.setAction(event1 -> {
-                handleGuiItemAction(plugin, event1, gui, guiItem, index, page, shulkerBoxes, player);
+                handleGuiItemAction(seasonId, plugin, event1, gui, guiItem, index, page, shulkerBoxes, player);
             });
 
             page.addItem(guiItem);
@@ -122,7 +134,8 @@ public class RedeemRewardsForSeasonGUI {
             shulkerBoxes.add(index, new ItemStack(Material.AIR));
         }
 
-        // TODO: Update the contents for this reward in the database.
+        SeasonRewardDAO seasonRewardDAO = new SeasonRewardDAOImpl(plugin.database);
+        seasonRewardDAO.updateRedeemedRewards(seasonId, player.getUniqueId(), shulkerBoxes);
 
         gui.update();
     }

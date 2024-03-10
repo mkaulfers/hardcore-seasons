@@ -1,9 +1,11 @@
 package us.mkaulfers.hardcoreseasons.interfaceimpl;
 
 import org.bukkit.Bukkit;
+import org.bukkit.inventory.ItemStack;
 import us.mkaulfers.hardcoreseasons.interfaces.SeasonRewardDAO;
 import us.mkaulfers.hardcoreseasons.models.Database;
 import us.mkaulfers.hardcoreseasons.models.SeasonReward;
+import us.mkaulfers.hardcoreseasons.utils.InventoryUtils;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -171,6 +173,35 @@ public class SeasonRewardDAOImpl implements SeasonRewardDAO {
             } catch (SQLException e) {
                 Bukkit.getLogger().severe("[Hardcore Seasons]: Failed to update seasonReward." + e.getMessage());
                 return null;
+            }
+        });
+    }
+
+    @Override
+    public void updateRedeemedRewards(int seasonId, UUID playerId, List<ItemStack> itemStackContents) {
+        // On previous step AIR was used to help maintain the index of the itemStackContents list
+        // We need to remove all air items from the list before saving to the database
+        itemStackContents.removeIf(itemStack -> itemStack.getType().isAir());
+
+        CompletableFuture.runAsync(() -> {
+            try (Connection connection = database.getConnection()) {
+
+                if (itemStackContents.isEmpty()) {
+                    // Remove entry from database
+                    String query = "DELETE FROM season_rewards WHERE season_id = ? AND player_id = ?";
+                    PreparedStatement ps = connection.prepareStatement(query);
+                    ps.setInt(1, seasonId);
+                    ps.setString(2, playerId.toString());
+                    ps.executeUpdate();
+                } else {
+                    String query = "UPDATE season_rewards SET contents = ? WHERE season_id = ? AND player_id = ?";
+                    PreparedStatement ps = connection.prepareStatement(query);
+                    ps.setString(1, InventoryUtils.itemStackArrayToBase64(itemStackContents.toArray(new ItemStack[0])));
+                    ps.setInt(2, seasonId);
+                    ps.setString(3, playerId.toString());
+                }
+            } catch (SQLException e) {
+                Bukkit.getLogger().severe("[Hardcore Seasons]: Failed to update redeemed rewards." + e.getMessage());
             }
         });
     }
