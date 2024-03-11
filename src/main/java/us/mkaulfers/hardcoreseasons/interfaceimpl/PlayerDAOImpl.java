@@ -180,21 +180,30 @@ public class PlayerDAOImpl implements PlayerDAO {
     public CompletableFuture<Integer> save(Participant participant) {
         return CompletableFuture.supplyAsync(() -> {
             try (Connection connection = database.getConnection()) {
-                String query = "INSERT INTO participants (player_id, season_id, join_date, last_online, is_dead) VALUES (?, ?, ?, ?, ?) " +
-                        "ON DUPLICATE KEY UPDATE season_id = ?, join_date = ?, last_online = ?, is_dead = ?";
+                // First, attempt to update
+                String updateQuery = "UPDATE participants SET season_id = ?, join_date = ?, last_online = ?, is_dead = ? WHERE player_id = ?";
+                PreparedStatement updatePs = connection.prepareStatement(updateQuery);
+                updatePs.setInt(1, participant.seasonId);
+                updatePs.setTimestamp(2, participant.joinDate);
+                updatePs.setTimestamp(3, participant.lastOnline);
+                updatePs.setBoolean(4, participant.isDead);
+                updatePs.setString(5, participant.playerId.toString());
 
-                PreparedStatement ps = connection.prepareStatement(query);
-                ps.setString(1, participant.playerId.toString());
-                ps.setInt(2, participant.seasonId);
-                ps.setTimestamp(3, participant.joinDate);
-                ps.setTimestamp(4, participant.lastOnline);
-                ps.setBoolean(5, participant.isDead);
-                ps.setInt(6, participant.seasonId);
-                ps.setTimestamp(7, participant.joinDate);
-                ps.setTimestamp(8, participant.lastOnline);
-                ps.setBoolean(9, participant.isDead);
+                int rowsAffected = updatePs.executeUpdate();
 
-                return ps.executeUpdate();
+                // If update does not affect any rows, perform insert
+                if (rowsAffected == 0) {
+                    String insertQuery = "INSERT INTO participants (player_id, season_id, join_date, last_online, is_dead) VALUES (?, ?, ?, ?, ?)";
+                    PreparedStatement insertPs = connection.prepareStatement(insertQuery);
+                    insertPs.setString(1, participant.playerId.toString());
+                    insertPs.setInt(2, participant.seasonId);
+                    insertPs.setTimestamp(3, participant.joinDate);
+                    insertPs.setTimestamp(4, participant.lastOnline);
+                    insertPs.setBoolean(5, participant.isDead);
+                    return insertPs.executeUpdate();
+                } else {
+                    return rowsAffected;
+                }
             } catch (SQLException e) {
                 Bukkit.getLogger().severe("[Hardcore Seasons]: Failed to save participant." + e.getMessage());
                 return null;

@@ -67,10 +67,6 @@
             <id>sonatype</id>
             <url>https://oss.sonatype.org/content/groups/public/</url>
         </repository>
-<!--        <repository>-->
-<!--            <id>OnARandomBox</id>-->
-<!--            <url>https://repo.onarandombox.com/content/groups/public/</url>-->
-<!--        </repository>-->
     </repositories>
 
     <dependencies>
@@ -79,6 +75,11 @@
             <artifactId>HikariCP</artifactId>
             <version>5.1.0</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.xerial</groupId>
+            <artifactId>sqlite-jdbc</artifactId>
+            <version>3.45.1.0</version>
         </dependency>
         <dependency>
             <groupId>org.spigotmc</groupId>
@@ -96,11 +97,5 @@
             <artifactId>annotations</artifactId>
             <version>24.0.1</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>com.onarandombox.multiversecore</groupId> &lt;!&ndash; Don't forget to replace this &ndash;&gt;-->
-<!--            <artifactId>Multiverse-Core</artifactId> &lt;!&ndash; Replace this as well &ndash;&gt;-->
-<!--            <version>4.3.1</version> &lt;!&ndash; This too &ndash;&gt;-->
-<!--            <scope>provided</scope>-->
-<!--        </dependency>-->
     </dependencies>
 </project>

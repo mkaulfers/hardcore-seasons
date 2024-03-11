@@ -5,7 +5,10 @@ import us.mkaulfers.hardcoreseasons.interfaces.SeasonDAO;
 import us.mkaulfers.hardcoreseasons.models.Database;
 import us.mkaulfers.hardcoreseasons.models.Season;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -20,7 +23,7 @@ public class SeasonDAOImpl implements SeasonDAO {
     @Override
     public CompletableFuture<Integer> getActiveSeasonId() {
         return CompletableFuture.supplyAsync(() -> {
-            try(Connection connection = database.getConnection()) {
+            try (Connection connection = database.getConnection()) {
                 int seasonId = 0;
 
                 // Get the active season, with the highest season_id
@@ -34,7 +37,7 @@ public class SeasonDAOImpl implements SeasonDAO {
 
                 return seasonId;
             } catch (SQLException e) {
-                Bukkit.getLogger().severe("[Hardcore Seasons]: Failed to get activeSeasonId." +e.getMessage());
+                Bukkit.getLogger().severe("[Hardcore Seasons]: Failed to get activeSeasonId." + e.getMessage());
                 return 0;
             }
         });
@@ -56,22 +59,22 @@ public class SeasonDAOImpl implements SeasonDAO {
                     season = new Season(
                             rs.getInt("id"),
                             rs.getInt("season_id"),
-                            rs.getDate("start_date"),
-                            rs.getDate("soft_end_date"),
-                            rs.getDate("hard_end_date")
+                            rs.getTimestamp("start_date"),
+                            rs.getTimestamp("soft_end_date"),
+                            rs.getTimestamp("hard_end_date")
                     );
                 }
 
                 return season;
             } catch (SQLException e) {
-                Bukkit.getLogger().severe("[Hardcore Seasons]: Failed to get season." +e.getMessage());
+                Bukkit.getLogger().severe("[Hardcore Seasons]: Failed to get season." + e.getMessage());
                 return null;
             }
         });
     }
 
     @Override
-    public CompletableFuture<List<Season>> getAll(){
+    public CompletableFuture<List<Season>> getAll() {
         return CompletableFuture.supplyAsync(() -> {
             try (Connection connection = database.getConnection()) {
                 List<Season> seasons = new ArrayList<>();
@@ -84,16 +87,16 @@ public class SeasonDAOImpl implements SeasonDAO {
                     Season season = new Season(
                             rs.getInt("id"),
                             rs.getInt("season_id"),
-                            rs.getDate("start_date"),
-                            rs.getDate("soft_end_date"),
-                            rs.getDate("hard_end_date")
+                            rs.getTimestamp("start_date"),
+                            rs.getTimestamp("soft_end_date"),
+                            rs.getTimestamp("hard_end_date")
                     );
                     seasons.add(season);
                 }
 
                 return seasons;
             } catch (SQLException e) {
-                Bukkit.getLogger().severe("[Hardcore Seasons]: Failed to get all seasons." +e.getMessage());
+                Bukkit.getLogger().severe("[Hardcore Seasons]: Failed to get all seasons." + e.getMessage());
                 return null;
             }
         });
@@ -102,22 +105,22 @@ public class SeasonDAOImpl implements SeasonDAO {
     @Override
     public CompletableFuture<Integer> save(Season season) {
         return CompletableFuture.supplyAsync(() -> {
-            try(Connection connection = database.getConnection()) {
+            try (Connection connection = database.getConnection()) {
                 String query = "INSERT INTO seasons (season_id, start_date, soft_end_date, hard_end_date) VALUES (?, ?, ?, ?) " +
                         "ON DUPLICATE KEY UPDATE season_id = ?, start_date = ?, soft_end_date = ?, hard_end_date = ?";
                 PreparedStatement ps = connection.prepareStatement(query);
                 ps.setInt(1, season.seasonId);
-                ps.setDate(2, (Date) season.startDate);
-                ps.setDate(3, (Date) season.softEndDate);
-                ps.setDate(4, (Date) season.hardEndDate);
+                ps.setTimestamp(2, season.startDate);
+                ps.setTimestamp(3, season.softEndDate);
+                ps.setTimestamp(4, season.hardEndDate);
                 ps.setInt(5, season.seasonId);
-                ps.setDate(6, (Date) season.startDate);
-                ps.setDate(7, (Date) season.softEndDate);
-                ps.setDate(8, (Date) season.hardEndDate);
+                ps.setTimestamp(6, season.startDate);
+                ps.setTimestamp(7, season.softEndDate);
+                ps.setTimestamp(8, season.hardEndDate);
 
                 return ps.executeUpdate();
             } catch (SQLException e) {
-                Bukkit.getLogger().severe("[Hardcore Seasons]: Failed to save season." +e.getMessage());
+                Bukkit.getLogger().severe("[Hardcore Seasons]: Failed to save season." + e.getMessage());
                 return 0;
             }
         });
@@ -126,18 +129,18 @@ public class SeasonDAOImpl implements SeasonDAO {
     @Override
     public CompletableFuture<Integer> insert(Season season) {
         return CompletableFuture.supplyAsync(() -> {
-            try(Connection connection = database.getConnection()) {
+            try (Connection connection = database.getConnection()) {
                 String query = "INSERT INTO seasons (id, season_id, start_date, soft_end_date, hard_end_date) VALUES (?, ?, ?, ?, ?)";
                 PreparedStatement ps = connection.prepareStatement(query);
                 ps.setInt(1, season.id);
                 ps.setInt(2, season.seasonId);
-                ps.setDate(3, (Date) season.startDate);
-                ps.setDate(4, (Date) season.softEndDate);
-                ps.setDate(5, (Date) season.hardEndDate);
+                ps.setTimestamp(3, season.startDate);
+                ps.setTimestamp(4, season.softEndDate);
+                ps.setTimestamp(5, season.hardEndDate);
 
                 return ps.executeUpdate();
             } catch (SQLException e) {
-                Bukkit.getLogger().severe("[Hardcore Seasons]: Failed to insert season." +e.getMessage());
+                Bukkit.getLogger().severe("[Hardcore Seasons]: Failed to insert season." + e.getMessage());
                 return 0;
             }
         });
@@ -146,18 +149,18 @@ public class SeasonDAOImpl implements SeasonDAO {
     @Override
     public CompletableFuture<Integer> update(Season season) {
         return CompletableFuture.supplyAsync(() -> {
-            try(Connection connection = database.getConnection()) {
+            try (Connection connection = database.getConnection()) {
                 String query = "UPDATE seasons SET season_id = ?, start_date = ?, soft_end_date = ?, hard_end_date = ? WHERE id = ?";
                 PreparedStatement ps = connection.prepareStatement(query);
                 ps.setInt(1, season.seasonId);
-                ps.setDate(2, (Date) season.startDate);
-                ps.setDate(3, (Date) season.softEndDate);
-                ps.setDate(4, (Date) season.hardEndDate);
+                ps.setTimestamp(2, season.startDate);
+                ps.setTimestamp(3, season.softEndDate);
+                ps.setTimestamp(4, season.hardEndDate);
                 ps.setInt(5, season.id);
 
                 return ps.executeUpdate();
             } catch (SQLException e) {
-                Bukkit.getLogger().severe("[Hardcore Seasons]: Failed to update season." +e.getMessage());
+                Bukkit.getLogger().severe("[Hardcore Seasons]: Failed to update season." + e.getMessage());
                 return 0;
             }
         });
@@ -166,7 +169,7 @@ public class SeasonDAOImpl implements SeasonDAO {
     @Override
     public CompletableFuture<Integer> delete(Season season) {
         return CompletableFuture.supplyAsync(() -> {
-            try(Connection connection = database.getConnection()) {
+            try (Connection connection = database.getConnection()) {
                 String query = "DELETE FROM seasons WHERE id = ?";
 
                 PreparedStatement ps = connection.prepareStatement(query);
@@ -174,7 +177,7 @@ public class SeasonDAOImpl implements SeasonDAO {
 
                 return ps.executeUpdate();
             } catch (SQLException e) {
-                Bukkit.getLogger().severe("[Hardcore Seasons]: Failed to delete season." +e.getMessage());
+                Bukkit.getLogger().severe("[Hardcore Seasons]: Failed to delete season." + e.getMessage());
                 return 0;
             }
         });

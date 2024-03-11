@@ -10,10 +10,9 @@ import us.mkaulfers.hardcoreseasons.interfaces.PlayerDAO;
 import us.mkaulfers.hardcoreseasons.models.Participant;
 
 import java.sql.Timestamp;
-import java.util.Date;
 import java.util.UUID;
 
-import static us.mkaulfers.hardcoreseasons.models.LocalizationKey.*;
+import static us.mkaulfers.hardcoreseasons.models.LocalizationKey.DEATH_MESSAGE;
 
 public class PlayerJoin implements Listener {
     HardcoreSeasons plugin;
@@ -39,8 +38,8 @@ public class PlayerJoin implements Listener {
                                 0,
                                 playerId,
                                 plugin.currentSeasonNum,
-                                new Timestamp(new Date().getTime()),
-                                new Timestamp(new Date().getTime()),
+                                new Timestamp(System.currentTimeMillis()),
+                                new Timestamp(System.currentTimeMillis()),
                                 false
                         );
 
@@ -52,7 +51,7 @@ public class PlayerJoin implements Listener {
                             event.getPlayer().kickPlayer(result);
                         });
                     } else {
-                        p.lastOnline = new Timestamp(new Date().getTime());
+                        p.lastOnline = new Timestamp(System.currentTimeMillis());
                         playerDAO.update(p);
                     }
                 });

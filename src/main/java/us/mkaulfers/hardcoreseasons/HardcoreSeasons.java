@@ -39,23 +39,19 @@ public final class HardcoreSeasons extends JavaPlugin {
             return;
         }
 
-        if (configManager.config.storageType.equalsIgnoreCase("mysql")) {
-            database = new Database(configManager.config);
+        database = new Database(configManager.config);
 
-            SeasonDAO seasonDAO = new SeasonDAOImpl(database);
-            seasonDAO.getActiveSeasonId().thenAccept(seasonId -> {
-                currentSeasonNum = seasonId;
+        SeasonDAO seasonDAO = new SeasonDAOImpl(database);
+        seasonDAO.getActiveSeasonId().thenAccept(seasonId -> {
+            currentSeasonNum = seasonId;
 
-                Bukkit.getScheduler().runTask(this, () -> {
-                    worldManager = new WorldManager(this);
-                    seasonManager = new SeasonManager(this);
-                    rewardManager = new RewardManager(this);
-                });
+            Bukkit.getScheduler().runTask(this, () -> {
+                worldManager = new WorldManager(this);
+                seasonManager = new SeasonManager(this);
+                rewardManager = new RewardManager(this);
             });
+        });
 
-        } else {
-            /// Use SQLite
-        }
     }
 
     private void registerListeners() {

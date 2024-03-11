@@ -9,13 +9,12 @@ import us.mkaulfers.hardcoreseasons.interfaceimpl.VoteDAOImpl;
 import us.mkaulfers.hardcoreseasons.interfaces.PlayerDAO;
 import us.mkaulfers.hardcoreseasons.interfaces.SeasonDAO;
 import us.mkaulfers.hardcoreseasons.interfaces.VoteDAO;
-import us.mkaulfers.hardcoreseasons.models.LocalizationKey;
 import us.mkaulfers.hardcoreseasons.models.Participant;
 import us.mkaulfers.hardcoreseasons.models.Season;
 import us.mkaulfers.hardcoreseasons.models.Vote;
 
 import java.io.File;
-import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -41,9 +40,9 @@ public class SeasonManager {
             int maxSurvivorsRemaining = plugin.configManager.config.maxSurvivorsRemaining;
 
             Season activeSeason = seasonDAO.get(plugin.currentSeasonNum).join();
-            Date now = new Date(System.currentTimeMillis());
-            Date softEndDate = activeSeason.softEndDate;
-            Date lastLoginThresholdDate = new Date(System.currentTimeMillis() - daysToTicks(lastLoginThreshold));
+            Timestamp now = new Timestamp(System.currentTimeMillis());
+            Timestamp softEndDate = activeSeason.softEndDate;
+            Timestamp lastLoginThresholdDate = new Timestamp(System.currentTimeMillis() - daysToTicks(lastLoginThreshold));
 
             if (softEndDate.before(now)) {
                 List<Participant> participants = playerDAO.getAllForSeason(plugin.currentSeasonNum).join();
@@ -81,13 +80,13 @@ public class SeasonManager {
                     }
                 }
             }
-        }, 0L, minutesToTicks(plugin.configManager.config.notificationInterval));
+        }, minutesToTicks(1), minutesToTicks(plugin.configManager.config.notificationInterval));
     }
 
     private boolean shouldResetVote(Vote vote) {
-        Date now = new Date(System.currentTimeMillis());
-        Date lastNotified = vote.dateLastVoted;
-        return lastNotified.before(new Date(now.getTime() - daysToTicks(plugin.configManager.config.voteResetInterval)));
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+        Timestamp lastNotified = vote.dateLastVoted;
+        return lastNotified.before(new Timestamp(now.getTime() - daysToTicks(plugin.configManager.config.voteResetInterval)));
     }
 
     private void scheduleSeasonEndTracker() {
@@ -99,7 +98,7 @@ public class SeasonManager {
                     Season activeSeason = seasonDAO.get(plugin.currentSeasonNum).join();
                     List<Participant> participants = playerDAO.getAllForSeason(plugin.currentSeasonNum).join();
                     List<Participant> activePlayers = getActivePlayers(participants);
-                    Date currentDate = new Date(System.currentTimeMillis());
+                    Timestamp currentDate = new Timestamp(System.currentTimeMillis());
 
                     if (plugin.configManager.config.maxSeasonLength != -1) {
                         if (activeSeason.hardEndDate.before(currentDate)) {
@@ -113,7 +112,7 @@ public class SeasonManager {
                         }
                     }
 
-                }, plugin.configManager.config.mySQLConfig.updateInterval * 20L * 60L, // Delay config * 20 ticks * 60 seconds = minutes
+                }, 60, // Delay 3 seconds
                 plugin.configManager.config.mySQLConfig.updateInterval * 20L * 60L); // Period config * 20 ticks * 60 seconds = minutes
     }
 
@@ -125,7 +124,7 @@ public class SeasonManager {
      */
     private List<Participant> getActivePlayers(List<Participant> participants) {
         int lastLoginThreshold = plugin.configManager.config.lastLoginThreshold;
-        Date lastLoginThresholdDate = new Date(System.currentTimeMillis() - ((long) lastLoginThreshold * 24 * 60 * 60 * 1000));
+        Timestamp lastLoginThresholdDate = new Timestamp(System.currentTimeMillis() - ((long) lastLoginThreshold * 24 * 60 * 60 * 1000));
         participants.removeIf(player -> player.lastOnline.before(lastLoginThresholdDate));
         return participants;
     }
@@ -141,12 +140,12 @@ public class SeasonManager {
         // Generate New Season
         SeasonDAO seasonDAO = new SeasonDAOImpl(plugin.database);
 
-        Date seasonStartDate = new Date(System.currentTimeMillis());
-        Date seasonSoftEndDate = new Date(System.currentTimeMillis() + (long) daysToTicks(plugin.configManager.config.minSeasonLength));
-        Date seasonHardEndDate = null;
+        Timestamp seasonStartDate = new Timestamp(System.currentTimeMillis());
+        Timestamp seasonSoftEndDate = new Timestamp(System.currentTimeMillis() + (long) daysToTicks(plugin.configManager.config.minSeasonLength));
+        Timestamp seasonHardEndDate = null;
 
         if (plugin.configManager.config.maxSeasonLength != -1) {
-            seasonHardEndDate = new Date(System.currentTimeMillis() + (long) daysToTicks(plugin.configManager.config.maxSeasonLength));
+            seasonHardEndDate = new Timestamp(System.currentTimeMillis() + (long) daysToTicks(plugin.configManager.config.maxSeasonLength));
         }
 
         Season newSeason = new Season(

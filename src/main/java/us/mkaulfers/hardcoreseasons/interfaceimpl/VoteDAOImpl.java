@@ -31,7 +31,7 @@ public class VoteDAOImpl implements VoteDAO {
     @Override
     public CompletableFuture<List<Vote>> getAllForSeason(int seasonId) {
         return CompletableFuture.supplyAsync(() -> {
-            try(Connection connection = database.getConnection()) {
+            try (Connection connection = database.getConnection()) {
                 List<Vote> votes = new ArrayList<>();
 
                 String query = "SELECT * FROM votes WHERE season_id = ?";
@@ -43,7 +43,7 @@ public class VoteDAOImpl implements VoteDAO {
                     int id = rs.getInt("id");
                     int seasonId1 = rs.getInt("season_id");
                     String playerId = rs.getString("player_id");
-                    Date lastNotification = rs.getDate("last_notification");
+                    Timestamp lastNotification = rs.getTimestamp("last_notification");
                     boolean shouldEndSeason = rs.getBoolean("should_end_season");
 
                     votes.add(new Vote(id, seasonId1, UUID.fromString(playerId), lastNotification, shouldEndSeason));
@@ -60,7 +60,7 @@ public class VoteDAOImpl implements VoteDAO {
     @Override
     public CompletableFuture<Vote> getPlayerVote(UUID playerId, int seasonId) {
         return CompletableFuture.supplyAsync(() -> {
-            try(Connection connection = database.getConnection()) {
+            try (Connection connection = database.getConnection()) {
                 String query = "SELECT * FROM votes WHERE player_id = ? AND season_id = ?";
                 PreparedStatement ps = connection.prepareStatement(query);
                 ps.setString(1, playerId.toString());
@@ -71,7 +71,7 @@ public class VoteDAOImpl implements VoteDAO {
                     int id = rs.getInt("id");
                     int seasonId1 = rs.getInt("season_id");
                     String playerId1 = rs.getString("player_id");
-                    Date lastNotification = rs.getDate("last_notification");
+                    Timestamp lastNotification = rs.getTimestamp("last_notification");
                     boolean shouldEndSeason = rs.getBoolean("should_end_season");
 
                     return new Vote(id, seasonId1, UUID.fromString(playerId1), lastNotification, shouldEndSeason);
@@ -88,12 +88,12 @@ public class VoteDAOImpl implements VoteDAO {
     @Override
     public CompletableFuture<Integer> save(Vote vote) {
         return CompletableFuture.supplyAsync(() -> {
-            try(Connection connection = database.getConnection()) {
+            try (Connection connection = database.getConnection()) {
                 String query = "INSERT INTO votes (season_id, player_id, date_last_voted, should_end_season) VALUES (?, ?, ?, ?)";
                 PreparedStatement ps = connection.prepareStatement(query);
                 ps.setInt(1, vote.seasonId);
                 ps.setString(2, vote.playerId.toString());
-                ps.setDate(3, vote.dateLastVoted);
+                ps.setTimestamp(3, vote.dateLastVoted);
                 ps.setBoolean(4, vote.shouldEndSeason);
 
                 return ps.executeUpdate();
@@ -112,10 +112,10 @@ public class VoteDAOImpl implements VoteDAO {
     @Override
     public CompletableFuture<Integer> update(Vote vote) {
         return CompletableFuture.supplyAsync(() -> {
-            try(Connection connection = database.getConnection()) {
+            try (Connection connection = database.getConnection()) {
                 String query = "UPDATE votes SET last_notification = ?, should_end_season = ? WHERE id = ?";
                 PreparedStatement ps = connection.prepareStatement(query);
-                ps.setDate(1, vote.dateLastVoted);
+                ps.setTimestamp(1, vote.dateLastVoted);
                 ps.setBoolean(2, vote.shouldEndSeason);
                 ps.setInt(3, vote.id);
 

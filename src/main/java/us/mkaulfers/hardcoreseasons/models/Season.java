@@ -1,15 +1,15 @@
 package us.mkaulfers.hardcoreseasons.models;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 
 public class Season implements Comparable<Season> {
     public int id;
     public int seasonId;
-    public Date startDate;
-    public Date softEndDate;
-    public Date hardEndDate;
+    public Timestamp startDate;
+    public Timestamp softEndDate;
+    public Timestamp hardEndDate;
 
-    public Season(int id, int seasonId, Date startDate, Date softEndDate, Date hardEndDate) {
+    public Season(int id, int seasonId, Timestamp startDate, Timestamp softEndDate, Timestamp hardEndDate) {
         this.id = id;
         this.seasonId = seasonId;
         this.startDate = startDate;
