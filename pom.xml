@@ -6,7 +6,7 @@
 
     <groupId>us.mkaulfers.hardcoreseasons.HardcoreSeasons</groupId>
     <artifactId>HardcoreSeasons</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0b</version>
     <packaging>jar</packaging>
 
     <name>HardcoreSeasons</name>
@@ -46,7 +46,7 @@
                             <shadedPattern>us.mkaulfers.hardcoreseasons.HardcoreSeasons.inventoryframework</shadedPattern>
                         </relocation>
                     </relocations>
-                    <outputFile>../_minecraft_dev_server/plugins/${project.artifactId}-${project.version}-DEV.jar</outputFile>
+                    <outputFile>../_minecraft_dev_server/plugins/${project.artifactId}-${project.version}.jar</outputFile>
                 </configuration>
             </plugin>
         </plugins>

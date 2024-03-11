@@ -1,7 +1,7 @@
 # Hardcore Seasons Minecraft Plugin
-- Current Version: 0.0.1a
-- _Requires Spigot, Paper, or Bukkit 1.20.X_
-- _Release Date: TBD_
+- Current Version: 1.0.0b _(Beta)_
+- _Requires Spigot, Paper, or Bukkit 1.20.X_ 
+_(Other versions "May" work, but have not been tested.)_
 
 Welcome to Hardcore Seasons! This triumphant plugin takes hardcore servers in Minecraft and kicks the thrilling experience up a notch. With an exciting new layer of automation seasonal rewards, this plugin is inspired by the immersive playstyle of battle royales games like PubG, Warzone, or Fortnite but with a quintessential async Minecraft twist.
 
@@ -21,6 +21,10 @@ But what to do when the loot count doesn't divide evenly? No worries, in those c
 
 ## Encouraging Hardcore Play
 Hardcore Seasons is tailored to stimulate and augment the hardcore gameplay experience. A mix of competition, thrill, and lucrative seasonal rewards — this plugin balances challenge with accessibility, promising a captivating experience that lures participants back, time and time again. Embrace the hardcore experience like never before! So, gear up and get ready to claim your seasonal rewards with Hardcore Seasons!
+
+## Technical Support? We've Got You Covered
+- Wiki: [GitBook](https://app.gitbook.com/invite/p0BPImHuxjc0DaxRNvT8/YF5rgrN12WFlkv2ukwoV)
+- Discord: https://discord.gg/mcET68gTGM
 
 # Default Config
 ```yaml
