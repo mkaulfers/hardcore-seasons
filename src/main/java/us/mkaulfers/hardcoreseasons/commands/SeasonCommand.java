@@ -8,8 +8,16 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import us.mkaulfers.hardcoreseasons.HardcoreSeasons;
 import us.mkaulfers.hardcoreseasons.guis.SelectSeasonRewardGUI;
+import us.mkaulfers.hardcoreseasons.interfaceimpl.SeasonDAOImpl;
+import us.mkaulfers.hardcoreseasons.interfaceimpl.VoteDAOImpl;
+import us.mkaulfers.hardcoreseasons.interfaces.SeasonDAO;
+import us.mkaulfers.hardcoreseasons.interfaces.VoteDAO;
 import us.mkaulfers.hardcoreseasons.models.CommandNode;
+import us.mkaulfers.hardcoreseasons.models.LocalizationKey;
+import us.mkaulfers.hardcoreseasons.models.Season;
+import us.mkaulfers.hardcoreseasons.models.Vote;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,19 +43,6 @@ public class SeasonCommand implements TabExecutor {
             }
         }));
 
-        CommandNode start = new CommandNode("start", "admin", (sender -> {
-            if (!plugin.configManager.config.trackingEnabled) {
-                return;
-            }
-        }));
-
-        CommandNode end = new CommandNode("end", "admin", (sender -> {
-            if (plugin.configManager.config.trackingEnabled) {
-                return;
-            }
-
-        }));
-
         CommandNode reload = new CommandNode("reload", "admin", (sender -> {
             plugin.reloadConfig();
             sender.sendMessage(plugin.configManager.localization.getLocalized(CONFIG_RELOADED));
@@ -57,16 +52,18 @@ public class SeasonCommand implements TabExecutor {
             root.addArg(claim);
         }
 
-        root.addArg(start);
-        root.addArg(end);
         root.addArg(reload);
 
         // Vote Branch
         CommandNode vote = new CommandNode("vote", null, (sender -> {
         }));
+
         CommandNode vContinue = new CommandNode("continue", null, (sender -> {
+            castVote(sender, false);
         }));
+
         CommandNode vEnd = new CommandNode("end", null, (sender -> {
+            castVote(sender, true);
         }));
 
         vote.addArg(vContinue);
@@ -154,5 +151,41 @@ public class SeasonCommand implements TabExecutor {
         }
 
         return suggestions;
+    }
+
+    private void castVote(CommandSender sender, boolean shouldEndSeason) {
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+        SeasonDAO seasonDAO = new SeasonDAOImpl(plugin.database);
+        Season activeSeason = seasonDAO.get(plugin.currentSeasonNum).join();
+
+        if (activeSeason == null || !activeSeason.softEndDate.before(now)) {
+            sender.sendMessage(plugin.configManager.localization.getLocalized(CANNOT_VOTE));
+            return;
+        }
+
+        if (sender instanceof Player) {
+            Player player = (Player) sender;
+
+            Vote vote = new Vote(
+                    0,
+                    plugin.currentSeasonNum,
+                    player.getUniqueId(),
+                    new Timestamp(System.currentTimeMillis()),
+                    shouldEndSeason
+            );
+
+            VoteDAO voteDAO = new VoteDAOImpl(plugin.database);
+
+            voteDAO.save(vote).thenAccept(success -> {
+                if (success != null) {
+                    sender.sendMessage(plugin.configManager.localization.getLocalized(shouldEndSeason ? VOTE_END_SUCCESS : VOTE_CONTINUE_SUCCESS));
+                } else {
+                    sender.sendMessage(plugin.configManager.localization.getLocalized(VOTE_FAIL));
+                }
+            });
+
+        } else {
+            sender.sendMessage(plugin.configManager.localization.getLocalized(MUST_BE_A_PLAYER));
+        }
     }
 }

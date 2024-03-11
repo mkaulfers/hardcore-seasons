@@ -25,8 +25,18 @@ seasonPageCounter: "&9Page" # The suffix is attached automatically (EG : Page 1/
 
 # Player Join Messages
 haveDied: "&cYou have died and must wait until &bSeason" # The suffix is attached automatically (EG : ... Season 1.)
+
+# Vote Messages
+cannotVote: "&9You cannot vote at this time. The season is not ending."
 requestingVoteTop: "&9The server is requesting a vote to end the season"
 requestingVoteBottom: "&9Please type &b/season vote &9< &bend&9 or &bcontinue&9 > to vote."
+voteContinueSuccess: "&9You have voted to continue the season."
+voteEndSuccess: "&9You have voted to end the season."
+voteFail: "&9There was an issue casting your vote, please try again."
 
 # Player Death Messages
 deathMessage: "&cYou have died and must wait until &bSeason" # The suffix is attached automatically (EG : ... Season 1.)
+
+# Season End Messages
+seasonEnding: "&9The season has ended. &c(Rejoin in 1 minute.)"
+seasonGenerating: "&9A new season is generating. &c(Rejoin in 1 minute.)"

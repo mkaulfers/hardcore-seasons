@@ -10,6 +10,7 @@ public class PluginConfig {
     public int minSeasonLength;
     public int maxSeasonLength;
     public int maxSurvivorsRemaining;
+    public int minVotesToEndSeason;
     public int lastLoginThreshold;
     public int notificationInterval;
     public int voteResetInterval;
@@ -24,6 +25,7 @@ public class PluginConfig {
                         int minSeasonLength,
                         int maxSeasonLength,
                         int maxSurvivorsRemaining,
+                        int minVotesToEndSeason,
                         int lastLoginThreshold,
                         int notificationInterval,
                         int voteResetInterval,
@@ -37,6 +39,7 @@ public class PluginConfig {
         this.minSeasonLength = minSeasonLength;
         this.maxSeasonLength = maxSeasonLength;
         this.maxSurvivorsRemaining = maxSurvivorsRemaining;
+        this.minVotesToEndSeason = minVotesToEndSeason;
         this.lastLoginThreshold = lastLoginThreshold;
         this.notificationInterval = notificationInterval;
         this.voteResetInterval = voteResetInterval;

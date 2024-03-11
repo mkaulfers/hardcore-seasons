@@ -15,6 +15,7 @@ import us.mkaulfers.hardcoreseasons.models.Database;
 
 public final class HardcoreSeasons extends JavaPlugin {
     public Database database;
+    public boolean isGeneratingNewSeason = false;
     public int currentSeasonNum;
     public ConfigManager configManager;
     public SeasonManager seasonManager;
@@ -65,6 +66,7 @@ public final class HardcoreSeasons extends JavaPlugin {
         pm.registerEvents(new InventoryMoveItem(this), this);
         pm.registerEvents(new PlayerPortal(this), this);
         pm.registerEvents(new PlayerSpawnLocation(this), this);
+        pm.registerEvents(new AsyncPlayerPreLogin(this), this);
     }
 
     @Override

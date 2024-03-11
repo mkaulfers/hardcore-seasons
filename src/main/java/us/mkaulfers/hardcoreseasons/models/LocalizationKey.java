@@ -21,9 +21,16 @@ public enum LocalizationKey {
     SEASON_CLOSE("seasonClose"),
     SEASON_PAGE_COUNTER("seasonPageCounter"),
     HAVE_DIED("haveDied"),
+    CANNOT_VOTE("cannotVote"),
     REQUESTING_VOTE_TOP("requestingVoteTop"),
     REQUESTING_VOTE_BOTTOM("requestingVoteBottom"),
-    DEATH_MESSAGE("deathMessage");
+    VOTE_CONTINUE_SUCCESS("voteContinueSuccess"),
+    VOTE_END_SUCCESS("voteEndSuccess"),
+    VOTE_FAIL("voteFail"),
+    DEATH_MESSAGE("deathMessage"),
+    SEASON_ENDING("seasonEnding"),
+
+    SEASON_GENERATING("seasonGenerating");
 
     private final String key;
 

@@ -32,11 +32,21 @@ public class Localization {
 
     // Player Join Messages
     public final String haveDied;
+
+    // Vote Messages
+    public final String cannotVote;
     public final String requestingVoteTop;
     public final String requestingVoteBottom;
+    public final String voteContinueSuccess;
+    public final String voteEndSuccess;
+    public final String voteFail;
 
     // Player Death Messages
     public final String deathMessage;
+
+    // Season Messages
+    public final String seasonEnding;
+    public final String seasonGenerating;
 
     public Localization(
             String configReloaded,
@@ -49,7 +59,8 @@ public class Localization {
             String rewardPage,
             String rewardNext,
             String rewardClose,
-            String rewardPageCounter, String inventoryFull,
+            String rewardPageCounter,
+            String inventoryFull,
             String loadingSeasons,
             String selectSeasonTitle,
             String seasonItemName,
@@ -58,9 +69,15 @@ public class Localization {
             String seasonClose,
             String seasonPageCounter,
             String haveDied,
+            String cannotVote,
             String requestingVoteTop,
             String requestingVoteBottom,
-            String deathMessage
+            String voteContinueSuccess,
+            String voteEndSuccess,
+            String voteFail,
+            String deathMessage,
+            String seasonEnding,
+            String seasonGenerating
     ) {
 
         this.configReloaded = configReloaded;
@@ -86,10 +103,18 @@ public class Localization {
         this.seasonPageCounter = seasonPageCounter;
 
         this.haveDied = haveDied;
+
+        this.cannotVote = cannotVote;
         this.requestingVoteTop = requestingVoteTop;
         this.requestingVoteBottom = requestingVoteBottom;
+        this.voteContinueSuccess = voteContinueSuccess;
+        this.voteEndSuccess = voteEndSuccess;
+        this.voteFail = voteFail;
 
         this.deathMessage = deathMessage;
+
+        this.seasonEnding = seasonEnding;
+        this.seasonGenerating = seasonGenerating;
     }
 
     public String getLocalized(LocalizationKey key) {
@@ -114,9 +139,15 @@ public class Localization {
             case SEASON_CLOSE -> translateAlternateColorCodes(seasonClose);
             case SEASON_PAGE_COUNTER -> translateAlternateColorCodes(seasonPageCounter);
             case HAVE_DIED -> translateAlternateColorCodes(haveDied);
+            case CANNOT_VOTE -> translateAlternateColorCodes(cannotVote);
             case REQUESTING_VOTE_TOP -> translateAlternateColorCodes(requestingVoteTop);
             case REQUESTING_VOTE_BOTTOM -> translateAlternateColorCodes(requestingVoteBottom);
-            case DEATH_MESSAGE -> deathMessage;
+            case VOTE_CONTINUE_SUCCESS -> translateAlternateColorCodes(voteContinueSuccess);
+            case VOTE_END_SUCCESS -> translateAlternateColorCodes(voteEndSuccess);
+            case VOTE_FAIL -> translateAlternateColorCodes(voteFail);
+            case DEATH_MESSAGE -> translateAlternateColorCodes(deathMessage);
+            case SEASON_ENDING -> translateAlternateColorCodes(seasonEnding);
+            case SEASON_GENERATING -> translateAlternateColorCodes(seasonGenerating);
         };
     }
 

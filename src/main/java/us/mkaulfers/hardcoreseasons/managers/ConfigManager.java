@@ -34,6 +34,7 @@ public class ConfigManager {
         int minSeasonLength = rawConfig.getInt("minSeasonLength");
         int maxSeasonLength = rawConfig.getInt("maxSeasonLength");
         int maxSurvivorsRemaining = rawConfig.getInt("maxSurvivorsRemaining");
+        int minVotesToEndSeason = rawConfig.getInt("minVotesToEndSeason");
         int lastLoginThreshold = rawConfig.getInt("lastLoginThreshold");
         int notificationInterval = rawConfig.getInt("notificationInterval");
         int voteResetInterval = rawConfig.getInt("voteResetInterval");
@@ -64,6 +65,7 @@ public class ConfigManager {
                 minSeasonLength,
                 maxSeasonLength,
                 maxSurvivorsRemaining,
+                minVotesToEndSeason,
                 lastLoginThreshold,
                 notificationInterval,
                 voteResetInterval,
@@ -106,11 +108,21 @@ public class ConfigManager {
 
         // Player Join Messages
         String haveDied = rawLocalization.getString("haveDied");
+
+        // Vote Messages
+        String cannotVote = rawLocalization.getString("cannotVote");
         String requestingVoteTop = rawLocalization.getString("requestingVoteTop");
         String requestingVoteBottom = rawLocalization.getString("requestingVoteBottom");
+        String voteContinueSuccess = rawLocalization.getString("voteContinueSuccess");
+        String voteEndSuccess = rawLocalization.getString("voteEndSuccess");
+        String voteFail = rawLocalization.getString("voteFail");
 
         // Player Death Messages
         String deathMessage = rawLocalization.getString("deathMessage");
+
+        // Season Messages
+        String seasonEnding = rawLocalization.getString("seasonEnding");
+        String seasonGenerating = rawLocalization.getString("seasonGenerating");
 
         localization = new Localization(
                 configReloaded,
@@ -133,9 +145,15 @@ public class ConfigManager {
                 seasonClose,
                 seasonPageCounter,
                 haveDied,
+                cannotVote,
                 requestingVoteTop,
                 requestingVoteBottom,
-                deathMessage
+                voteContinueSuccess,
+                voteEndSuccess,
+                voteFail,
+                deathMessage,
+                seasonEnding,
+                seasonGenerating
         );
     }
 }

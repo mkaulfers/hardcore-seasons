@@ -43,7 +43,7 @@ public class VoteDAOImpl implements VoteDAO {
                     int id = rs.getInt("id");
                     int seasonId1 = rs.getInt("season_id");
                     String playerId = rs.getString("player_id");
-                    Timestamp lastNotification = rs.getTimestamp("last_notification");
+                    Timestamp lastNotification = rs.getTimestamp("date_last_voted");
                     boolean shouldEndSeason = rs.getBoolean("should_end_season");
 
                     votes.add(new Vote(id, seasonId1, UUID.fromString(playerId), lastNotification, shouldEndSeason));
@@ -71,7 +71,7 @@ public class VoteDAOImpl implements VoteDAO {
                     int id = rs.getInt("id");
                     int seasonId1 = rs.getInt("season_id");
                     String playerId1 = rs.getString("player_id");
-                    Timestamp lastNotification = rs.getTimestamp("last_notification");
+                    Timestamp lastNotification = rs.getTimestamp("date_last_voted");
                     boolean shouldEndSeason = rs.getBoolean("should_end_season");
 
                     return new Vote(id, seasonId1, UUID.fromString(playerId1), lastNotification, shouldEndSeason);
@@ -89,14 +89,27 @@ public class VoteDAOImpl implements VoteDAO {
     public CompletableFuture<Integer> save(Vote vote) {
         return CompletableFuture.supplyAsync(() -> {
             try (Connection connection = database.getConnection()) {
-                String query = "INSERT INTO votes (season_id, player_id, date_last_voted, should_end_season) VALUES (?, ?, ?, ?)";
-                PreparedStatement ps = connection.prepareStatement(query);
-                ps.setInt(1, vote.seasonId);
-                ps.setString(2, vote.playerId.toString());
-                ps.setTimestamp(3, vote.dateLastVoted);
-                ps.setBoolean(4, vote.shouldEndSeason);
+                // Attempt to update the existing vote
+                String updateQuery = "UPDATE votes SET date_last_voted = ?, should_end_season = ? WHERE season_id = ? AND player_id = ?";
+                PreparedStatement updatePs = connection.prepareStatement(updateQuery);
+                updatePs.setTimestamp(1, vote.dateLastVoted);
+                updatePs.setBoolean(2, vote.shouldEndSeason);
+                updatePs.setInt(3, vote.seasonId);
+                updatePs.setString(4, vote.playerId.toString());
+                int rowsAffected = updatePs.executeUpdate();
 
-                return ps.executeUpdate();
+                // If no rows were affected by the update, insert a new vote
+                if (rowsAffected == 0) {
+                    String insertQuery = "INSERT INTO votes (season_id, player_id, date_last_voted, should_end_season) VALUES (?, ?, ?, ?)";
+                    PreparedStatement insertPs = connection.prepareStatement(insertQuery);
+                    insertPs.setInt(1, vote.seasonId);
+                    insertPs.setString(2, vote.playerId.toString());
+                    insertPs.setTimestamp(3, vote.dateLastVoted);
+                    insertPs.setBoolean(4, vote.shouldEndSeason);
+                    return insertPs.executeUpdate();
+                } else {
+                    return rowsAffected;
+                }
             } catch (SQLException e) {
                 Bukkit.getLogger().severe("Failed to save vote: \n" + e.getMessage());
                 return null;
@@ -113,7 +126,7 @@ public class VoteDAOImpl implements VoteDAO {
     public CompletableFuture<Integer> update(Vote vote) {
         return CompletableFuture.supplyAsync(() -> {
             try (Connection connection = database.getConnection()) {
-                String query = "UPDATE votes SET last_notification = ?, should_end_season = ? WHERE id = ?";
+                String query = "UPDATE votes SET date_last_voted = ?, should_end_season = ? WHERE id = ?";
                 PreparedStatement ps = connection.prepareStatement(query);
                 ps.setTimestamp(1, vote.dateLastVoted);
                 ps.setBoolean(2, vote.shouldEndSeason);

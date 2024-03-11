@@ -1,5 +1,6 @@
 package us.mkaulfers.hardcoreseasons.managers;
 
+import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import us.mkaulfers.hardcoreseasons.HardcoreSeasons;
@@ -19,8 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static us.mkaulfers.hardcoreseasons.models.LocalizationKey.REQUESTING_VOTE_BOTTOM;
-import static us.mkaulfers.hardcoreseasons.models.LocalizationKey.REQUESTING_VOTE_TOP;
+import static us.mkaulfers.hardcoreseasons.models.LocalizationKey.*;
 
 public class SeasonManager {
     HardcoreSeasons plugin;
@@ -42,7 +42,7 @@ public class SeasonManager {
             Season activeSeason = seasonDAO.get(plugin.currentSeasonNum).join();
             Timestamp now = new Timestamp(System.currentTimeMillis());
             Timestamp softEndDate = activeSeason.softEndDate;
-            Timestamp lastLoginThresholdDate = new Timestamp(System.currentTimeMillis() - daysToTicks(lastLoginThreshold));
+            Timestamp lastLoginThresholdDate = new Timestamp(System.currentTimeMillis() - lastLoginThreshold * 86400000L);
 
             if (softEndDate.before(now)) {
                 List<Participant> participants = playerDAO.getAllForSeason(plugin.currentSeasonNum).join();
@@ -78,15 +78,42 @@ public class SeasonManager {
                             }
                         }
                     }
+
+                    if (shouldVotesEndSeason(votes)) {
+                        endSeason(participants);
+                    }
                 }
             }
         }, minutesToTicks(1), minutesToTicks(plugin.configManager.config.notificationInterval));
     }
 
+    private boolean shouldVotesEndSeason(List<Vote> votes) {
+        if (votes.isEmpty()) {
+            return false; // If there are no votes, we can't end the season.
+        }
+
+        int voteCount = votes.size();
+        int voteReqPercent = plugin.configManager.config.minVotesToEndSeason;
+        long voteEndCount = votes.stream().filter(vote -> vote.shouldEndSeason).count(); // Use count() directly for efficiency.
+
+        // Calculate the percentage of votes for ending the season.
+        int voteEndPercent = (int) ((voteEndCount * 100) / voteCount);
+
+        return voteEndPercent >= voteReqPercent;
+    }
+
+
     private boolean shouldResetVote(Vote vote) {
+        if(vote.dateLastVoted == null || vote.shouldEndSeason) {
+            return false;
+        }
+
         Timestamp now = new Timestamp(System.currentTimeMillis());
-        Timestamp lastNotified = vote.dateLastVoted;
-        return lastNotified.before(new Timestamp(now.getTime() - daysToTicks(plugin.configManager.config.voteResetInterval)));
+        long voteResetIntervalMillis = plugin.configManager.config.voteResetInterval * 86400000L; // 24 * 60 * 60 * 1000
+        Timestamp threshold = new Timestamp(now.getTime() - voteResetIntervalMillis);
+        Bukkit.getLogger().info("Threshold: " + threshold);
+        Bukkit.getLogger().info("DateLastVoted: " + vote.dateLastVoted);
+        return vote.dateLastVoted.before(threshold);
     }
 
     private void scheduleSeasonEndTracker() {
@@ -113,7 +140,7 @@ public class SeasonManager {
                     }
 
                 }, 60, // Delay 3 seconds
-                plugin.configManager.config.mySQLConfig.updateInterval * 20L * 60L); // Period config * 20 ticks * 60 seconds = minutes
+                minutesToTicks(plugin.configManager.config.mySQLConfig.updateInterval));
     }
 
     /**
@@ -124,7 +151,7 @@ public class SeasonManager {
      */
     private List<Participant> getActivePlayers(List<Participant> participants) {
         int lastLoginThreshold = plugin.configManager.config.lastLoginThreshold;
-        Timestamp lastLoginThresholdDate = new Timestamp(System.currentTimeMillis() - ((long) lastLoginThreshold * 24 * 60 * 60 * 1000));
+        Timestamp lastLoginThresholdDate = new Timestamp(System.currentTimeMillis() - ((long) lastLoginThreshold * 86400000L));
         participants.removeIf(player -> player.lastOnline.before(lastLoginThresholdDate));
         return participants;
     }
@@ -134,6 +161,8 @@ public class SeasonManager {
      * Destroys the world, and generates a new world.
      */
     private void endSeason(List<Participant> winners) {
+        kickPlayersPreventRejoin();
+
         // Generate Rewards
         plugin.rewardManager.saveRewards(winners);
 
@@ -141,11 +170,11 @@ public class SeasonManager {
         SeasonDAO seasonDAO = new SeasonDAOImpl(plugin.database);
 
         Timestamp seasonStartDate = new Timestamp(System.currentTimeMillis());
-        Timestamp seasonSoftEndDate = new Timestamp(System.currentTimeMillis() + (long) daysToTicks(plugin.configManager.config.minSeasonLength));
+        Timestamp seasonSoftEndDate = new Timestamp(System.currentTimeMillis() + plugin.configManager.config.minSeasonLength * 86400000L);
         Timestamp seasonHardEndDate = null;
 
         if (plugin.configManager.config.maxSeasonLength != -1) {
-            seasonHardEndDate = new Timestamp(System.currentTimeMillis() + (long) daysToTicks(plugin.configManager.config.maxSeasonLength));
+            seasonHardEndDate = new Timestamp(System.currentTimeMillis() + plugin.configManager.config.maxSeasonLength * 86400000L);
         }
 
         Season newSeason = new Season(
@@ -163,6 +192,19 @@ public class SeasonManager {
         plugin.worldManager = new WorldManager(plugin);
         clearOfflinePlayerData();
         clearOnlinePlayerData();
+    }
+
+    private void kickPlayersPreventRejoin() {
+        // Kick All Online Players
+        Collection<? extends Player> players = plugin.getServer().getOnlinePlayers();
+        for (Player player : players) {
+            player.kickPlayer(plugin.configManager.localization.getLocalized(SEASON_ENDING));
+        }
+        plugin.isGeneratingNewSeason = true;
+
+        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+            plugin.isGeneratingNewSeason = false;
+        }, secondsToTicks(60));
     }
 
     private void clearOfflinePlayerData() {
