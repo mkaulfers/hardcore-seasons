@@ -1,6 +1,5 @@
 package us.mkaulfers.hardcoreseasons.commands;
 
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -24,12 +23,13 @@ public class SeasonCommand implements TabExecutor {
         this.plugin = plugin;
 
         // Root Branch
-        CommandNode root = new CommandNode("season" , null, (sender -> {}));
+        CommandNode root = new CommandNode("season", null, (sender -> {
+        }));
 
         CommandNode claim = new CommandNode("claim", null, (sender -> {
             if (sender instanceof Player) {
                 Player player = (Player) sender;
-                        SelectSeasonRewardGUI.make(player, plugin);
+                SelectSeasonRewardGUI.make(player, plugin);
             } else {
                 sender.sendMessage(plugin.configManager.localization.getLocalized(MUST_BE_A_PLAYER));
             }
@@ -62,9 +62,12 @@ public class SeasonCommand implements TabExecutor {
         root.addArg(reload);
 
         // Vote Branch
-        CommandNode vote = new CommandNode("vote", null, (sender -> {}));
-        CommandNode vContinue = new CommandNode("continue", null, (sender -> {}));
-        CommandNode vEnd = new CommandNode("end", null, (sender -> {}));
+        CommandNode vote = new CommandNode("vote", null, (sender -> {
+        }));
+        CommandNode vContinue = new CommandNode("continue", null, (sender -> {
+        }));
+        CommandNode vEnd = new CommandNode("end", null, (sender -> {
+        }));
 
         vote.addArg(vContinue);
         vote.addArg(vEnd);

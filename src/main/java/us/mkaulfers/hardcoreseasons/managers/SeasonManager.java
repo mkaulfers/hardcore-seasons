@@ -9,10 +9,8 @@ import us.mkaulfers.hardcoreseasons.interfaces.PlayerDAO;
 import us.mkaulfers.hardcoreseasons.interfaces.SeasonDAO;
 import us.mkaulfers.hardcoreseasons.models.Participant;
 import us.mkaulfers.hardcoreseasons.models.Season;
-import us.mkaulfers.hardcoreseasons.utils.FileUtils;
 
 import java.io.File;
-import java.io.IOException;
 import java.sql.Date;
 import java.util.Collection;
 import java.util.List;
@@ -26,21 +24,6 @@ public class SeasonManager {
     }
 
     private void scheduleSeasonEndTracker() {
-        // If the season has reached the hard-end date end the season
-        // - If there are more players than `maxSurvivorsRemaining` then generate rewards for the top players
-        // - Top players are those who joined earlier and have been online more recently than the lastLoginThreshold
-        // - Should compare timespan from joinDate to lastOnline largest to smallest, then trim to `maxSurvivorsRemaining`
-
-        // If the season has reached the soft-end date, request a vote to end the season only
-        // - If the maxSurvivorsRemaining is equal to active players.
-        // - If the vote is successful, end the season
-        // - Otherwise continue the season.
-
-        // If no players are active, or no players are alive, end the season
-        // - Only end the season if the minimum season length has been reached
-        // - Also only end if there is at least one player who has joined the server
-
-
         plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
 
                     SeasonDAO seasonDAO = new SeasonDAOImpl(plugin.database);
@@ -90,8 +73,6 @@ public class SeasonManager {
      * Destroys the world, and generates a new world.
      */
     private void endSeason(List<Participant> winners) {
-        // TODO: Handle no winners case.
-
         // Generate Rewards
         plugin.rewardManager.saveRewards(winners);
 

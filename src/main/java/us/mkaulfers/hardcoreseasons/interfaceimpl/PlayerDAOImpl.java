@@ -24,7 +24,7 @@ public class PlayerDAOImpl implements PlayerDAO {
     @Override
     public CompletableFuture<Participant> get(UUID playerId, int seasonId) {
         return CompletableFuture.supplyAsync(() -> {
-            try(Connection connection = database.getConnection()) {
+            try (Connection connection = database.getConnection()) {
                 Participant participant = null;
 
                 String query = "SELECT * FROM participants WHERE player_id = ? AND season_id = ?";
@@ -47,7 +47,7 @@ public class PlayerDAOImpl implements PlayerDAO {
 
                 return participant;
             } catch (SQLException e) {
-                Bukkit.getLogger().severe("[Hardcore Seasons]: Failed to get player." +e.getMessage());
+                Bukkit.getLogger().severe("[Hardcore Seasons]: Failed to get player." + e.getMessage());
                 return null;
             }
         });
@@ -78,7 +78,7 @@ public class PlayerDAOImpl implements PlayerDAO {
 
                 return participant;
             } catch (SQLException e) {
-                Bukkit.getLogger().severe("[Hardcore Seasons]: Failed to get player." +e.getMessage());
+                Bukkit.getLogger().severe("[Hardcore Seasons]: Failed to get player." + e.getMessage());
                 return null;
             }
         });
@@ -109,7 +109,7 @@ public class PlayerDAOImpl implements PlayerDAO {
 
                 return participants;
             } catch (SQLException e) {
-                Bukkit.getLogger().severe("[Hardcore Seasons]: Failed to get all players for season." +e.getMessage());
+                Bukkit.getLogger().severe("[Hardcore Seasons]: Failed to get all players for season." + e.getMessage());
                 return null;
             }
         });
@@ -140,7 +140,7 @@ public class PlayerDAOImpl implements PlayerDAO {
 
                 return participants;
             } catch (SQLException e) {
-                Bukkit.getLogger().severe("[Hardcore Seasons]: Failed to get all alive players for season." +e.getMessage());
+                Bukkit.getLogger().severe("[Hardcore Seasons]: Failed to get all alive players for season." + e.getMessage());
                 return null;
             }
         });
@@ -170,7 +170,7 @@ public class PlayerDAOImpl implements PlayerDAO {
 
                 return participants;
             } catch (SQLException e) {
-                Bukkit.getLogger().severe("[Hardcore Seasons]: Failed to get all players." +e.getMessage());
+                Bukkit.getLogger().severe("[Hardcore Seasons]: Failed to get all players." + e.getMessage());
                 return null;
             }
         });
@@ -179,7 +179,7 @@ public class PlayerDAOImpl implements PlayerDAO {
     @Override
     public CompletableFuture<Integer> save(Participant participant) {
         return CompletableFuture.supplyAsync(() -> {
-            try(Connection connection = database.getConnection()) {
+            try (Connection connection = database.getConnection()) {
                 String query = "INSERT INTO participants (player_id, season_id, join_date, last_online, is_dead) VALUES (?, ?, ?, ?, ?) " +
                         "ON DUPLICATE KEY UPDATE season_id = ?, join_date = ?, last_online = ?, is_dead = ?";
 
@@ -196,7 +196,7 @@ public class PlayerDAOImpl implements PlayerDAO {
 
                 return ps.executeUpdate();
             } catch (SQLException e) {
-                Bukkit.getLogger().severe("[Hardcore Seasons]: Failed to save participant." +e.getMessage());
+                Bukkit.getLogger().severe("[Hardcore Seasons]: Failed to save participant." + e.getMessage());
                 return null;
             }
         });
@@ -205,7 +205,7 @@ public class PlayerDAOImpl implements PlayerDAO {
     @Override
     public CompletableFuture<Integer> insert(Participant participant) {
         return CompletableFuture.supplyAsync(() -> {
-            try(Connection connection = database.getConnection()) {
+            try (Connection connection = database.getConnection()) {
                 String query = "INSERT INTO participants (player_id, season_id, join_date, last_online, is_dead) VALUES (?, ?, ?, ?, ?)";
 
                 PreparedStatement ps = connection.prepareStatement(query);
@@ -217,7 +217,7 @@ public class PlayerDAOImpl implements PlayerDAO {
 
                 return ps.executeUpdate();
             } catch (SQLException e) {
-                Bukkit.getLogger().severe("[Hardcore Seasons]: Failed to insert participant." +e.getMessage());
+                Bukkit.getLogger().severe("[Hardcore Seasons]: Failed to insert participant." + e.getMessage());
                 return null;
             }
         });
@@ -226,7 +226,7 @@ public class PlayerDAOImpl implements PlayerDAO {
     @Override
     public CompletableFuture<Integer> update(Participant participant) {
         return CompletableFuture.supplyAsync(() -> {
-            try(Connection connection = database.getConnection()) {
+            try (Connection connection = database.getConnection()) {
                 String query = "UPDATE participants SET season_id = ?, join_date = ?, last_online = ?, is_dead = ? WHERE id = ?";
 
                 PreparedStatement ps = connection.prepareStatement(query);
@@ -238,7 +238,7 @@ public class PlayerDAOImpl implements PlayerDAO {
 
                 return ps.executeUpdate();
             } catch (SQLException e) {
-                Bukkit.getLogger().severe("[Hardcore Seasons]: Failed to update participant." +e.getMessage());
+                Bukkit.getLogger().severe("[Hardcore Seasons]: Failed to update participant." + e.getMessage());
                 return null;
             }
         });
@@ -247,7 +247,7 @@ public class PlayerDAOImpl implements PlayerDAO {
     @Override
     public CompletableFuture<Integer> delete(Participant participant) {
         return CompletableFuture.supplyAsync(() -> {
-            try(Connection connection = database.getConnection()) {
+            try (Connection connection = database.getConnection()) {
                 String query = "DELETE FROM players WHERE id = ?";
 
                 PreparedStatement ps = connection.prepareStatement(query);
@@ -255,7 +255,7 @@ public class PlayerDAOImpl implements PlayerDAO {
 
                 return ps.executeUpdate();
             } catch (SQLException e) {
-                Bukkit.getLogger().severe("[Hardcore Seasons]: Failed to delete participant." +e.getMessage());
+                Bukkit.getLogger().severe("[Hardcore Seasons]: Failed to delete participant." + e.getMessage());
                 return null;
             }
         });

@@ -13,7 +13,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class InventoryUtils {
     /**
@@ -145,10 +144,10 @@ public class InventoryUtils {
     }
 
     /**
-     *  Returns a list of unique items with lore containing the total count of each material
-     *  @param items to be sorted and counted
-     *  @return list of unique items with lore
+     * Returns a list of unique items with lore containing the total count of each material
      *
+     * @param items to be sorted and counted
+     * @return list of unique items with lore
      */
     public static List<ItemStack> getGUIItemsList(List<ItemStack> items) {
         // TreeMap to automatically sort items by display name
@@ -186,11 +185,12 @@ public class InventoryUtils {
     }
 
     /**
-     *  Returns a list of items of a specific type
-     *  @param items to be sorted
-     *  @param material to filter items by
-     *  @return two lists where [0] is the items of the specified type
-     *  and [1] is the items that remain after removal.
+     * Returns a list of items of a specific type
+     *
+     * @param items    to be sorted
+     * @param material to filter items by
+     * @return two lists where [0] is the items of the specified type
+     * and [1] is the items that remain after removal.
      */
     public static List<List<ItemStack>> getItemsOfType(List<ItemStack> items, Material material) {
         List<ItemStack> itemsOfType = new ArrayList<>();
