@@ -129,7 +129,14 @@ public class SeasonManager {
         for (World world : worlds) {
             File playerData = new File(world.getName() + "/playerdata");
             if (playerData.exists()) {
-                FileUtils.deleteRecursive(playerData);
+                File[] files = playerData.listFiles();
+                if (files != null) {
+                    for (File file : files) {
+                        if (file.getName().endsWith(".dat")) {
+                            file.delete();
+                        }
+                    }
+                }
             }
         }
     }

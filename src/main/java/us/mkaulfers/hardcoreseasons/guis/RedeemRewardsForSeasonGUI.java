@@ -67,7 +67,7 @@ public class RedeemRewardsForSeasonGUI {
                         GuiItem guiItem = new GuiItem(shulkerBoxes.get(index));
 
                         guiItem.setAction(event1 -> {
-                            handleGuiItemAction(seasonId, plugin, event1, gui, guiItem, index, page, shulkerBoxes, player);
+                            handleGuiItemAction(seasonId, plugin, event1, gui, guiItem, event1.getSlot(), page, shulkerBoxes, player);
                         });
 
                         page.addItem(guiItem);
@@ -113,27 +113,23 @@ public class RedeemRewardsForSeasonGUI {
         Map<Integer, ItemStack> remainingItems = player.getInventory().addItem(nonNullContents);
 
         if (!remainingItems.isEmpty()) {
-            // Your existing logic for handling non-empty remaining items
+
             ItemStack[] remainingNonNullItems = remainingItems.values().stream().filter(Objects::nonNull).toArray(ItemStack[]::new);
             shulkerBox.getInventory().setContents(remainingNonNullItems);
             blockStateMeta.setBlockState(shulkerBox);
             shulkerBoxes.get(index).setItemMeta(blockStateMeta);
-            page.removeItem(guiItem);
 
             guiItem.setAction(event1 -> {
-                handleGuiItemAction(seasonId, plugin, event1, gui, guiItem, index, page, shulkerBoxes, player);
+                handleGuiItemAction(seasonId, plugin, event1, gui, guiItem, event1.getSlot(), page, shulkerBoxes, player);
             });
 
-            page.addItem(guiItem);
             player.sendMessage(plugin.configManager.localization.getLocalized(INVENTORY_FULL));
         } else {
             shulkerBoxes.remove(index);
             page.removeItem(guiItem);
-
-            // Set air at the index. This is important to keep the order of the items in the shulkerBoxes list
-            shulkerBoxes.add(index, new ItemStack(Material.AIR));
         }
 
+        Bukkit.getLogger().info("Number of shulkerBoxes: " + shulkerBoxes.size());
         SeasonRewardDAO seasonRewardDAO = new SeasonRewardDAOImpl(plugin.database);
         seasonRewardDAO.updateRedeemedRewards(seasonId, player.getUniqueId(), shulkerBoxes);
 
@@ -193,10 +189,12 @@ public class RedeemRewardsForSeasonGUI {
         closeMeta.setDisplayName(plugin.configManager.localization.getLocalized(REWARD_CLOSE));
         close.setItemMeta(closeMeta);
 
+        // Go Back
         navigation.addItem(new GuiItem(goBack, event -> {
             SelectSeasonRewardGUI.make(player, plugin);
         }), 0, 0);
 
+        // Previous
         navigation.addItem(new GuiItem(previous, event -> {
             if (pages.getPage() > 0) {
                 pages.setPage(pages.getPage() - 1);
@@ -206,9 +204,11 @@ public class RedeemRewardsForSeasonGUI {
             }
         }), 3, 0);
 
+        // Current
         navigation.addItem(new GuiItem(current, event -> {
         }), 4, 0);
 
+        // Next
         navigation.addItem(new GuiItem(next, event -> {
             if (pages.getPage() < pages.getPages() - 1) {
                 pages.setPage(pages.getPage() + 1);
@@ -218,6 +218,7 @@ public class RedeemRewardsForSeasonGUI {
             }
         }), 5, 0);
 
+        // Close
         navigation.addItem(new GuiItem(close, event -> event.getWhoClicked().closeInventory()), 8, 0);
 
         return navigation;

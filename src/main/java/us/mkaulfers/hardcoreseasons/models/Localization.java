@@ -121,9 +121,7 @@ public class Localization {
     }
 
     private static String translateAlternateColorCodes(String text) {
-        String translated = ChatColor.translateAlternateColorCodes('&', text);
-        Bukkit.getLogger().info("Translated: " + translated);
-        return translated;
+        return ChatColor.translateAlternateColorCodes('&', text);
     }
 }
 

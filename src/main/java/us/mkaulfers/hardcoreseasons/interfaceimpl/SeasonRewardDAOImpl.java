@@ -42,7 +42,7 @@ public class SeasonRewardDAOImpl implements SeasonRewardDAO {
                             UUID.fromString(rs.getString("player_id")),
                             rs.getString("contents"),
                             rs.getBoolean("redeemed")
-                            ));
+                    ));
                 }
 
                 return seasonRewards;
@@ -120,7 +120,7 @@ public class SeasonRewardDAOImpl implements SeasonRewardDAO {
                 searchPs.setString(1, seasonReward.getPlayerId().toString());
                 searchPs.setInt(2, seasonReward.getSeasonId());
                 ResultSet rs = searchPs.executeQuery();
-                if(!rs.next()) { //insert
+                if (!rs.next()) { //insert
                     String insertQuery = "INSERT INTO season_rewards (season_id, player_id, contents) VALUES (?, ?, ?)";
                     PreparedStatement insertPs = connection.prepareStatement(insertQuery);
                     insertPs.setInt(1, seasonReward.getSeasonId());
@@ -184,26 +184,31 @@ public class SeasonRewardDAOImpl implements SeasonRewardDAO {
         itemStackContents.removeIf(itemStack -> itemStack.getType().isAir());
 
         CompletableFuture.runAsync(() -> {
-            try (Connection connection = database.getConnection()) {
+                    try (Connection connection = database.getConnection()) {
 
-                if (itemStackContents.isEmpty()) {
-                    // Remove entry from database
-                    String query = "DELETE FROM season_rewards WHERE season_id = ? AND player_id = ?";
-                    PreparedStatement ps = connection.prepareStatement(query);
-                    ps.setInt(1, seasonId);
-                    ps.setString(2, playerId.toString());
-                    ps.executeUpdate();
-                } else {
-                    String query = "UPDATE season_rewards SET contents = ? WHERE season_id = ? AND player_id = ?";
-                    PreparedStatement ps = connection.prepareStatement(query);
-                    ps.setString(1, InventoryUtils.itemStackArrayToBase64(itemStackContents.toArray(new ItemStack[0])));
-                    ps.setInt(2, seasonId);
-                    ps.setString(3, playerId.toString());
-                }
-            } catch (SQLException e) {
-                Bukkit.getLogger().severe("[Hardcore Seasons]: Failed to update redeemed rewards." + e.getMessage());
-            }
-        });
+                        if (itemStackContents.isEmpty()) {
+                            // Remove entry from database
+                            String query = "DELETE FROM season_rewards WHERE season_id = ? AND player_id = ?";
+                            PreparedStatement ps = connection.prepareStatement(query);
+                            ps.setInt(1, seasonId);
+                            ps.setString(2, playerId.toString());
+                            ps.executeUpdate();
+                        } else {
+                            String query = "UPDATE season_rewards SET contents = ? WHERE season_id = ? AND player_id = ?";
+                            PreparedStatement ps = connection.prepareStatement(query);
+                            ps.setString(1, InventoryUtils.itemStackArrayToBase64(itemStackContents.toArray(new ItemStack[0])));
+                            ps.setInt(2, seasonId);
+                            ps.setString(3, String.valueOf(playerId));
+                            ps.executeUpdate();
+                        }
+                    } catch (SQLException e) {
+                        Bukkit.getLogger().severe("[Hardcore Seasons]: Failed to update redeemed rewards." + e.getMessage());
+                    }
+                })
+                .exceptionally(e -> {
+                    Bukkit.getLogger().warning("[Hardcore Seasons]: Failed to update redeemed rewards: \n" + e.getMessage());
+                    return null;
+                });
     }
 
     @Override
