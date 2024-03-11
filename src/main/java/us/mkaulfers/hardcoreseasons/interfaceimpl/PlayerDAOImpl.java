@@ -78,7 +78,7 @@ public class PlayerDAOImpl implements PlayerDAO {
 
                 return participant;
             } catch (SQLException e) {
-                Bukkit.getLogger().severe("[Hardcore Seasons]: Failed to get player." + e.getMessage());
+                Bukkit.getLogger().severe("[Hardcore Seasons]: Failed to get player. \n" + e.getMessage());
                 return null;
             }
         });
@@ -109,7 +109,7 @@ public class PlayerDAOImpl implements PlayerDAO {
 
                 return participants;
             } catch (SQLException e) {
-                Bukkit.getLogger().severe("[Hardcore Seasons]: Failed to get all players for season." + e.getMessage());
+                Bukkit.getLogger().severe("[Hardcore Seasons]: Failed to get all players for season. \n" + e.getMessage());
                 return null;
             }
         });

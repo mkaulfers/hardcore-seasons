@@ -16,7 +16,6 @@ import us.mkaulfers.hardcoreseasons.models.Database;
 public final class HardcoreSeasons extends JavaPlugin {
     public Database database;
     public int currentSeasonNum;
-    public boolean shouldRequestSeasonEnd;
     public ConfigManager configManager;
     public SeasonManager seasonManager;
     public WorldManager worldManager;

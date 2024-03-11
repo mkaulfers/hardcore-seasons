@@ -11,9 +11,8 @@ public class PluginConfig {
     public int maxSeasonLength;
     public int maxSurvivorsRemaining;
     public int lastLoginThreshold;
-    public int confirmationIntervalDays;
-    public int confirmationIntervalHours;
-    public int confirmationIntervalMinutes;
+    public int notificationInterval;
+    public int voteResetInterval;
     List<String> endOfSeasonCommands;
     public String storageType;
     public MySQLConfig mySQLConfig;
@@ -26,9 +25,8 @@ public class PluginConfig {
                         int maxSeasonLength,
                         int maxSurvivorsRemaining,
                         int lastLoginThreshold,
-                        int confirmationIntervalDays,
-                        int confirmationIntervalHours,
-                        int confirmationIntervalMinutes,
+                        int notificationInterval,
+                        int voteResetInterval,
                         List<String> endOfSeasonCommands,
                         String storageType,
                         MySQLConfig mySQLConfig) {
@@ -40,9 +38,8 @@ public class PluginConfig {
         this.maxSeasonLength = maxSeasonLength;
         this.maxSurvivorsRemaining = maxSurvivorsRemaining;
         this.lastLoginThreshold = lastLoginThreshold;
-        this.confirmationIntervalDays = confirmationIntervalDays;
-        this.confirmationIntervalHours = confirmationIntervalHours;
-        this.confirmationIntervalMinutes = confirmationIntervalMinutes;
+        this.notificationInterval = notificationInterval;
+        this.voteResetInterval = voteResetInterval;
         this.endOfSeasonCommands = endOfSeasonCommands;
         this.storageType = storageType;
         this.mySQLConfig = mySQLConfig;

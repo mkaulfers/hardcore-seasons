@@ -65,13 +65,21 @@ minVotesToEndSeason: 50 # Default | 50 (%)
 # vote will not be counted.
 lastLoginThreshold: 3 # Default | 3 (Days)
 
-# This is the interval that Hardcore Seasons
-# will notify players to vote to end the season,
-# or to continue the season whenever minSeasonLength
-# and maxSurvivorsRemaining conditions are met.
-confirmationIntervalDays: 0 # Default | 0 (Days)
-confirmationIntervalHours: 24 # Default | 24 (Hours)
-confirmationIntervalMinutes: 0 # Default | 0 (Minutes)
+# Displays a message to vote to end the season
+# when the maxSurvivorsRemaining condition is met,
+# and when minSeasonLength is reached. Only
+# the players who are still alive, and have not
+# fallen off due to inactivity or not voted, will
+# receive this message.
+notificationInterval: 5 # Default | 5 (Minutes)
+
+# This is the interval for which the plugin will
+# reset a player's vote if they voted to continue
+# the season. This is to prevent players from
+# voting to continue the season, and then not
+# logging in to vote again. This will reset their
+# vote, and they will have to vote again.
+voteResetInterval: 2 # Default | 1 (Days)
 
 # These commands will be executed when the season ends.
 # The commands will only be executed on the non-seasonal server.

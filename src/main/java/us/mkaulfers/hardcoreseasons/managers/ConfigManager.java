@@ -8,7 +8,6 @@ import us.mkaulfers.hardcoreseasons.models.MySQLConfig;
 import us.mkaulfers.hardcoreseasons.models.PluginConfig;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 public class ConfigManager {
@@ -36,9 +35,8 @@ public class ConfigManager {
         int maxSeasonLength = rawConfig.getInt("maxSeasonLength");
         int maxSurvivorsRemaining = rawConfig.getInt("maxSurvivorsRemaining");
         int lastLoginThreshold = rawConfig.getInt("lastLoginThreshold");
-        int confirmationIntervalDays = rawConfig.getInt("confirmationIntervalDays");
-        int confirmationIntervalHours = rawConfig.getInt("confirmationIntervalHours");
-        int confirmationIntervalMinutes = rawConfig.getInt("confirmationIntervalMinutes");
+        int notificationInterval = rawConfig.getInt("notificationInterval");
+        int voteResetInterval = rawConfig.getInt("voteResetInterval");
         List<String> endOfSeasonCommands = rawConfig.getStringList("endOfSeasonCommands");
         String storageType = rawConfig.getString("storageType");
 
@@ -67,9 +65,8 @@ public class ConfigManager {
                 maxSeasonLength,
                 maxSurvivorsRemaining,
                 lastLoginThreshold,
-                confirmationIntervalDays,
-                confirmationIntervalHours,
-                confirmationIntervalMinutes,
+                notificationInterval,
+                voteResetInterval,
                 endOfSeasonCommands,
                 storageType,
                 mySQLConfig

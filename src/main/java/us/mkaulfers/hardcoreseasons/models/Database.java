@@ -138,8 +138,8 @@ public class Database {
                         CREATE TABLE IF NOT EXISTS `votes` (
                           id INT AUTO_INCREMENT,
                           season_id INT,
-                          player_name VARCHAR(36),
-                          last_notification DATETIME,
+                          player_id VARCHAR(36),
+                          date_last_voted DATETIME,
                           should_end_season BOOLEAN,
                           PRIMARY KEY (id)
                         );

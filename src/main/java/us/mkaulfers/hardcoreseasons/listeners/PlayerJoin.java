@@ -56,12 +56,5 @@ public class PlayerJoin implements Listener {
                         playerDAO.update(p);
                     }
                 });
-
-        if(plugin.shouldRequestSeasonEnd) {
-            Bukkit.getScheduler().runTask(plugin, () -> {
-                event.getPlayer().sendMessage(plugin.configManager.localization.getLocalized(REQUESTING_VOTE_TOP));
-                event.getPlayer().sendMessage(plugin.configManager.localization.getLocalized(REQUESTING_VOTE_BOTTOM));
-            });
-        }
     }
 }
