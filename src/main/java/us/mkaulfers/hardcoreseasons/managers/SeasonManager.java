@@ -3,6 +3,7 @@ package us.mkaulfers.hardcoreseasons.managers;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 import us.mkaulfers.hardcoreseasons.HardcoreSeasons;
 import us.mkaulfers.hardcoreseasons.interfaceimpl.PlayerDAOImpl;
 import us.mkaulfers.hardcoreseasons.interfaceimpl.SeasonDAOImpl;
@@ -16,6 +17,7 @@ import us.mkaulfers.hardcoreseasons.models.Vote;
 
 import java.io.File;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -40,6 +42,11 @@ public class SeasonManager {
             int maxSurvivorsRemaining = plugin.configManager.config.maxSurvivorsRemaining;
 
             Season activeSeason = seasonDAO.get(plugin.currentSeasonNum).join();
+
+            if (activeSeason == null) {
+                activeSeason = initializeFirstSeason(seasonDAO);
+            }
+
             Timestamp now = new Timestamp(System.currentTimeMillis());
             Timestamp softEndDate = activeSeason.softEndDate;
             Timestamp lastLoginThresholdDate = new Timestamp(System.currentTimeMillis() - lastLoginThreshold * 86400000L);
@@ -123,7 +130,15 @@ public class SeasonManager {
                     PlayerDAO playerDAO = new PlayerDAOImpl(plugin.database);
 
                     Season activeSeason = seasonDAO.get(plugin.currentSeasonNum).join();
+
+                    if (activeSeason == null) {
+                        activeSeason = initializeFirstSeason(seasonDAO);
+                    }
+
                     List<Participant> participants = playerDAO.getAllForSeason(plugin.currentSeasonNum).join();
+
+                    if (participants == null) { return; }
+
                     List<Participant> activePlayers = getActivePlayers(participants);
                     Timestamp currentDate = new Timestamp(System.currentTimeMillis());
 
@@ -141,6 +156,30 @@ public class SeasonManager {
 
                 }, 60, // Delay 3 seconds
                 minutesToTicks(plugin.configManager.config.mySQLConfig.updateInterval));
+    }
+
+    @NotNull
+    private Season initializeFirstSeason(SeasonDAO seasonDAO) {
+        Season activeSeason;
+        int minimumLength = plugin.configManager.config.minSeasonLength;
+        int maximumLength = plugin.configManager.config.minSeasonLength;
+
+        if (minimumLength < 1) {
+            minimumLength = 1;
+        }
+
+        if (minimumLength > maximumLength) {
+            maximumLength = minimumLength;
+        }
+
+        Timestamp startDate = new Timestamp(System.currentTimeMillis());
+        Timestamp softEndDate = Timestamp.valueOf(LocalDateTime.now().plusDays(minimumLength));
+        Timestamp hardEndDate = Timestamp.valueOf(LocalDateTime.now().plusDays(maximumLength));
+
+        activeSeason = new Season(plugin.currentSeasonNum + 1, plugin.currentSeasonNum + 1, startDate, softEndDate, hardEndDate);
+        plugin.currentSeasonNum = activeSeason.seasonId;
+        seasonDAO.insert(activeSeason).join();
+        return activeSeason;
     }
 
     /**

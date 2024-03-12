@@ -5,7 +5,11 @@ import com.zaxxer.hikari.HikariDataSource;
 import org.bukkit.Bukkit;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Database {
     private static String host;
@@ -57,28 +61,6 @@ public class Database {
                     );
                     """;
             connection.prepareStatement(CREATE_SEASONS_TABLE).execute();
-
-            int minimumLength = pluginConfig.minSeasonLength;
-            int maximumLength = pluginConfig.maxSeasonLength;
-
-            if (minimumLength < 1) {
-                minimumLength = 1;
-            }
-
-            if (minimumLength > maximumLength) {
-                maximumLength = minimumLength;
-            }
-
-            String INIT_FIRST_SEASON = String.format(
-                    "INSERT INTO seasons (season_id, start_date, soft_end_date, hard_end_date)\n" +
-                            "SELECT 1, CURRENT_TIMESTAMP, \n" +
-                            "datetime(CURRENT_TIMESTAMP, '+%d days'),\n" + // Replaces DATE_ADD(NOW(), INTERVAL %d DAY)
-                            "CASE WHEN %d = -1 THEN NULL ELSE datetime(CURRENT_TIMESTAMP, '+%d days') END\n" + // Same replacement
-                            "FROM (SELECT 1 AS a) tempTable\n" +
-                            "WHERE NOT EXISTS (SELECT 1 FROM seasons WHERE season_id = 1);",
-                    minimumLength, maximumLength, maximumLength
-            );
-            connection.prepareStatement(INIT_FIRST_SEASON).execute();
 
             String INIT_PARTICIPANTS = """
                     CREATE TABLE IF NOT EXISTS participants (
