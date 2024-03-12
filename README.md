@@ -1,5 +1,5 @@
 # Hardcore Seasons Minecraft Plugin
-- Current Version: 1.0.2b _(Beta)_
+- Current Version: 1.0.3b _(Beta)_
 - _Requires Spigot, Paper, or Bukkit 1.20.X_ 
 _(Other versions "May" work, but have not been tested.)_
 
