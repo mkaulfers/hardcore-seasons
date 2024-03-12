@@ -7,11 +7,11 @@ import us.mkaulfers.hardcoreseasons.commands.SeasonCommand;
 import us.mkaulfers.hardcoreseasons.interfaceimpl.SeasonDAOImpl;
 import us.mkaulfers.hardcoreseasons.interfaces.SeasonDAO;
 import us.mkaulfers.hardcoreseasons.listeners.*;
-import us.mkaulfers.hardcoreseasons.managers.ConfigManager;
-import us.mkaulfers.hardcoreseasons.managers.RewardManager;
-import us.mkaulfers.hardcoreseasons.managers.SeasonManager;
-import us.mkaulfers.hardcoreseasons.managers.WorldManager;
+import us.mkaulfers.hardcoreseasons.managers.*;
 import us.mkaulfers.hardcoreseasons.models.Database;
+
+import static us.mkaulfers.hardcoreseasons.enums.InternalPlaceholder.CURRENT_SEASON;
+import static us.mkaulfers.hardcoreseasons.enums.InternalPlaceholder.NEXT_SEASON;
 
 public final class HardcoreSeasons extends JavaPlugin {
     public Database database;
@@ -21,6 +21,7 @@ public final class HardcoreSeasons extends JavaPlugin {
     public SeasonManager seasonManager;
     public WorldManager worldManager;
     public RewardManager rewardManager;
+    public PlaceholderManager placeholderManager;
 
     // Lifecycle methods
     @Override
@@ -45,6 +46,9 @@ public final class HardcoreSeasons extends JavaPlugin {
         SeasonDAO seasonDAO = new SeasonDAOImpl(database);
         seasonDAO.getActiveSeasonId().thenAccept(seasonId -> {
             currentSeasonNum = seasonId;
+            placeholderManager = new PlaceholderManager();
+            placeholderManager.setPlaceholderValue(CURRENT_SEASON, String.valueOf(seasonId));
+            placeholderManager.setPlaceholderValue(NEXT_SEASON, String.valueOf(seasonId + 1));
 
             Bukkit.getScheduler().runTask(this, () -> {
                 seasonManager = new SeasonManager(this);

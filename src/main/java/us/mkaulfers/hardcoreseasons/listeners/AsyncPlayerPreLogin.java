@@ -5,7 +5,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import us.mkaulfers.hardcoreseasons.HardcoreSeasons;
 
-import static us.mkaulfers.hardcoreseasons.models.LocalizationKey.SEASON_GENERATING;
+import static us.mkaulfers.hardcoreseasons.enums.LocalizationKey.SEASON_GENERATING;
 
 public class AsyncPlayerPreLogin implements Listener {
     HardcoreSeasons plugin;

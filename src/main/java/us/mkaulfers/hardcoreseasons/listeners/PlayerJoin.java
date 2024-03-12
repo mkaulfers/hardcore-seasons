@@ -12,7 +12,7 @@ import us.mkaulfers.hardcoreseasons.models.Participant;
 import java.sql.Timestamp;
 import java.util.UUID;
 
-import static us.mkaulfers.hardcoreseasons.models.LocalizationKey.DEATH_MESSAGE;
+import static us.mkaulfers.hardcoreseasons.enums.LocalizationKey.DEATH_MESSAGE;
 
 public class PlayerJoin implements Listener {
     HardcoreSeasons plugin;
@@ -47,7 +47,7 @@ public class PlayerJoin implements Listener {
 
                     } else if (p.isDead) {
                         Bukkit.getScheduler().runTask(plugin, () -> {
-                            String result = plugin.configManager.localization.getLocalized(DEATH_MESSAGE) + " " + (plugin.currentSeasonNum + 1);
+                            String result = plugin.configManager.localization.getLocalized(DEATH_MESSAGE);
                             event.getPlayer().kickPlayer(result);
                         });
                     } else {

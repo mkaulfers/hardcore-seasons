@@ -2,7 +2,6 @@ package us.mkaulfers.hardcoreseasons.guis;
 
 import com.github.stefvanschie.inventoryframework.gui.GuiItem;
 import com.github.stefvanschie.inventoryframework.gui.type.ChestGui;
-import com.github.stefvanschie.inventoryframework.gui.type.util.Gui;
 import com.github.stefvanschie.inventoryframework.pane.OutlinePane;
 import com.github.stefvanschie.inventoryframework.pane.PaginatedPane;
 import com.github.stefvanschie.inventoryframework.pane.Pane;
@@ -18,7 +17,6 @@ import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import us.mkaulfers.hardcoreseasons.HardcoreSeasons;
 import us.mkaulfers.hardcoreseasons.interfaceimpl.SeasonRewardDAOImpl;
-import us.mkaulfers.hardcoreseasons.interfaces.RewardSource;
 import us.mkaulfers.hardcoreseasons.interfaces.SeasonRewardDAO;
 import us.mkaulfers.hardcoreseasons.models.SeasonReward;
 import us.mkaulfers.hardcoreseasons.utils.InventoryUtils;
@@ -26,12 +24,14 @@ import us.mkaulfers.hardcoreseasons.utils.InventoryUtils;
 import java.io.IOException;
 import java.util.*;
 
-import static us.mkaulfers.hardcoreseasons.models.LocalizationKey.*;
+import static us.mkaulfers.hardcoreseasons.enums.InternalPlaceholder.*;
+import static us.mkaulfers.hardcoreseasons.enums.LocalizationKey.*;
 
 public class RedeemRewardsForSeasonGUI {
     public static void make(Player player, int seasonId, HardcoreSeasons plugin) {
         player.sendMessage(plugin.configManager.localization.getLocalized(LOADING_REWARDS));
-        ChestGui gui = new ChestGui(6, plugin.configManager.localization.getLocalized(SEASON_ITEM_NAME) + " " + seasonId);
+        plugin.placeholderManager.setPlaceholderValue(PAST_SEASON_NUMBER, String.valueOf(seasonId));
+        ChestGui gui = new ChestGui(6, plugin.configManager.localization.getLocalized(SEASON_ITEM_NAME));
 
         // Rewards
         int length = 9;
@@ -170,6 +170,9 @@ public class RedeemRewardsForSeasonGUI {
         ItemMeta previousMeta = previous.getItemMeta();
         previousMeta.setDisplayName(plugin.configManager.localization.getLocalized(REWARD_PREVIOUS));
         previous.setItemMeta(previousMeta);
+
+        plugin.placeholderManager.setPlaceholderValue(REWARD_SELECT_CURRENT_PAGE, String.valueOf(pages.getPage()));
+        plugin.placeholderManager.setPlaceholderValue(REWARD_SELECT_TOTAL_PAGES, String.valueOf(pages.getPages()));
 
         // Current
         ItemStack current = new ItemStack(Material.PAPER);
