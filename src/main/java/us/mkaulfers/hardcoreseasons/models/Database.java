@@ -53,7 +53,7 @@ public class Database {
         try (Connection connection = ds.getConnection()) {
             String CREATE_SEASONS_TABLE = """
                     CREATE TABLE IF NOT EXISTS seasons (
-                        id INTEGER PRIMARY KEY,
+                        id INTEGER PRIMARY KEY /*!40101 AUTO_INCREMENT*/,
                         season_id INT,
                         start_date DATETIME,
                         soft_end_date DATETIME,
@@ -64,7 +64,7 @@ public class Database {
 
             String INIT_PARTICIPANTS = """
                     CREATE TABLE IF NOT EXISTS participants (
-                        id INTEGER PRIMARY KEY,
+                        id INTEGER PRIMARY KEY /*!40101 AUTO_INCREMENT*/,
                         player_id VARCHAR(36),
                         season_id INT,
                         join_date DATETIME,
@@ -76,7 +76,7 @@ public class Database {
 
             String INIT_TRACKED_CHESTS = """
                     CREATE TABLE IF NOT EXISTS `tracked_chests` (
-                      id INTEGER PRIMARY KEY,
+                      id INTEGER PRIMARY KEY /*!40101 AUTO_INCREMENT*/,
                       season_id INT,
                       x INT,
                       y INT,
@@ -90,7 +90,7 @@ public class Database {
 
             String INIT_END_CHESTS = """
                     CREATE TABLE IF NOT EXISTS `end_chests` (
-                      id INTEGER PRIMARY KEY,
+                      id INTEGER PRIMARY KEY /*!40101 AUTO_INCREMENT*/,
                       season_id INT,
                       player_id VARCHAR(36),
                       contents MEDIUMTEXT
@@ -100,7 +100,7 @@ public class Database {
 
             String INIT_INVENTORIES = """
                     CREATE TABLE IF NOT EXISTS `inventories` (
-                      id INTEGER PRIMARY KEY,
+                      id INTEGER PRIMARY KEY /*!40101 AUTO_INCREMENT*/,
                       season_id INT,
                       player_id VARCHAR(36),
                       contents MEDIUMTEXT
@@ -110,7 +110,7 @@ public class Database {
 
             String INIT_REWARDS = """
                     CREATE TABLE IF NOT EXISTS `season_rewards` (
-                      id INTEGER PRIMARY KEY,
+                      id INTEGER PRIMARY KEY /*!40101 AUTO_INCREMENT*/,
                       player_id VARCHAR(36),
                       season_id INT,
                       contents LONGTEXT,
@@ -121,7 +121,7 @@ public class Database {
 
             String INIT_VOTES = """
                     CREATE TABLE IF NOT EXISTS `votes` (
-                      id INTEGER PRIMARY KEY,
+                      id INTEGER PRIMARY KEY /*!40101 AUTO_INCREMENT*/,
                       season_id INT,
                       player_id VARCHAR(36),
                       date_last_voted DATETIME,

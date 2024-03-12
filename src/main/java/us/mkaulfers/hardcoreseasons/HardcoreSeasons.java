@@ -47,9 +47,9 @@ public final class HardcoreSeasons extends JavaPlugin {
             currentSeasonNum = seasonId;
 
             Bukkit.getScheduler().runTask(this, () -> {
-                worldManager = new WorldManager(this);
                 seasonManager = new SeasonManager(this);
                 rewardManager = new RewardManager(this);
+                worldManager = new WorldManager(this);
             });
         });
 

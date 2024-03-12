@@ -24,7 +24,7 @@ public class SeasonDAOImpl implements SeasonDAO {
     public CompletableFuture<Integer> getActiveSeasonId() {
         return CompletableFuture.supplyAsync(() -> {
             try (Connection connection = database.getConnection()) {
-                int seasonId = 0;
+                int seasonId = 1;
 
                 // Get the active season, with the highest season_id
                 String query = "SELECT season_id FROM seasons ORDER BY season_id DESC LIMIT 1";
