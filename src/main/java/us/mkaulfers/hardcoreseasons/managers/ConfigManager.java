@@ -125,6 +125,7 @@ public class ConfigManager {
         String seasonGenerating = rawLocalization.getString("seasonGenerating");
 
         localization = new Localization(
+                plugin,
                 configReloaded,
                 mustBeAPlayer,
                 noPermission,

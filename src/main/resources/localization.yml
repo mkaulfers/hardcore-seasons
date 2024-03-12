@@ -1,3 +1,12 @@
+# Placeholders:
+# {current_season} - The current season number.
+# {next_season} - The next season number.
+# {reward_select_current_page} - The current page number when selecting rewards.
+# {reward_select_total_pages} - The total number of pages when selecting rewards.
+# {season_select_current_page} - The current page number when selecting seasons.
+# {season_select_total_pages} - The total number of pages when selecting seasons.
+# {past_season_number} - The number of the past season.
+
 # System Messages
 configReloaded: "&9Config reloaded."
 mustBeAPlayer: "&9You must be a player to use this command."
@@ -11,20 +20,20 @@ rewardPrevious: "&9Previous"
 rewardPage: "&9Page"
 rewardNext: "&9Next"
 rewardClose: "&4Close"
-rewardPageCounter: "&9Page" # The suffix is attached automatically (EG : Page 1/3)
+rewardPageCounter: "&9Page {reward_current_page}/{reward_total_pages}"
 inventoryFull: "&9Your inventory is full. Please make room to claim the remaining rewards."
 
 # Selecting Season GUI
 loadingSeasons: "&9Loading seasonal rewards."
 selectSeasonTitle: "&9Select Season"
-seasonItemName: "&9Season" # The suffix is attached automatically (EG : Season 1)
+seasonItemName: "&9Season {past_season_number}"
 seasonPrevious: "&9Previous"
 seasonNext: "&9Next"
 seasonClose: "&9Close"
-seasonPageCounter: "&9Page" # The suffix is attached automatically (EG : Page 1/3)
+seasonPageCounter: "&9Page {season_select_current_page}/{season_select_total_pages}"
 
 # Player Join Messages
-haveDied: "&cYou have died and must wait until &bSeason" # The suffix is attached automatically (EG : ... Season 1.)
+haveDied: "&cYou have died and must wait until &bSeason {next_season}"
 
 # Vote Messages
 cannotVote: "&9You cannot vote at this time. The season is not ending."
@@ -35,7 +44,7 @@ voteEndSuccess: "&9You have voted to end the season."
 voteFail: "&9There was an issue casting your vote, please try again."
 
 # Player Death Messages
-deathMessage: "&cYou have died and must wait until &bSeason" # The suffix is attached automatically (EG : ... Season 1.)
+deathMessage: "&cYou have died and must wait until &bSeason {next_season}"
 
 # Season End Messages
 seasonEnding: "&9The season has ended. &c(Rejoin in 1 minute.)"

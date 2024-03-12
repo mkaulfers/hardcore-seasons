@@ -1,9 +1,11 @@
 package us.mkaulfers.hardcoreseasons.models;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import us.mkaulfers.hardcoreseasons.HardcoreSeasons;
+import us.mkaulfers.hardcoreseasons.enums.LocalizationKey;
 
 public class Localization {
+    HardcoreSeasons plugin;
 
     // System Messages
     public final String configReloaded;
@@ -49,6 +51,7 @@ public class Localization {
     public final String seasonGenerating;
 
     public Localization(
+            HardcoreSeasons plugin,
             String configReloaded,
             String mustBeAPlayer,
             String noPermission,
@@ -79,6 +82,7 @@ public class Localization {
             String seasonEnding,
             String seasonGenerating
     ) {
+        this.plugin = plugin;
 
         this.configReloaded = configReloaded;
         this.mustBeAPlayer = mustBeAPlayer;
@@ -151,8 +155,9 @@ public class Localization {
         };
     }
 
-    private static String translateAlternateColorCodes(String text) {
-        return ChatColor.translateAlternateColorCodes('&', text);
+    private String translateAlternateColorCodes(String text) {
+        String internalPlaceholderParsed = plugin.placeholderManager.getPlaceholderValue(text);
+        return ChatColor.translateAlternateColorCodes('&', internalPlaceholderParsed);
     }
 }
 

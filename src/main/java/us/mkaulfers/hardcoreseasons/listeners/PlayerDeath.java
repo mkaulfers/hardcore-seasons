@@ -7,7 +7,7 @@ import us.mkaulfers.hardcoreseasons.HardcoreSeasons;
 import us.mkaulfers.hardcoreseasons.interfaceimpl.PlayerDAOImpl;
 import us.mkaulfers.hardcoreseasons.interfaces.PlayerDAO;
 
-import static us.mkaulfers.hardcoreseasons.models.LocalizationKey.DEATH_MESSAGE;
+import static us.mkaulfers.hardcoreseasons.enums.LocalizationKey.DEATH_MESSAGE;
 
 public class PlayerDeath implements Listener {
     HardcoreSeasons plugin;
@@ -23,7 +23,7 @@ public class PlayerDeath implements Listener {
         }
 
         event.getEntity().spigot().respawn();
-        String result = plugin.configManager.localization.getLocalized(DEATH_MESSAGE) + " " + (plugin.currentSeasonNum + 1);
+        String result = plugin.configManager.localization.getLocalized(DEATH_MESSAGE);
         event.getEntity().kickPlayer(result);
 
         PlayerDAO playerDAO = new PlayerDAOImpl(plugin.database);

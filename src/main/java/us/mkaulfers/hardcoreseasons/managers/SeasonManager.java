@@ -5,6 +5,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import us.mkaulfers.hardcoreseasons.HardcoreSeasons;
+import us.mkaulfers.hardcoreseasons.enums.InternalPlaceholder;
 import us.mkaulfers.hardcoreseasons.interfaceimpl.PlayerDAOImpl;
 import us.mkaulfers.hardcoreseasons.interfaceimpl.SeasonDAOImpl;
 import us.mkaulfers.hardcoreseasons.interfaceimpl.VoteDAOImpl;
@@ -22,7 +23,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static us.mkaulfers.hardcoreseasons.models.LocalizationKey.*;
+import static us.mkaulfers.hardcoreseasons.enums.InternalPlaceholder.CURRENT_SEASON;
+import static us.mkaulfers.hardcoreseasons.enums.InternalPlaceholder.NEXT_SEASON;
+import static us.mkaulfers.hardcoreseasons.enums.LocalizationKey.*;
 
 public class SeasonManager {
     HardcoreSeasons plugin;
@@ -178,6 +181,8 @@ public class SeasonManager {
 
         activeSeason = new Season(plugin.currentSeasonNum + 1, plugin.currentSeasonNum + 1, startDate, softEndDate, hardEndDate);
         plugin.currentSeasonNum = activeSeason.seasonId;
+        plugin.placeholderManager.setPlaceholderValue(CURRENT_SEASON, String.valueOf(activeSeason.seasonId));
+        plugin.placeholderManager.setPlaceholderValue(NEXT_SEASON, String.valueOf(activeSeason.seasonId + 1));
         seasonDAO.insert(activeSeason).join();
         return activeSeason;
     }
@@ -192,6 +197,7 @@ public class SeasonManager {
         int lastLoginThreshold = plugin.configManager.config.lastLoginThreshold;
         Timestamp lastLoginThresholdDate = new Timestamp(System.currentTimeMillis() - ((long) lastLoginThreshold * 86400000L));
         participants.removeIf(player -> player.lastOnline.before(lastLoginThresholdDate));
+        participants.removeIf(player -> player.isDead);
         return participants;
     }
 
@@ -226,6 +232,9 @@ public class SeasonManager {
 
         seasonDAO.insert(newSeason).join();
         plugin.currentSeasonNum = newSeason.id;
+
+        plugin.placeholderManager.setPlaceholderValue(CURRENT_SEASON, String.valueOf(newSeason.seasonId));
+        plugin.placeholderManager.setPlaceholderValue(NEXT_SEASON, String.valueOf(newSeason.seasonId + 1));
 
         // Generate New Worlds
         plugin.worldManager = new WorldManager(plugin);

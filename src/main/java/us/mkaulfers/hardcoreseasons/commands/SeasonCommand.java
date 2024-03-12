@@ -13,7 +13,6 @@ import us.mkaulfers.hardcoreseasons.interfaceimpl.VoteDAOImpl;
 import us.mkaulfers.hardcoreseasons.interfaces.SeasonDAO;
 import us.mkaulfers.hardcoreseasons.interfaces.VoteDAO;
 import us.mkaulfers.hardcoreseasons.models.CommandNode;
-import us.mkaulfers.hardcoreseasons.models.LocalizationKey;
 import us.mkaulfers.hardcoreseasons.models.Season;
 import us.mkaulfers.hardcoreseasons.models.Vote;
 
@@ -21,7 +20,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-import static us.mkaulfers.hardcoreseasons.models.LocalizationKey.*;
+import static us.mkaulfers.hardcoreseasons.enums.LocalizationKey.*;
 
 public class SeasonCommand implements TabExecutor {
     private CommandNode root;

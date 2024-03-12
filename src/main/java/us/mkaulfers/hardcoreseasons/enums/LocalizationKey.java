@@ -1,4 +1,4 @@
-package us.mkaulfers.hardcoreseasons.models;
+package us.mkaulfers.hardcoreseasons.enums;
 
 public enum LocalizationKey {
     CONFIG_RELOADED("configReloaded"),
