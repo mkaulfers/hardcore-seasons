@@ -4,8 +4,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import us.mkaulfers.hardcoreseasons.HardcoreSeasons;
 import us.mkaulfers.hardcoreseasons.guis.SelectSeasonRewardGUI;
 import us.mkaulfers.hardcoreseasons.interfaceimpl.SeasonDAOImpl;
@@ -74,7 +72,7 @@ public class SeasonCommand implements TabExecutor {
     }
 
     @Override
-    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+    public boolean onCommand(CommandSender commandSender, Command command, String label, String[] args) {
         CommandNode currentNode = this.root;
         boolean executed = false;
 
@@ -120,9 +118,8 @@ public class SeasonCommand implements TabExecutor {
         return executed;
     }
 
-    @Nullable
     @Override
-    public List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
+    public List<String> onTabComplete(CommandSender commandSender, Command command, String alias, String[] args) {
         // Start from the root node and traverse based on the input args
         CommandNode currentNode = this.root;
         for (String arg : args) {
