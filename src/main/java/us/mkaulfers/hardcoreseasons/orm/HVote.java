@@ -7,7 +7,7 @@ import java.sql.Timestamp;
 import java.util.UUID;
 
 @DatabaseTable(tableName = "votes")
-public class HVotes {
+public class HVote {
     @DatabaseField(generatedId = true)
     private int id;
 
@@ -23,7 +23,7 @@ public class HVotes {
     @DatabaseField(columnName = "should_end_season")
     private boolean shouldEndSeason;
 
-    public HVotes() {}
+    public HVote() {}
 
     public int getId() {
         return id;

@@ -1,11 +1,9 @@
 package us.mkaulfers.hardcoreseasons.orm;
 
-import com.google.common.collect.Table;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.DataSourceConnectionSource;
 import com.j256.ormlite.stmt.DeleteBuilder;
-import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import com.zaxxer.hikari.HikariConfig;
@@ -13,7 +11,6 @@ import com.zaxxer.hikari.HikariDataSource;
 import org.bukkit.Bukkit;
 import us.mkaulfers.hardcoreseasons.models.PluginConfig;
 
-import javax.swing.plaf.TableUI;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +27,7 @@ public class HDataSource {
     private List<HSeason> seasons;
     private List<HSeasonReward> seasonRewards;
     private List<HTrackedContainer> trackedContainers;
-    private List<HVotes> votes;
+    private List<HVote> votes;
 
     public HEndChest getEndChest(UUID playerId, int seasonId) {
         for (HEndChest endChest : endChests) {
@@ -83,6 +80,23 @@ public class HDataSource {
         }
     }
 
+    public void deleteEndChests(int seasonId) {
+        try (ConnectionSource connectionSource = new DataSourceConnectionSource(ds, config.getJdbcUrl())) {
+            Dao<HEndChest, Integer> endChestDao = DaoManager.createDao(connectionSource, HEndChest.class);
+
+            DeleteBuilder<HEndChest, Integer> deleteBuilder = endChestDao.deleteBuilder();
+
+            deleteBuilder.where()
+                    .eq("season_id", seasonId);
+
+            deleteBuilder.delete();
+
+            endChests.removeIf(endChest -> endChest.getSeasonId() == seasonId);
+        } catch (Exception e) {
+            Bukkit.getLogger().severe("[HardcoreSeasons]: Failed to delete end chests: " + e.getMessage());
+        }
+    }
+
     public HInventory getInventory(UUID playerId, int seasonId) {
         for (HInventory inventory : inventories) {
             if (inventory.getSeasonId() == seasonId && inventory.getPlayerId().equals(playerId)) {
@@ -131,6 +145,23 @@ public class HDataSource {
             }
         } catch (Exception e) {
             Bukkit.getLogger().severe("[HardcoreSeasons]: Failed to update inventory: " + e.getMessage());
+        }
+    }
+
+    public void deleteInventories(int seasonId) {
+        try (ConnectionSource connectionSource = new DataSourceConnectionSource(ds, config.getJdbcUrl())) {
+            Dao<HInventory, Integer> inventoryDao = DaoManager.createDao(connectionSource, HInventory.class);
+
+            DeleteBuilder<HInventory, Integer> deleteBuilder = inventoryDao.deleteBuilder();
+
+            deleteBuilder.where()
+                    .eq("season_id", seasonId);
+
+            deleteBuilder.delete();
+
+            inventories.removeIf(inventory -> inventory.getSeasonId() == seasonId);
+        } catch (Exception e) {
+            Bukkit.getLogger().severe("[HardcoreSeasons]: Failed to delete inventories: " + e.getMessage());
         }
     }
 
@@ -189,8 +220,43 @@ public class HDataSource {
         }
     }
 
+    public HSeason getActiveSeason() {
+        HSeason activeSeason = null;
+
+        // Get season with the highest seasonId
+        for (HSeason season : seasons) {
+            if (activeSeason == null || season.getSeasonId() > activeSeason.getSeasonId()) {
+                activeSeason = season;
+            }
+        }
+
+        return activeSeason;
+    }
+
+    public void setActiveSeason(HSeason season) {
+        try (ConnectionSource connectionSource = new DataSourceConnectionSource(ds, config.getJdbcUrl())) {
+            Dao<HSeason, Integer> seasonDao = DaoManager.createDao(connectionSource, HSeason.class);
+            seasonDao.create(season);
+            seasons.add(season);
+        } catch (Exception e) {
+            Bukkit.getLogger().severe("[HardcoreSeasons]: Failed to set active season: " + e.getMessage());
+        }
+    }
+
     public List<HSeason> getSeasons() {
         return seasons;
+    }
+
+    public List<HSeasonReward> getSeasonRewards(UUID playerId) {
+        List<HSeasonReward> filteredSeasonRewards = new ArrayList<>();
+
+        seasonRewards.forEach(seasonReward -> {
+            if (seasonReward.getPlayerId().equals(playerId)) {
+                filteredSeasonRewards.add(seasonReward);
+            }
+        });
+
+        return filteredSeasonRewards;
     }
 
     public List<HSeasonReward> getSeasonRewards(int seasonId) {
@@ -215,6 +281,22 @@ public class HDataSource {
         }
     }
 
+    public void updateSeasonReward(int seasonId, UUID playerId, String contents) {
+        try (ConnectionSource connectionSource = new DataSourceConnectionSource(ds, config.getJdbcUrl())) {
+            Dao<HSeasonReward, Integer> seasonRewardDao = DaoManager.createDao(connectionSource, HSeasonReward.class);
+
+            for (HSeasonReward seasonReward : seasonRewards) {
+                if (seasonReward.getSeasonId() == seasonId && seasonReward.getPlayerId().equals(playerId)) {
+                    seasonReward.setContents(contents);
+                    seasonRewardDao.update(seasonReward);
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            Bukkit.getLogger().severe("[HardcoreSeasons]: Failed to update season reward: " + e.getMessage());
+        }
+    }
+
     public HTrackedContainer getTrackedContainer(int seasonId, int posX, int posY, int posZ, String world, String type) {
         for (HTrackedContainer trackedContainer : trackedContainers) {
             if (trackedContainer.getSeasonId() == seasonId &&
@@ -228,6 +310,18 @@ public class HDataSource {
         }
 
         return null;
+    }
+
+    public List<HTrackedContainer> getTrackedContainers(int seasonId) {
+        List<HTrackedContainer> filteredTrackedContainers = new ArrayList<>();
+
+        trackedContainers.forEach(trackedContainer -> {
+            if (trackedContainer.getSeasonId() == seasonId) {
+                filteredTrackedContainers.add(trackedContainer);
+            }
+        });
+
+        return filteredTrackedContainers;
     }
 
     public void setTrackedContainer(HTrackedContainer trackedContainer) {
@@ -289,8 +383,35 @@ public class HDataSource {
         }
     }
 
-    public List<HVotes> getVotes(int seasonId) {
-        List<HVotes> filteredVotes = new ArrayList<>();
+    public void deleteTrackedContainers(int seasonId) {
+        try (ConnectionSource connectionSource = new DataSourceConnectionSource(ds, config.getJdbcUrl())) {
+            Dao<HTrackedContainer, Integer> trackedContainerDao = DaoManager.createDao(connectionSource, HTrackedContainer.class);
+
+            DeleteBuilder<HTrackedContainer, Integer> deleteBuilder = trackedContainerDao.deleteBuilder();
+
+            deleteBuilder.where()
+                    .eq("season_id", seasonId);
+
+            deleteBuilder.delete();
+
+            trackedContainers.removeIf(trackedContainer -> trackedContainer.getSeasonId() == seasonId);
+        } catch (Exception e) {
+            Bukkit.getLogger().severe("[HardcoreSeasons]: Failed to delete tracked containers: " + e.getMessage());
+        }
+    }
+
+    public HVote getVote(UUID playerId, int seasonId) {
+        for (HVote vote : votes) {
+            if (vote.getSeasonId() == seasonId && vote.getPlayerId().equals(playerId)) {
+                return vote;
+            }
+        }
+
+        return null;
+    }
+
+    public List<HVote> getVotes(int seasonId) {
+        List<HVote> filteredVotes = new ArrayList<>();
 
         votes.forEach(vote -> {
             if (vote.getSeasonId() == seasonId) {
@@ -301,13 +422,15 @@ public class HDataSource {
         return filteredVotes;
     }
 
-    public void setVote(HVotes vote) {
+    public boolean setVote(HVote vote) {
         try (ConnectionSource connectionSource = new DataSourceConnectionSource(ds, config.getJdbcUrl())) {
-            Dao<HVotes, Integer> votesDao = DaoManager.createDao(connectionSource, HVotes.class);
+            Dao<HVote, Integer> votesDao = DaoManager.createDao(connectionSource, HVote.class);
             votesDao.create(vote);
             votes.add(vote);
+            return true;
         } catch (Exception e) {
             Bukkit.getLogger().severe("[HardcoreSeasons]: Failed to set vote: " + e.getMessage());
+            return false;
         }
     }
 
@@ -340,7 +463,7 @@ public class HDataSource {
             TableUtils.createTableIfNotExists(connectionSource, HSeason.class);
             TableUtils.createTableIfNotExists(connectionSource, HSeasonReward.class);
             TableUtils.createTableIfNotExists(connectionSource, HTrackedContainer.class);
-            TableUtils.createTableIfNotExists(connectionSource, HVotes.class);
+            TableUtils.createTableIfNotExists(connectionSource, HVote.class);
         } catch (Exception e) {
             Bukkit.getLogger().severe("[HardcoreSeasons]: Failed to create tables: " + e.getMessage());
         }
@@ -424,7 +547,7 @@ public class HDataSource {
 
     private void loadVotes() {
         try (ConnectionSource connectionSource = new DataSourceConnectionSource(ds, config.getJdbcUrl())) {
-            Dao<HVotes, Integer> votesDao = DaoManager.createDao(connectionSource, HVotes.class);
+            Dao<HVote, Integer> votesDao = DaoManager.createDao(connectionSource, HVote.class);
             votes = votesDao.queryForAll();
         } catch (Exception e) {
             Bukkit.getLogger().severe("[HardcoreSeasons]: Failed to load votes: " + e.getMessage());

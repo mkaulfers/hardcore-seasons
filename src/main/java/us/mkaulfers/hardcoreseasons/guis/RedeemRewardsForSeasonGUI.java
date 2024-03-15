@@ -16,9 +16,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import us.mkaulfers.hardcoreseasons.HardcoreSeasons;
-import us.mkaulfers.hardcoreseasons.interfaceimpl.SeasonRewardDAOImpl;
-import us.mkaulfers.hardcoreseasons.interfaces.SeasonRewardDAO;
-import us.mkaulfers.hardcoreseasons.models.SeasonReward;
+import us.mkaulfers.hardcoreseasons.orm.HSeasonReward;
 import us.mkaulfers.hardcoreseasons.utils.InventoryUtils;
 
 import java.io.IOException;
@@ -38,57 +36,52 @@ public class RedeemRewardsForSeasonGUI {
         int height = 5;
         PaginatedPane pages = new PaginatedPane(0, 0, length, height);
 
-        plugin.rewardManager.getWonSeasonalRewardsForPlayer(player).thenAccept(rewards -> {
-            List<ItemStack> shulkerBoxes = new ArrayList<>();
-            for (SeasonReward seasonReward : rewards) {
-                if (seasonReward.getSeasonId() == seasonId) {
-                    try {
-                        ItemStack[] contents = InventoryUtils.itemStackArrayFromBase64(seasonReward.getContents());
-                        shulkerBoxes.addAll(Arrays.asList(contents));
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
+        List<HSeasonReward> playerRewards = plugin.hDataSource.getSeasonRewards(player.getUniqueId());
+        List<ItemStack> shulkerBoxes = new ArrayList<>();
+
+        for (HSeasonReward seasonReward : playerRewards) {
+            if (seasonReward.getSeasonId() == seasonId) {
+                try {
+                    ItemStack[] contents = InventoryUtils.itemStackArrayFromBase64(seasonReward.getContents());
+                    shulkerBoxes.addAll(Arrays.asList(contents));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
                 }
             }
+        }
 
-            if (!shulkerBoxes.isEmpty()) {
-                int itemsPerPage = height * length;
-                int pagesNeeded = (int) Math.max(Math.ceil((double) shulkerBoxes.size() / (double) itemsPerPage), 1.0);
+        if (!shulkerBoxes.isEmpty()) {
+            int itemsPerPage = height * length;
+            int pagesNeeded = (int) Math.max(Math.ceil((double) shulkerBoxes.size() / (double) itemsPerPage), 1.0);
 
-                for (int i = 0; i < pagesNeeded; ++i) {
-                    OutlinePane page = new OutlinePane(0, 0, length, height);
+            for (int i = 0; i < pagesNeeded; ++i) {
+                OutlinePane page = new OutlinePane(0, 0, length, height);
 
-                    for (int j = 0; j < itemsPerPage; ++j) {
-                        int index = i * itemsPerPage + j;
-                        if (index >= shulkerBoxes.size()) {
-                            break;
-                        }
-
-                        GuiItem guiItem = new GuiItem(shulkerBoxes.get(index));
-
-                        guiItem.setAction(event1 -> {
-                            handleGuiItemAction(seasonId, plugin, event1, gui, guiItem, event1.getSlot(), page, shulkerBoxes, player);
-                        });
-
-                        page.addItem(guiItem);
+                for (int j = 0; j < itemsPerPage; ++j) {
+                    int index = i * itemsPerPage + j;
+                    if (index >= shulkerBoxes.size()) {
+                        break;
                     }
 
-                    pages.addPane(i, page);
+                    GuiItem guiItem = new GuiItem(shulkerBoxes.get(index));
+
+                    guiItem.setAction(event1 -> {
+                        handleGuiItemAction(seasonId, plugin, event1, gui, guiItem, event1.getSlot(), page, shulkerBoxes, player);
+                    });
+
+                    page.addItem(guiItem);
                 }
+
+                pages.addPane(i, page);
             }
+        }
 
-            gui.addPane(getBackground());
+        gui.addPane(getBackground());
 
-            // Must operate on the main thread
-            Bukkit.getScheduler().runTask(plugin, () -> {
-                gui.addPane(pages);
-                gui.addPane(getNavigation(plugin, player, gui, pages));
-                gui.show(player);
-            });
-        }).exceptionally(e -> {
-            Bukkit.getLogger().warning("[Hardcore Seasons]: Failed to get rewards: \n" + e.getMessage());
-            return null;
-        });
+        // Must operate on the main thread
+        gui.addPane(pages);
+        gui.addPane(getNavigation(plugin, player, gui, pages));
+        gui.show(player);
     }
 
     // Method to handle the action logic
@@ -130,8 +123,9 @@ public class RedeemRewardsForSeasonGUI {
         }
 
         Bukkit.getLogger().info("Number of shulkerBoxes: " + shulkerBoxes.size());
-        SeasonRewardDAO seasonRewardDAO = new SeasonRewardDAOImpl(plugin.database);
-        seasonRewardDAO.updateRedeemedRewards(seasonId, player.getUniqueId(), shulkerBoxes);
+
+        String shulkerBoxesBase64 = InventoryUtils.itemStackArrayToBase64(shulkerBoxes.toArray(new ItemStack[0]));
+        plugin.hDataSource.updateSeasonReward(seasonId, player.getUniqueId(), shulkerBoxesBase64);
 
         gui.update();
     }

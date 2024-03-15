@@ -86,7 +86,6 @@
             <groupId>com.github.stefvanschie.inventoryframework</groupId>
             <artifactId>IF</artifactId>
             <version>0.10.13</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.j256.ormlite</groupId>

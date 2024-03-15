@@ -4,19 +4,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import us.mkaulfers.hardcoreseasons.HardcoreSeasons;
-import us.mkaulfers.hardcoreseasons.interfaceimpl.PlayerDAOImpl;
-import us.mkaulfers.hardcoreseasons.interfaceimpl.SeasonDAOImpl;
-import us.mkaulfers.hardcoreseasons.interfaceimpl.VoteDAOImpl;
-import us.mkaulfers.hardcoreseasons.interfaces.PlayerDAO;
-import us.mkaulfers.hardcoreseasons.interfaces.SeasonDAO;
-import us.mkaulfers.hardcoreseasons.interfaces.VoteDAO;
-import us.mkaulfers.hardcoreseasons.models.Participant;
-import us.mkaulfers.hardcoreseasons.models.Season;
-import us.mkaulfers.hardcoreseasons.models.Vote;
+import us.mkaulfers.hardcoreseasons.orm.HParticipant;
+import us.mkaulfers.hardcoreseasons.orm.HSeason;
+import us.mkaulfers.hardcoreseasons.orm.HVote;
 
 import java.io.File;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -36,120 +29,91 @@ public class SeasonManager {
 
     private void scheduleVoteReminder() {
         plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
-            SeasonDAO seasonDAO = new SeasonDAOImpl(plugin.database);
-            PlayerDAO playerDAO = new PlayerDAOImpl(plugin.database);
 
-            int lastLoginThreshold = plugin.configManager.config.lastLoginThreshold;
-            int maxSurvivorsRemaining = plugin.configManager.config.maxSurvivorsRemaining;
+            HSeason activeSeason = plugin.hDataSource.getActiveSeason();
+            Timestamp now = new Timestamp(System.currentTimeMillis());
 
-            Season activeSeason = seasonDAO.get(plugin.currentSeasonNum).join();
-
-            if (activeSeason == null) {
-                activeSeason = initializeFirstSeason(seasonDAO);
+            // Only prompt players to vote if the soft-end date has passed
+            if (now.before(activeSeason.getSoftEndDate())) {
+                return;
+            }
+            if (now.before(activeSeason.getHardEndDate())) {
+                return;
             }
 
-            Timestamp now = new Timestamp(System.currentTimeMillis());
-            Timestamp softEndDate = activeSeason.softEndDate;
-            Timestamp lastLoginThresholdDate = new Timestamp(System.currentTimeMillis() - lastLoginThreshold * 86400000L);
+            List<HParticipant> participants = plugin.hDataSource.getParticipants(activeSeason.getSeasonId());
 
-            if (softEndDate.before(now)) {
-                List<Participant> participants = playerDAO.getAllForSeason(plugin.currentSeasonNum).join();
-                participants.removeIf(player -> player.lastOnline.before(lastLoginThresholdDate));
+            // Only prompt players to vote if there are less than or equal to the maxSurvivorsRemaining
+            if (participants.size() > plugin.configManager.config.maxSurvivorsRemaining) {
+                return;
+            }
 
-                if (participants.size() <= maxSurvivorsRemaining) {
-                    VoteDAO voteDAO = new VoteDAOImpl(plugin.database);
-                    List<Vote> votes = voteDAO.getAllForSeason(plugin.currentSeasonNum).join();
+            // Only send a message to players who have not voted yet
+            // Or to players who need to confirm their vote again
+            // because the voteResetInterval has passed
 
-                    // We want to reset any votes that have a date_last_voted date that is older than the voteResetInterval
-                    for (Vote vote : votes) {
-                        if (shouldResetVote(vote)) {
-                            vote.dateLastVoted = null;
-                            voteDAO.update(vote).join();
-                        }
-                    }
+            for (HParticipant participant : participants) {
+                HVote vote = plugin.hDataSource.getVote(participant.getPlayerId(), activeSeason.getSeasonId());
 
-                    List<Participant> participantsToNotify = new ArrayList<>();
+                int confirmationThreshold = plugin.configManager.config.voteResetInterval;
+                Timestamp threshold = new Timestamp(now.getTime() - confirmationThreshold * 86400000L);
 
-                    for (Participant participant : participants) {
-                        Vote vote = voteDAO.getPlayerVote(participant.playerId, plugin.currentSeasonNum).join();
-                        if (vote == null || vote.dateLastVoted == null) {
-                            participantsToNotify.add(participant);
-                        }
-                    }
-
-                    for (Participant participant : participantsToNotify) {
-                        Collection<? extends Player> players = plugin.getServer().getOnlinePlayers();
-                        for (Player player : players) {
-                            if (player.getUniqueId().equals(participant.playerId)) {
-                                player.sendMessage(plugin.configManager.localization.getLocalized(REQUESTING_VOTE_TOP));
-                                player.sendMessage(plugin.configManager.localization.getLocalized(REQUESTING_VOTE_BOTTOM));
-                            }
-                        }
-                    }
-
-                    if (shouldVotesEndSeason(votes)) {
-                        endSeason(participants);
+                if (vote == null || vote.getDateLastVoted() == null || vote.getDateLastVoted().before(threshold)) {
+                    Player player = plugin.getServer().getPlayer(participant.getPlayerId());
+                    if (player != null) {
+                        player.sendMessage(plugin.configManager.localization.getLocalized(REQUESTING_VOTE_TOP));
+                        player.sendMessage(plugin.configManager.localization.getLocalized(REQUESTING_VOTE_BOTTOM));
                     }
                 }
             }
+
+            List<HVote> votes = plugin.hDataSource.getVotes(activeSeason.getSeasonId());
+
+            // Check if there are enough votes to end the season
+            int votePercent = plugin.configManager.config.minVotesToEndSeason;
+            long voteCount = votes.size();
+            long voteEndCount = votes.stream().filter(HVote::isShouldEndSeason).count();
+
+            if (voteCount == 0) {
+                return;
+            }
+
+            int voteEndPercent = (int) ((voteEndCount * 100) / voteCount);
+
+            if (voteEndPercent >= votePercent) {
+                endSeason(participants);
+            }
         }, minutesToTicks(1), minutesToTicks(plugin.configManager.config.notificationInterval));
-    }
-
-    private boolean shouldVotesEndSeason(List<Vote> votes) {
-        if (votes.isEmpty()) {
-            return false; // If there are no votes, we can't end the season.
-        }
-
-        int voteCount = votes.size();
-        int voteReqPercent = plugin.configManager.config.minVotesToEndSeason;
-        long voteEndCount = votes.stream().filter(vote -> vote.shouldEndSeason).count(); // Use count() directly for efficiency.
-
-        // Calculate the percentage of votes for ending the season.
-        int voteEndPercent = (int) ((voteEndCount * 100) / voteCount);
-
-        return voteEndPercent >= voteReqPercent;
-    }
-
-
-    private boolean shouldResetVote(Vote vote) {
-        if(vote.dateLastVoted == null || vote.shouldEndSeason) {
-            return false;
-        }
-
-        Timestamp now = new Timestamp(System.currentTimeMillis());
-        long voteResetIntervalMillis = plugin.configManager.config.voteResetInterval * 86400000L; // 24 * 60 * 60 * 1000
-        Timestamp threshold = new Timestamp(now.getTime() - voteResetIntervalMillis);
-        Bukkit.getLogger().info("Threshold: " + threshold);
-        Bukkit.getLogger().info("DateLastVoted: " + vote.dateLastVoted);
-        return vote.dateLastVoted.before(threshold);
     }
 
     private void scheduleSeasonEndTracker() {
         plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
 
-                    SeasonDAO seasonDAO = new SeasonDAOImpl(plugin.database);
-                    PlayerDAO playerDAO = new PlayerDAOImpl(plugin.database);
+                    HSeason activeSeason = plugin.hDataSource.getActiveSeason();
 
-                    Season activeSeason = seasonDAO.get(plugin.currentSeasonNum).join();
+                    if (activeSeason == null) { return; }
 
-                    if (activeSeason == null) {
-                        activeSeason = initializeFirstSeason(seasonDAO);
-                    }
-
-                    List<Participant> participants = playerDAO.getAllForSeason(plugin.currentSeasonNum).join();
+                    List<HParticipant> participants = plugin.hDataSource.getParticipants(activeSeason.getSeasonId());
 
                     if (participants == null) { return; }
 
-                    List<Participant> activePlayers = getActivePlayers(participants);
-                    Timestamp currentDate = new Timestamp(System.currentTimeMillis());
+                    List<HParticipant> activePlayers = new ArrayList<>();
+                    Timestamp now = new Timestamp(System.currentTimeMillis());
+                    Timestamp lastOnlineThreshold = new Timestamp(now.getTime() - plugin.configManager.config.lastLoginThreshold * 86400000L);
+
+                    for (HParticipant participant : participants) {
+                        if (participant.getLastOnline() == null || participant.getLastOnline().after(lastOnlineThreshold)) {
+                            activePlayers.add(participant);
+                        }
+                    }
 
                     if (plugin.configManager.config.maxSeasonLength != -1) {
-                        if (activeSeason.hardEndDate.before(currentDate)) {
+                        if (activeSeason.getHardEndDate().before(now)) {
                             endSeason(activePlayers);
                         }
                     }
 
-                    if (activeSeason.softEndDate.before(currentDate)) {
+                    if (activeSeason.getSoftEndDate().before(now)) {
                         if (activePlayers.isEmpty()) {
                             endSeason(activePlayers);
                         }
@@ -159,58 +123,17 @@ public class SeasonManager {
                 minutesToTicks(plugin.configManager.config.mySQLConfig.updateInterval));
     }
 
-    private Season initializeFirstSeason(SeasonDAO seasonDAO) {
-        Season activeSeason;
-        int minimumLength = plugin.configManager.config.minSeasonLength;
-        int maximumLength = plugin.configManager.config.minSeasonLength;
-
-        if (minimumLength < 1) {
-            minimumLength = 1;
-        }
-
-        if (minimumLength > maximumLength) {
-            maximumLength = minimumLength;
-        }
-
-        Timestamp startDate = new Timestamp(System.currentTimeMillis());
-        Timestamp softEndDate = Timestamp.valueOf(LocalDateTime.now().plusDays(minimumLength));
-        Timestamp hardEndDate = Timestamp.valueOf(LocalDateTime.now().plusDays(maximumLength));
-
-        activeSeason = new Season(plugin.currentSeasonNum + 1, plugin.currentSeasonNum + 1, startDate, softEndDate, hardEndDate);
-        plugin.currentSeasonNum = activeSeason.seasonId;
-        plugin.placeholderManager.setPlaceholderValue(CURRENT_SEASON, String.valueOf(activeSeason.seasonId));
-        plugin.placeholderManager.setPlaceholderValue(NEXT_SEASON, String.valueOf(activeSeason.seasonId + 1));
-        seasonDAO.insert(activeSeason).join();
-        return activeSeason;
-    }
-
-    /**
-     * Players must have been online from the current date minus the lastLoginThreshold
-     *
-     * @param participants
-     * @return List<Participant> activePlayers
-     */
-    private List<Participant> getActivePlayers(List<Participant> participants) {
-        int lastLoginThreshold = plugin.configManager.config.lastLoginThreshold;
-        Timestamp lastLoginThresholdDate = new Timestamp(System.currentTimeMillis() - ((long) lastLoginThreshold * 86400000L));
-        participants.removeIf(player -> player.lastOnline.before(lastLoginThresholdDate));
-        participants.removeIf(player -> player.isDead);
-        return participants;
-    }
-
     /**
      * Ends the season, generates seasonal rewards, splitting as needed.
      * Destroys the world, and generates a new world.
      */
-    private void endSeason(List<Participant> winners) {
+    private void endSeason(List<HParticipant> winners) {
         kickPlayersPreventRejoin();
 
         // Generate Rewards
         plugin.rewardManager.saveRewards(winners);
 
         // Generate New Season
-        SeasonDAO seasonDAO = new SeasonDAOImpl(plugin.database);
-
         Timestamp seasonStartDate = new Timestamp(System.currentTimeMillis());
         Timestamp seasonSoftEndDate = new Timestamp(System.currentTimeMillis() + plugin.configManager.config.minSeasonLength * 86400000L);
         Timestamp seasonHardEndDate = null;
@@ -219,19 +142,17 @@ public class SeasonManager {
             seasonHardEndDate = new Timestamp(System.currentTimeMillis() + plugin.configManager.config.maxSeasonLength * 86400000L);
         }
 
-        Season newSeason = new Season(
-                plugin.currentSeasonNum + 1,
-                plugin.currentSeasonNum + 1,
-                seasonStartDate,
-                seasonSoftEndDate,
-                seasonHardEndDate
-        );
+        HSeason newSeason = new HSeason();
+        newSeason.setSeasonId(plugin.currentSeasonNum + 1);
+        newSeason.setStartDate(seasonStartDate);
+        newSeason.setSoftEndDate(seasonSoftEndDate);
+        newSeason.setHardEndDate(seasonHardEndDate);
 
-        seasonDAO.insert(newSeason).join();
-        plugin.currentSeasonNum = newSeason.id;
+        plugin.hDataSource.setActiveSeason(newSeason);
+        plugin.currentSeasonNum = plugin.currentSeasonNum + 1;
 
-        plugin.placeholderManager.setPlaceholderValue(CURRENT_SEASON, String.valueOf(newSeason.seasonId));
-        plugin.placeholderManager.setPlaceholderValue(NEXT_SEASON, String.valueOf(newSeason.seasonId + 1));
+        plugin.placeholderManager.setPlaceholderValue(CURRENT_SEASON, String.valueOf(newSeason.getSeasonId()));
+        plugin.placeholderManager.setPlaceholderValue(NEXT_SEASON, String.valueOf(newSeason.getSeasonId() + 1));
 
         // Generate New Worlds
         plugin.worldManager = new WorldManager(plugin);
