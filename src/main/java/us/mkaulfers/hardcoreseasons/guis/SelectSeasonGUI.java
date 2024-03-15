@@ -20,7 +20,7 @@ import java.util.List;
 import static us.mkaulfers.hardcoreseasons.enums.InternalPlaceholder.*;
 import static us.mkaulfers.hardcoreseasons.enums.LocalizationKey.*;
 
-public class SelectSeasonRewardGUI {
+public class SelectSeasonGUI {
     public static void make(Player player, HardcoreSeasons plugin) {
         player.sendMessage(plugin.configManager.localization.getLocalized(LOADING_SEASONS));
         ChestGui gui = new ChestGui(6, plugin.configManager.localization.getLocalized(SELECT_SEASON_TITLE));
@@ -43,7 +43,7 @@ public class SelectSeasonRewardGUI {
 
             seasonChestItem.add(new GuiItem(guiChestItem, event -> {
                 event.setCancelled(true);
-                RedeemRewardsForSeasonGUI.make(player, seasonReward.getSeasonId(), plugin);
+                RedeemRewardGUI.make(player, seasonReward.getSeasonId(), plugin);
             }));
         }
 

@@ -243,27 +243,11 @@ public class HDataSource {
         }
     }
 
-    public List<HSeason> getSeasons() {
-        return seasons;
-    }
-
     public List<HSeasonReward> getSeasonRewards(UUID playerId) {
         List<HSeasonReward> filteredSeasonRewards = new ArrayList<>();
 
         seasonRewards.forEach(seasonReward -> {
             if (seasonReward.getPlayerId().equals(playerId)) {
-                filteredSeasonRewards.add(seasonReward);
-            }
-        });
-
-        return filteredSeasonRewards;
-    }
-
-    public List<HSeasonReward> getSeasonRewards(int seasonId) {
-        List<HSeasonReward> filteredSeasonRewards = new ArrayList<>();
-
-        seasonRewards.forEach(seasonReward -> {
-            if (seasonReward.getSeasonId() == seasonId) {
                 filteredSeasonRewards.add(seasonReward);
             }
         });
@@ -556,17 +540,5 @@ public class HDataSource {
 
     private long daysToMillis(int days) {
         return 1000L * 60 * 60 * 24 * days;
-    }
-
-    private long hoursToMillis(int hours) {
-        return 1000L * 60 * 60 * hours;
-    }
-
-    private long minutesToMillis(int minutes) {
-        return 1000L * 60 * minutes;
-    }
-
-    private long secondsToMillis(int seconds) {
-        return 1000L * seconds;
     }
 }

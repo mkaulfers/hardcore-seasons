@@ -5,7 +5,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import us.mkaulfers.hardcoreseasons.HardcoreSeasons;
-import us.mkaulfers.hardcoreseasons.guis.SelectSeasonRewardGUI;
+import us.mkaulfers.hardcoreseasons.guis.SelectSeasonGUI;
 import us.mkaulfers.hardcoreseasons.models.CommandNode;
 import us.mkaulfers.hardcoreseasons.orm.HSeason;
 import us.mkaulfers.hardcoreseasons.orm.HVote;
@@ -30,7 +30,7 @@ public class SeasonCommand implements TabExecutor {
         CommandNode claim = new CommandNode("claim", null, (sender -> {
             if (sender instanceof Player) {
                 Player player = (Player) sender;
-                SelectSeasonRewardGUI.make(player, plugin);
+                SelectSeasonGUI.make(player, plugin);
             } else {
                 sender.sendMessage(plugin.configManager.localization.getLocalized(MUST_BE_A_PLAYER));
             }

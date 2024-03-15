@@ -25,7 +25,7 @@ import java.util.*;
 import static us.mkaulfers.hardcoreseasons.enums.InternalPlaceholder.*;
 import static us.mkaulfers.hardcoreseasons.enums.LocalizationKey.*;
 
-public class RedeemRewardsForSeasonGUI {
+public class RedeemRewardGUI {
     public static void make(Player player, int seasonId, HardcoreSeasons plugin) {
         player.sendMessage(plugin.configManager.localization.getLocalized(LOADING_REWARDS));
         plugin.placeholderManager.setPlaceholderValue(PAST_SEASON_NUMBER, String.valueOf(seasonId));
@@ -188,7 +188,7 @@ public class RedeemRewardsForSeasonGUI {
 
         // Go Back
         navigation.addItem(new GuiItem(goBack, event -> {
-            SelectSeasonRewardGUI.make(player, plugin);
+            SelectSeasonGUI.make(player, plugin);
         }), 0, 0);
 
         // Previous
