@@ -7,13 +7,12 @@ import com.github.stefvanschie.inventoryframework.pane.PaginatedPane;
 import com.github.stefvanschie.inventoryframework.pane.Pane;
 import com.github.stefvanschie.inventoryframework.pane.StaticPane;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import us.mkaulfers.hardcoreseasons.HardcoreSeasons;
-import us.mkaulfers.hardcoreseasons.models.SeasonReward;
+import us.mkaulfers.hardcoreseasons.orm.HSeasonReward;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +20,7 @@ import java.util.List;
 import static us.mkaulfers.hardcoreseasons.enums.InternalPlaceholder.*;
 import static us.mkaulfers.hardcoreseasons.enums.LocalizationKey.*;
 
-public class SelectSeasonRewardGUI {
+public class SelectSeasonGUI {
     public static void make(Player player, HardcoreSeasons plugin) {
         player.sendMessage(plugin.configManager.localization.getLocalized(LOADING_SEASONS));
         ChestGui gui = new ChestGui(6, plugin.configManager.localization.getLocalized(SELECT_SEASON_TITLE));
@@ -29,36 +28,33 @@ public class SelectSeasonRewardGUI {
         // Rewards
         PaginatedPane pages = new PaginatedPane(0, 0, 9, 5);
 
-        plugin.rewardManager.getWonSeasonalRewardsForPlayer(player).thenAccept(rewards -> {
-            List<GuiItem> seasonChestItem = new ArrayList<>();
+        List<GuiItem> seasonChestItem = new ArrayList<>();
 
-            for (SeasonReward seasonReward : rewards) {
-                ItemStack guiChestItem = new ItemStack(Material.CHEST);
-                ItemMeta guiChestItemMeta = guiChestItem.getItemMeta();
+        List<HSeasonReward> rewards = plugin.hDataSource.getSeasonRewards(player.getUniqueId());
 
-                plugin.placeholderManager.setPlaceholderValue(PAST_SEASON_NUMBER, String.valueOf(seasonReward.getSeasonId()));
+        for (HSeasonReward seasonReward : rewards) {
+            ItemStack guiChestItem = new ItemStack(Material.CHEST);
+            ItemMeta guiChestItemMeta = guiChestItem.getItemMeta();
 
-                guiChestItemMeta.setDisplayName(plugin.configManager.localization.getLocalized(SEASON_ITEM_NAME));
-                guiChestItem.setItemMeta(guiChestItemMeta);
+            plugin.placeholderManager.setPlaceholderValue(PAST_SEASON_NUMBER, String.valueOf(seasonReward.getSeasonId()));
 
-                seasonChestItem.add(new GuiItem(guiChestItem, event -> {
-                    event.setCancelled(true);
-                    RedeemRewardsForSeasonGUI.make(player, seasonReward.getSeasonId(), plugin);
-                }));
-            }
+            guiChestItemMeta.setDisplayName(plugin.configManager.localization.getLocalized(SEASON_ITEM_NAME));
+            guiChestItem.setItemMeta(guiChestItemMeta);
 
-            pages.populateWithGuiItems(seasonChestItem);
-            gui.addPane(getBackground());
+            seasonChestItem.add(new GuiItem(guiChestItem, event -> {
+                event.setCancelled(true);
+                RedeemRewardGUI.make(player, seasonReward.getSeasonId(), plugin);
+            }));
+        }
 
-            // Must operate on the main thread
-            Bukkit.getScheduler().runTask(plugin, () -> {
-                gui.addPane(pages);
-                gui.addPane(getNavigation(plugin, gui, pages));
-                gui.show(player);
-            });
-        }).exceptionally(e -> {
-            Bukkit.getLogger().warning("[Hardcore Seasons]: Failed to get rewards: \n" + e.getMessage());
-            return null;
+        pages.populateWithGuiItems(seasonChestItem);
+        gui.addPane(getBackground());
+
+        // Must operate on the main thread
+        Bukkit.getScheduler().runTask(plugin, () -> {
+            gui.addPane(pages);
+            gui.addPane(getNavigation(plugin, gui, pages));
+            gui.show(player);
         });
     }
 

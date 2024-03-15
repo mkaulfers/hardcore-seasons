@@ -5,14 +5,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import us.mkaulfers.hardcoreseasons.HardcoreSeasons;
-import us.mkaulfers.hardcoreseasons.guis.SelectSeasonRewardGUI;
-import us.mkaulfers.hardcoreseasons.interfaceimpl.SeasonDAOImpl;
-import us.mkaulfers.hardcoreseasons.interfaceimpl.VoteDAOImpl;
-import us.mkaulfers.hardcoreseasons.interfaces.SeasonDAO;
-import us.mkaulfers.hardcoreseasons.interfaces.VoteDAO;
+import us.mkaulfers.hardcoreseasons.guis.SelectSeasonGUI;
 import us.mkaulfers.hardcoreseasons.models.CommandNode;
-import us.mkaulfers.hardcoreseasons.models.Season;
-import us.mkaulfers.hardcoreseasons.models.Vote;
+import us.mkaulfers.hardcoreseasons.orm.HSeason;
+import us.mkaulfers.hardcoreseasons.orm.HVote;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -34,7 +30,7 @@ public class SeasonCommand implements TabExecutor {
         CommandNode claim = new CommandNode("claim", null, (sender -> {
             if (sender instanceof Player) {
                 Player player = (Player) sender;
-                SelectSeasonRewardGUI.make(player, plugin);
+                SelectSeasonGUI.make(player, plugin);
             } else {
                 sender.sendMessage(plugin.configManager.localization.getLocalized(MUST_BE_A_PLAYER));
             }
@@ -151,10 +147,9 @@ public class SeasonCommand implements TabExecutor {
 
     private void castVote(CommandSender sender, boolean shouldEndSeason) {
         Timestamp now = new Timestamp(System.currentTimeMillis());
-        SeasonDAO seasonDAO = new SeasonDAOImpl(plugin.database);
-        Season activeSeason = seasonDAO.get(plugin.currentSeasonNum).join();
+        HSeason activeSeason = plugin.hDataSource.getActiveSeason();
 
-        if (activeSeason == null || !activeSeason.softEndDate.before(now)) {
+        if (activeSeason == null || !activeSeason.getSoftEndDate().before(now)) {
             sender.sendMessage(plugin.configManager.localization.getLocalized(CANNOT_VOTE));
             return;
         }
@@ -162,23 +157,19 @@ public class SeasonCommand implements TabExecutor {
         if (sender instanceof Player) {
             Player player = (Player) sender;
 
-            Vote vote = new Vote(
-                    0,
-                    plugin.currentSeasonNum,
-                    player.getUniqueId(),
-                    new Timestamp(System.currentTimeMillis()),
-                    shouldEndSeason
-            );
+            HVote vote = new HVote();
+            vote.setSeasonId(activeSeason.getId());
+            vote.setPlayerId(player.getUniqueId());
+            vote.setDateLastVoted(now);
+            vote.setShouldEndSeason(shouldEndSeason);
 
-            VoteDAO voteDAO = new VoteDAOImpl(plugin.database);
+            boolean successful = plugin.hDataSource.setVote(vote);
 
-            voteDAO.save(vote).thenAccept(success -> {
-                if (success != null) {
-                    sender.sendMessage(plugin.configManager.localization.getLocalized(shouldEndSeason ? VOTE_END_SUCCESS : VOTE_CONTINUE_SUCCESS));
-                } else {
-                    sender.sendMessage(plugin.configManager.localization.getLocalized(VOTE_FAIL));
-                }
-            });
+            if (successful) {
+                sender.sendMessage(plugin.configManager.localization.getLocalized(shouldEndSeason ? VOTE_END_SUCCESS : VOTE_CONTINUE_SUCCESS));
+            } else {
+                sender.sendMessage(plugin.configManager.localization.getLocalized(VOTE_FAIL));
+            }
 
         } else {
             sender.sendMessage(plugin.configManager.localization.getLocalized(MUST_BE_A_PLAYER));

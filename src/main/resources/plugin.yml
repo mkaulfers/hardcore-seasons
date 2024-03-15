@@ -5,3 +5,7 @@ api-version: "1.20"
 commands:
   season:
     aliases: [sn]
+libraries:
+  - com.zaxxer:HikariCP:5.1.0
+  - com.j256.ormlite:ormlite-core:6.1
+  - com.j256.ormlite:ormlite-jdbc:6.1

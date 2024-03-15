@@ -1,20 +1,17 @@
 package us.mkaulfers.hardcoreseasons;
 
-import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import us.mkaulfers.hardcoreseasons.commands.SeasonCommand;
-import us.mkaulfers.hardcoreseasons.interfaceimpl.SeasonDAOImpl;
-import us.mkaulfers.hardcoreseasons.interfaces.SeasonDAO;
 import us.mkaulfers.hardcoreseasons.listeners.*;
 import us.mkaulfers.hardcoreseasons.managers.*;
-import us.mkaulfers.hardcoreseasons.models.Database;
+import us.mkaulfers.hardcoreseasons.orm.HDataSource;
 
 import static us.mkaulfers.hardcoreseasons.enums.InternalPlaceholder.CURRENT_SEASON;
 import static us.mkaulfers.hardcoreseasons.enums.InternalPlaceholder.NEXT_SEASON;
 
 public final class HardcoreSeasons extends JavaPlugin {
-    public Database database;
+    public HDataSource hDataSource;
     public boolean isGeneratingNewSeason = false;
     public int currentSeasonNum;
     public ConfigManager configManager;
@@ -41,22 +38,15 @@ public final class HardcoreSeasons extends JavaPlugin {
             return;
         }
 
-        database = new Database(configManager.config);
+        hDataSource = new HDataSource(configManager.config);
+        currentSeasonNum = hDataSource.getActiveSeason().getSeasonId();
+        placeholderManager = new PlaceholderManager();
+        placeholderManager.setPlaceholderValue(CURRENT_SEASON, String.valueOf(currentSeasonNum));
+        placeholderManager.setPlaceholderValue(NEXT_SEASON, String.valueOf(currentSeasonNum + 1));
 
-        SeasonDAO seasonDAO = new SeasonDAOImpl(database);
-        seasonDAO.getActiveSeasonId().thenAccept(seasonId -> {
-            currentSeasonNum = seasonId;
-            placeholderManager = new PlaceholderManager();
-            placeholderManager.setPlaceholderValue(CURRENT_SEASON, String.valueOf(seasonId));
-            placeholderManager.setPlaceholderValue(NEXT_SEASON, String.valueOf(seasonId + 1));
-
-            Bukkit.getScheduler().runTask(this, () -> {
-                seasonManager = new SeasonManager(this);
-                rewardManager = new RewardManager(this);
-                worldManager = new WorldManager(this);
-            });
-        });
-
+        seasonManager = new SeasonManager(this);
+        rewardManager = new RewardManager(this);
+        worldManager = new WorldManager(this);
     }
 
     private void registerListeners() {

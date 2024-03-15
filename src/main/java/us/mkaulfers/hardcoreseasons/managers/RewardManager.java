@@ -3,21 +3,14 @@ package us.mkaulfers.hardcoreseasons.managers;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.ShulkerBox;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BlockStateMeta;
 import us.mkaulfers.hardcoreseasons.HardcoreSeasons;
-import us.mkaulfers.hardcoreseasons.interfaceimpl.SeasonRewardDAOImpl;
-import us.mkaulfers.hardcoreseasons.interfaces.*;
-import us.mkaulfers.hardcoreseasons.interfaceimpl.ChestDAOImpl;
-import us.mkaulfers.hardcoreseasons.interfaceimpl.EndChestDAOImpl;
-import us.mkaulfers.hardcoreseasons.interfaceimpl.InventoryDAOImpl;
-import us.mkaulfers.hardcoreseasons.models.*;
+import us.mkaulfers.hardcoreseasons.orm.*;
 import us.mkaulfers.hardcoreseasons.utils.InventoryUtils;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 
 public class RewardManager {
     HardcoreSeasons plugin;
@@ -26,76 +19,46 @@ public class RewardManager {
         this.plugin = plugin;
     }
 
-    public CompletableFuture<List<SeasonReward>> getWonSeasonalRewardsForPlayer(Player player) {
-        // Async operation to obtain SeasonRewardDAO
-        CompletableFuture<SeasonRewardDAO> seasonRewardDAOFuture = CompletableFuture.supplyAsync(() -> new SeasonRewardDAOImpl(plugin.database));
-
-        // Use thenCompose to chain the async operation of getting player rewards
-        return seasonRewardDAOFuture.thenCompose(seasonRewardDAO ->
-                seasonRewardDAO.getPlayerRewards(player.getUniqueId().toString())
-        ).exceptionally(ex -> {
-            Bukkit.getLogger().severe("[Hardcore Seasons]: Failed to get seasonRewards for player. " + ex.getMessage());
-            return Collections.emptyList(); // Provide an empty list in case of failure
-        });
-    }
-
-    public CompletableFuture<List<RewardSource>> getRewardSourcesAsync(int seasonId) {
-        return CompletableFuture.supplyAsync(() -> {
-            List<RewardSource> rewards = new ArrayList<>();
-
-            ChestDAO chestDAO = new ChestDAOImpl(plugin.database);
-            EndChestDAO endChestDAO = new EndChestDAOImpl(plugin.database);
-            InventoryDAO inventoryDAO = new InventoryDAOImpl(plugin.database);
-
-            // Create CompletableFuture for each DAO operation
-            CompletableFuture<List<TrackedChest>> chestDAOFuture = chestDAO.getAll(seasonId);
-            CompletableFuture<List<TrackedEndChest>> endChestDAOFuture = endChestDAO.getAll(seasonId);
-            CompletableFuture<List<SurvivorInventory>> inventoryDAOFuture = inventoryDAO.getAll(seasonId);
-
-            // Combine all DAO Futures
-            CompletableFuture<Void> allFutures = CompletableFuture.allOf(chestDAOFuture, endChestDAOFuture, inventoryDAOFuture);
-
-            try {
-                // Wait until all futures are complete
-                allFutures.get();
-
-                // After all futures are complete, combine their results into 'rewards'
-                List<TrackedChest> chests = chestDAOFuture.get();
-                List<TrackedEndChest> endChests = endChestDAOFuture.get();
-                List<SurvivorInventory> inventories = inventoryDAOFuture.get();
-
-                rewards.addAll(chests);
-                rewards.addAll(endChests);
-                rewards.addAll(inventories);
-            } catch (Exception e) {
-                Bukkit.getLogger().severe("[Hardcore Seasons]: Failed to get rewards. " + e.getMessage());
-            }
-
-            return rewards;
-        });
-    }
-
-    public void saveRewards(List<Participant> winners) {
+    public void saveRewards(List<HParticipant> winners) {
         if (winners.isEmpty()) {
             return;
         }
 
-        List<RewardSource> rewardSources = getRewardSourcesAsync(plugin.currentSeasonNum).join();
-        List<ItemStack> rewards = new ArrayList<>();
 
-        for (RewardSource rewardSource : rewardSources) {
-            try {
-                ItemStack[] contents = InventoryUtils.itemStackArrayFromBase64(rewardSource.getContents());
-                rewards.addAll(Arrays.asList(contents));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+        List<ItemStack> rewards = new ArrayList<>();
+        List<HEndChest> endChests = plugin.hDataSource.getEndChests(plugin.currentSeasonNum);
+        List< HInventory> inventories = plugin.hDataSource.getInventories(plugin.currentSeasonNum);
+        List<HTrackedContainer> trackedContainers = plugin.hDataSource.getTrackedContainers(plugin.currentSeasonNum);
+
+        try {
+            for (HEndChest endChest : endChests) {
+                List<ItemStack> contents = List.of(InventoryUtils.itemStackArrayFromBase64(endChest.getContents()));
+                rewards.addAll(contents);
             }
+
+            for (HInventory inventory : inventories) {
+                List<ItemStack> contents = List.of(InventoryUtils.itemStackArrayFromBase64(inventory.getContents()));
+                rewards.addAll(contents);
+            }
+
+            for (HTrackedContainer trackedContainer : trackedContainers) {
+                List<ItemStack> contents = List.of(InventoryUtils.itemStackArrayFromBase64(trackedContainer.getContents()));
+                rewards.addAll(contents);
+            }
+        } catch (IOException e) {
+            Bukkit.getLogger().severe("[Hardcore Seasons]: Failed to get rewards. " + e.getMessage());
+            return;
         }
+
+        // Remove endChests, inventories, and trackedContainers from the database
+        plugin.hDataSource.deleteEndChests(plugin.currentSeasonNum);
+        plugin.hDataSource.deleteInventories(plugin.currentSeasonNum);
+        plugin.hDataSource.deleteTrackedContainers(plugin.currentSeasonNum);
 
         distributeRewards(winners, rewards);
     }
 
-    private void distributeRewards(List<Participant> winners, List<ItemStack> rewards) {
+    private void distributeRewards(List<HParticipant> winners, List<ItemStack> rewards) {
         // Step 1: Aggregate ItemStacks by Material
         Map<Material, Integer> aggregatedRewards = new HashMap<>();
         for (ItemStack reward : rewards) {
@@ -104,13 +67,13 @@ public class RewardManager {
 
         // Sort winners based on joinDate, then by lastOnline for handling remainders
         winners.sort(
-                Comparator.comparing(Participant::getJoinDate)
-                        .thenComparing(Participant::getLastOnline)
+                Comparator.comparing(HParticipant::getJoinDate)
+                        .thenComparing(HParticipant::getLastOnline)
                         .reversed()
         );
 
         // Step 2: Distribute Items Evenly Among Winners
-        Map<Participant, List<ItemStack>> winnerRewards = new HashMap<>();
+        Map<HParticipant, List<ItemStack>> winnerRewards = new HashMap<>();
         for (Map.Entry<Material, Integer> entry : aggregatedRewards.entrySet()) {
             Material material = entry.getKey();
             int totalAmount = entry.getValue();
@@ -118,7 +81,7 @@ public class RewardManager {
             int remainder = totalAmount % winners.size();
 
             for (int i = 0; i < winners.size(); i++) {
-                Participant winner = winners.get(i);
+                HParticipant winner = winners.get(i);
                 int amountToGive = baseAmount;
                 if (i == 0 && remainder > 0) { // First winner gets the remainder
                     amountToGive += remainder;
@@ -138,23 +101,22 @@ public class RewardManager {
         saveWinnerRewardsToDatabase(winnerRewards);
     }
 
-    private void saveWinnerRewardsToDatabase(Map<Participant, List<ItemStack>> winnerRewards) {
+    private void saveWinnerRewardsToDatabase(Map<HParticipant, List<ItemStack>> winnerRewards) {
         // This method should contain logic to save the rewards for each player in the database
         // The exact implementation will depend on how your database is structured and how you manage transactions
-        for (Map.Entry<Participant, List<ItemStack>> entry : winnerRewards.entrySet()) {
-            Participant winner = entry.getKey();
+        for (Map.Entry<HParticipant, List<ItemStack>> entry : winnerRewards.entrySet()) {
+            HParticipant winner = entry.getKey();
             List<ItemStack> rewards = entry.getValue();
 
             List<ItemStack> shulkerBoxes = new ArrayList<>();
             packRewardsIntoShulkerBoxes(new LinkedList<>(rewards), shulkerBoxes);
-            SeasonRewardDAO seasonRewardDAO = new SeasonRewardDAOImpl(plugin.database);
-            seasonRewardDAO.save(new SeasonReward(
-                    0,
-                    plugin.currentSeasonNum,
-                    winner.playerId,
-                    InventoryUtils.itemStackArrayToBase64(shulkerBoxes.toArray(new ItemStack[0])),
-                    false
-            ));
+
+            HSeasonReward seasonReward = new HSeasonReward();
+            seasonReward.setPlayerId(winner.getPlayerId());
+            seasonReward.setSeasonId(plugin.currentSeasonNum);
+            seasonReward.setContents(InventoryUtils.itemStackArrayToBase64(shulkerBoxes.toArray(new ItemStack[0])));
+
+            plugin.hDataSource.setSeasonReward(seasonReward);
         }
     }
 
