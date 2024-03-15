@@ -6,7 +6,7 @@
 
     <groupId>us.mkaulfers.hardcoreseasons.HardcoreSeasons</groupId>
     <artifactId>HardcoreSeasons</artifactId>
-    <version>1.2.0b</version>
+    <version>1.2.1b</version>
     <packaging>jar</packaging>
 
     <name>HardcoreSeasons</name>
