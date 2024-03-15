@@ -1,0 +1,55 @@
+package us.mkaulfers.hardcoreseasons.orm;
+
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
+
+import java.util.UUID;
+
+@DatabaseTable(tableName = "season_rewards")
+public class HSeasonReward {
+    @DatabaseField(generatedId = true)
+    private int id;
+
+    @DatabaseField(columnName = "player_id")
+    private UUID playerId;
+
+    @DatabaseField(columnName = "season_id")
+    private int seasonId;
+
+    @DatabaseField(columnName = "contents")
+    private String contents;
+
+    public HSeasonReward() {}
+
+    public int getId() {
+        return id;
+    }
+
+    public UUID getPlayerId() {
+        return playerId;
+    }
+
+    public int getSeasonId() {
+        return seasonId;
+    }
+
+    public String getContents() {
+        return contents;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setPlayerId(UUID playerId) {
+        this.playerId = playerId;
+    }
+
+    public void setSeasonId(int seasonId) {
+        this.seasonId = seasonId;
+    }
+
+    public void setContents(String contents) {
+        this.contents = contents;
+    }
+}

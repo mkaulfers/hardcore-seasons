@@ -1,5 +1,10 @@
 package us.mkaulfers.hardcoreseasons;
 
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.DaoManager;
+import com.j256.ormlite.support.ConnectionSource;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -9,11 +14,18 @@ import us.mkaulfers.hardcoreseasons.interfaces.SeasonDAO;
 import us.mkaulfers.hardcoreseasons.listeners.*;
 import us.mkaulfers.hardcoreseasons.managers.*;
 import us.mkaulfers.hardcoreseasons.models.Database;
+import us.mkaulfers.hardcoreseasons.models.MySQLConfig;
+import us.mkaulfers.hardcoreseasons.orm.HDataSource;
+import us.mkaulfers.hardcoreseasons.orm.HSeason;
+
+import java.sql.Connection;
+import java.sql.SQLException;
 
 import static us.mkaulfers.hardcoreseasons.enums.InternalPlaceholder.CURRENT_SEASON;
 import static us.mkaulfers.hardcoreseasons.enums.InternalPlaceholder.NEXT_SEASON;
 
 public final class HardcoreSeasons extends JavaPlugin {
+    public HDataSource hDataSource;
     public Database database;
     public boolean isGeneratingNewSeason = false;
     public int currentSeasonNum;
@@ -41,22 +53,21 @@ public final class HardcoreSeasons extends JavaPlugin {
             return;
         }
 
-        database = new Database(configManager.config);
+        hDataSource = new HDataSource(configManager.config);
 
+        seasonManager = new SeasonManager(this);
+        rewardManager = new RewardManager(this);
+        worldManager = new WorldManager(this);
+
+
+        database = new Database(configManager.config);
         SeasonDAO seasonDAO = new SeasonDAOImpl(database);
         seasonDAO.getActiveSeasonId().thenAccept(seasonId -> {
             currentSeasonNum = seasonId;
             placeholderManager = new PlaceholderManager();
             placeholderManager.setPlaceholderValue(CURRENT_SEASON, String.valueOf(seasonId));
             placeholderManager.setPlaceholderValue(NEXT_SEASON, String.valueOf(seasonId + 1));
-
-            Bukkit.getScheduler().runTask(this, () -> {
-                seasonManager = new SeasonManager(this);
-                rewardManager = new RewardManager(this);
-                worldManager = new WorldManager(this);
-            });
         });
-
     }
 
     private void registerListeners() {
