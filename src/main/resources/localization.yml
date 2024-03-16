@@ -6,6 +6,7 @@
 # {season_select_current_page} - The current page number when selecting seasons.
 # {season_select_total_pages} - The total number of pages when selecting seasons.
 # {past_season_number} - The number of the past season.
+# {resurrected_player_name} - The name of the player that was resurrected.
 
 # System Messages
 configReloaded: "&9Config reloaded."
@@ -49,3 +50,6 @@ deathMessage: "&cYou have died and must wait until &bSeason {next_season}"
 # Season End Messages
 seasonEnding: "&9The season has ended. &c(Rejoin in 1 minute.)"
 seasonGenerating: "&9A new season is generating. &c(Rejoin in 1 minute.)"
+
+# Admin Messages
+playerResurrected: "&b{resurrected_player_name} &9has been resurrected, for &bSeason {current_season}&9."

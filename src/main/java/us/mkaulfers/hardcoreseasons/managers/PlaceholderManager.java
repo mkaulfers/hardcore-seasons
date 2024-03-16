@@ -11,6 +11,8 @@ public class PlaceholderManager {
     public int phSeasonSelectNextPage;
     public int pastSeasonNum;
 
+    public String resurrectedPlayerName;
+
     public PlaceholderManager() {
         phCurrentSeason = 0;
         phNextSeason = 0;
@@ -19,6 +21,7 @@ public class PlaceholderManager {
         phSeasonSelectCurrentPage = 0;
         phSeasonSelectNextPage = 0;
         pastSeasonNum = 0;
+        resurrectedPlayerName = "";
     }
 
     // Should replace the placeholder that has the format {placeholder} with the value
@@ -30,6 +33,7 @@ public class PlaceholderManager {
         message = message.replace("{season_select_current_page}", String.valueOf(phSeasonSelectCurrentPage));
         message = message.replace("{season_select_total_pages}", String.valueOf(phSeasonSelectNextPage));
         message = message.replace("{past_season_number}", String.valueOf(pastSeasonNum));
+        message = message.replace("{resurrected_player_name}", resurrectedPlayerName);
         return message;
     }
 
@@ -55,6 +59,9 @@ public class PlaceholderManager {
                 break;
             case PAST_SEASON_NUMBER:
                 pastSeasonNum = Integer.parseInt(value);
+                break;
+            case RESURRECTED_PLAYER_NAME:
+                resurrectedPlayerName = value;
                 break;
         }
     }

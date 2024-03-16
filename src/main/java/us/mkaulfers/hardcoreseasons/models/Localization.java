@@ -50,6 +50,8 @@ public class Localization {
     public final String seasonEnding;
     public final String seasonGenerating;
 
+    public final String playerResurrected;
+
     public Localization(
             HardcoreSeasons plugin,
             String configReloaded,
@@ -80,7 +82,8 @@ public class Localization {
             String voteFail,
             String deathMessage,
             String seasonEnding,
-            String seasonGenerating
+            String seasonGenerating,
+            String playerResurrected
     ) {
         this.plugin = plugin;
 
@@ -119,6 +122,8 @@ public class Localization {
 
         this.seasonEnding = seasonEnding;
         this.seasonGenerating = seasonGenerating;
+
+        this.playerResurrected = playerResurrected;
     }
 
     public String getLocalized(LocalizationKey key) {
@@ -152,6 +157,7 @@ public class Localization {
             case DEATH_MESSAGE -> translateAlternateColorCodes(deathMessage);
             case SEASON_ENDING -> translateAlternateColorCodes(seasonEnding);
             case SEASON_GENERATING -> translateAlternateColorCodes(seasonGenerating);
+            case PLAYER_RESURRECTED -> translateAlternateColorCodes(playerResurrected);
         };
     }
 

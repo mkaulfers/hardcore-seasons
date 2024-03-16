@@ -1,12 +1,18 @@
 package us.mkaulfers.hardcoreseasons;
 
 import co.aikar.commands.PaperCommandManager;
+import com.google.common.collect.ImmutableList;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import us.mkaulfers.hardcoreseasons.commands.Season;
 import us.mkaulfers.hardcoreseasons.listeners.*;
 import us.mkaulfers.hardcoreseasons.managers.*;
+import us.mkaulfers.hardcoreseasons.models.ResRequest;
 import us.mkaulfers.hardcoreseasons.orm.HDataSource;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static us.mkaulfers.hardcoreseasons.enums.InternalPlaceholder.CURRENT_SEASON;
 import static us.mkaulfers.hardcoreseasons.enums.InternalPlaceholder.NEXT_SEASON;
@@ -32,6 +38,24 @@ public final class HardcoreSeasons extends JavaPlugin {
 
     private void registerCommands() {
         PaperCommandManager manager = new PaperCommandManager(this);
+
+        manager.getCommandContexts().registerContext(ResRequest.class, c -> {
+            String playerName = c.popFirstArg();
+            OfflinePlayer offlinePlayer = getServer().getOfflinePlayer(playerName);
+            return new ResRequest(playerName, offlinePlayer.getUniqueId());
+        });
+
+        manager.getCommandCompletions().registerCompletion("resurrectCompletion", c -> {
+            List<String> playerNames = new ArrayList<>();
+            OfflinePlayer[] offlinePlayers = getServer().getOfflinePlayers();
+
+            for (OfflinePlayer offlinePlayer : offlinePlayers) {
+                playerNames.add(offlinePlayer.getName());
+            }
+
+            return playerNames;
+        });
+
         manager.registerCommand(new Season(this));
     }
 
@@ -63,10 +87,5 @@ public final class HardcoreSeasons extends JavaPlugin {
         pm.registerEvents(new PlayerPortal(this), this);
         pm.registerEvents(new PlayerSpawnLocation(this), this);
         pm.registerEvents(new AsyncPlayerPreLogin(this), this);
-    }
-
-    @Override
-    public void onDisable() {
-        // Plugin shutdown logic
     }
 }

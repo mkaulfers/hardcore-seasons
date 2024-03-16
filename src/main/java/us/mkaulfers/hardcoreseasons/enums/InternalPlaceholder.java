@@ -7,7 +7,8 @@ public enum InternalPlaceholder {
     REWARD_SELECT_TOTAL_PAGES("reward_select_total_pages"),
     SEASON_SELECT_CURRENT_PAGE("season_select_current_page"),
     SEASON_SELECT_TOTAL_PAGES("season_select_total_pages"),
-    PAST_SEASON_NUMBER("past_season_number");
+    PAST_SEASON_NUMBER("past_season_number"),
+    RESURRECTED_PLAYER_NAME("resurrected_player_name");
 
     private final String placeholder;
 

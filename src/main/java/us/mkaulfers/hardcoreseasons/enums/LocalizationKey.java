@@ -29,8 +29,8 @@ public enum LocalizationKey {
     VOTE_FAIL("voteFail"),
     DEATH_MESSAGE("deathMessage"),
     SEASON_ENDING("seasonEnding"),
-
-    SEASON_GENERATING("seasonGenerating");
+    SEASON_GENERATING("seasonGenerating"),
+    PLAYER_RESURRECTED("playerResurrected");
 
     private final String key;
 

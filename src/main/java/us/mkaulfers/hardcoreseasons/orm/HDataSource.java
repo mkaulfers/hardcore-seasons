@@ -538,6 +538,12 @@ public class HDataSource {
         }
     }
 
+    public void resurrectPlayer(UUID playerId) {
+        HParticipant participant = getParticipant(playerId, getActiveSeason().getSeasonId());
+        participant.setDead(false);
+        updateParticipant(participant);
+    }
+
     private long daysToMillis(int days) {
         return 1000L * 60 * 60 * 24 * days;
     }

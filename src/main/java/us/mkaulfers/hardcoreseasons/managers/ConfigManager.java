@@ -124,6 +124,9 @@ public class ConfigManager {
         String seasonEnding = rawLocalization.getString("seasonEnding");
         String seasonGenerating = rawLocalization.getString("seasonGenerating");
 
+        // Admin Messages
+        String playerResurrected = rawLocalization.getString("playerResurrected");
+
         localization = new Localization(
                 plugin,
                 configReloaded,
@@ -154,7 +157,8 @@ public class ConfigManager {
                 voteFail,
                 deathMessage,
                 seasonEnding,
-                seasonGenerating
+                seasonGenerating,
+                playerResurrected
         );
     }
 }
