@@ -7,6 +7,8 @@ import us.mkaulfers.hardcoreseasons.enums.LocalizationKey;
 public class Localization {
     HardcoreSeasons plugin;
 
+    public final String configVersion;
+
     // System Messages
     public final String configReloaded;
     public final String mustBeAPlayer;
@@ -54,6 +56,7 @@ public class Localization {
 
     public Localization(
             HardcoreSeasons plugin,
+            String configversion,
             String configReloaded,
             String mustBeAPlayer,
             String noPermission,
@@ -86,6 +89,8 @@ public class Localization {
             String playerResurrected
     ) {
         this.plugin = plugin;
+
+        this.configVersion = configversion;
 
         this.configReloaded = configReloaded;
         this.mustBeAPlayer = mustBeAPlayer;

@@ -7,8 +7,8 @@ import us.mkaulfers.hardcoreseasons.models.Localization;
 import us.mkaulfers.hardcoreseasons.models.MySQLConfig;
 import us.mkaulfers.hardcoreseasons.models.PluginConfig;
 
-import java.io.File;
-import java.util.List;
+import java.io.*;
+import java.util.function.BiConsumer;
 
 public class ConfigManager {
     HardcoreSeasons plugin;
@@ -23,142 +23,131 @@ public class ConfigManager {
     }
 
     public void loadConfig(HardcoreSeasons plugin) {
-        plugin.getConfig().options().copyDefaults();
-        plugin.saveDefaultConfig();
+        File configFile = new File(plugin.getDataFolder(), "config.yml");
+        plugin.saveResource("config.yml", false);
+        config = constructPluginConfig(YamlConfiguration.loadConfiguration(configFile));
 
-        FileConfiguration rawConfig = plugin.getConfig();
-        boolean claimingEnabled = rawConfig.getBoolean("claimingEnabled");
-        boolean trackingEnabled = rawConfig.getBoolean("trackingEnabled");
-        boolean persistSeasonWorlds = rawConfig.getBoolean("persistSeasonWorlds");
-        boolean unloadPastSeasons = rawConfig.getBoolean("unloadPastSeasons");
-        int minSeasonLength = rawConfig.getInt("minSeasonLength");
-        int maxSeasonLength = rawConfig.getInt("maxSeasonLength");
-        int maxSurvivorsRemaining = rawConfig.getInt("maxSurvivorsRemaining");
-        int minVotesToEndSeason = rawConfig.getInt("minVotesToEndSeason");
-        int lastLoginThreshold = rawConfig.getInt("lastLoginThreshold");
-        int notificationInterval = rawConfig.getInt("notificationInterval");
-        int voteResetInterval = rawConfig.getInt("voteResetInterval");
-        List<String> endOfSeasonCommands = rawConfig.getStringList("endOfSeasonCommands");
-        String storageType = rawConfig.getString("storageType");
-
-        String host = rawConfig.getString("MySQL.host");
-        int port = rawConfig.getInt("MySQL.port");
-        String database = rawConfig.getString("MySQL.database");
-        String username = rawConfig.getString("MySQL.username");
-        String password = rawConfig.getString("MySQL.password");
-        int updateInterval = rawConfig.getInt("MySQL.updateInterval");
-
-        MySQLConfig mySQLConfig = new MySQLConfig(
-                host,
-                port,
-                database,
-                username,
-                password,
-                updateInterval
-        );
-
-        config = new PluginConfig(
-                claimingEnabled,
-                trackingEnabled,
-                persistSeasonWorlds,
-                unloadPastSeasons,
-                minSeasonLength,
-                maxSeasonLength,
-                maxSurvivorsRemaining,
-                minVotesToEndSeason,
-                lastLoginThreshold,
-                notificationInterval,
-                voteResetInterval,
-                endOfSeasonCommands,
-                storageType,
-                mySQLConfig
-        );
+        updateConfigurationIfNeeded("config.yml", (config, p) -> {
+            this.config = constructPluginConfig(config);
+        });
     }
 
-    // Load the localization.yml from the same directory as the config.yml
     private void loadLocalization(HardcoreSeasons plugin) {
         File localizationFile = new File(plugin.getDataFolder(), "localization.yml");
         plugin.saveResource("localization.yml", false);
-        FileConfiguration rawLocalization = YamlConfiguration.loadConfiguration(localizationFile);
+        localization = constructLocalization(YamlConfiguration.loadConfiguration(localizationFile));
 
-        // System Messages
-        String configReloaded = rawLocalization.getString("configReloaded");
-        String mustBeAPlayer = rawLocalization.getString("mustBeAPlayer");
-        String noPermission = rawLocalization.getString("noPermission");
-        String invalidCommand = rawLocalization.getString("invalidCommand");
+        updateConfigurationIfNeeded("localization.yml", (config, p) -> {
+            this.localization = constructLocalization(config);
+        });
+    }
 
-        // Redeeming Rewards GUI
-        String loadingRewards = rawLocalization.getString("loadingRewards");
-        String rewardGoBack = rawLocalization.getString("rewardGoBack");
-        String rewardPrevious = rawLocalization.getString("rewardPrevious");
-        String rewardPage = rawLocalization.getString("rewardPage");
-        String rewardNext = rawLocalization.getString("rewardNext");
-        String rewardClose = rawLocalization.getString("rewardClose");
-        String rewardPageCounter = rawLocalization.getString("rewardPageCounter");
-        String inventoryFull = rawLocalization.getString("inventoryFull");
-
-        // Selecting Season GUI
-        String loadingSeasons = rawLocalization.getString("loadingSeasons");
-        String selectSeasonTitle = rawLocalization.getString("selectSeasonTitle");
-        String seasonItemName = rawLocalization.getString("seasonItemName");
-        String seasonPrevious = rawLocalization.getString("seasonPrevious");
-        String seasonNext = rawLocalization.getString("seasonNext");
-        String seasonClose = rawLocalization.getString("seasonClose");
-        String seasonPageCounter = rawLocalization.getString("seasonPageCounter");
-
-        // Player Join Messages
-        String haveDied = rawLocalization.getString("haveDied");
-
-        // Vote Messages
-        String cannotVote = rawLocalization.getString("cannotVote");
-        String requestingVoteTop = rawLocalization.getString("requestingVoteTop");
-        String requestingVoteBottom = rawLocalization.getString("requestingVoteBottom");
-        String voteContinueSuccess = rawLocalization.getString("voteContinueSuccess");
-        String voteEndSuccess = rawLocalization.getString("voteEndSuccess");
-        String voteFail = rawLocalization.getString("voteFail");
-
-        // Player Death Messages
-        String deathMessage = rawLocalization.getString("deathMessage");
-
-        // Season Messages
-        String seasonEnding = rawLocalization.getString("seasonEnding");
-        String seasonGenerating = rawLocalization.getString("seasonGenerating");
-
-        // Admin Messages
-        String playerResurrected = rawLocalization.getString("playerResurrected");
-
-        localization = new Localization(
-                plugin,
-                configReloaded,
-                mustBeAPlayer,
-                noPermission,
-                invalidCommand,
-                loadingRewards,
-                rewardGoBack,
-                rewardPrevious,
-                rewardPage,
-                rewardNext,
-                rewardClose,
-                rewardPageCounter,
-                inventoryFull,
-                loadingSeasons,
-                selectSeasonTitle,
-                seasonItemName,
-                seasonPrevious,
-                seasonNext,
-                seasonClose,
-                seasonPageCounter,
-                haveDied,
-                cannotVote,
-                requestingVoteTop,
-                requestingVoteBottom,
-                voteContinueSuccess,
-                voteEndSuccess,
-                voteFail,
-                deathMessage,
-                seasonEnding,
-                seasonGenerating,
-                playerResurrected
+    private PluginConfig constructPluginConfig(FileConfiguration rawConfig) {
+        return new PluginConfig(
+                rawConfig.getString("configVersion"),
+                rawConfig.getBoolean("claimingEnabled"),
+                rawConfig.getBoolean("trackingEnabled"),
+                rawConfig.getBoolean("persistSeasonWorlds"),
+                rawConfig.getBoolean("unloadPastSeasons"),
+                rawConfig.getInt("minSeasonLength"),
+                rawConfig.getInt("maxSeasonLength"),
+                rawConfig.getInt("maxSurvivorsRemaining"),
+                rawConfig.getInt("minVotesToEndSeason"),
+                rawConfig.getInt("lastLoginThreshold"),
+                rawConfig.getInt("notificationInterval"),
+                rawConfig.getInt("voteResetInterval"),
+                rawConfig.getStringList("endOfSeasonCommands"),
+                rawConfig.getString("storageType"),
+                new MySQLConfig(
+                        rawConfig.getString("MySQL.host"),
+                        rawConfig.getInt("MySQL.port"),
+                        rawConfig.getString("MySQL.database"),
+                        rawConfig.getString("MySQL.username"),
+                        rawConfig.getString("MySQL.password"),
+                        rawConfig.getInt("MySQL.updateInterval")
+                )
         );
+    }
+
+    private Localization constructLocalization(FileConfiguration rawConfig) {
+        return new Localization(
+                plugin,
+                rawConfig.getString("configVersion"),
+                rawConfig.getString("configReloaded"),
+                rawConfig.getString("mustBeAPlayer"),
+                rawConfig.getString("noPermission"),
+                rawConfig.getString("invalidCommand"),
+                rawConfig.getString("loadingRewards"),
+                rawConfig.getString("rewardGoBack"),
+                rawConfig.getString("rewardPrevious"),
+                rawConfig.getString("rewardPage"),
+                rawConfig.getString("rewardNext"),
+                rawConfig.getString("rewardClose"),
+                rawConfig.getString("rewardPageCounter"),
+                rawConfig.getString("inventoryFull"),
+                rawConfig.getString("loadingSeasons"),
+                rawConfig.getString("selectSeasonTitle"),
+                rawConfig.getString("seasonItemName"),
+                rawConfig.getString("seasonPrevious"),
+                rawConfig.getString("seasonNext"),
+                rawConfig.getString("seasonClose"),
+                rawConfig.getString("seasonPageCounter"),
+                rawConfig.getString("haveDied"),
+                rawConfig.getString("cannotVote"),
+                rawConfig.getString("requestingVoteTop"),
+                rawConfig.getString("requestingVoteBottom"),
+                rawConfig.getString("voteContinueSuccess"),
+                rawConfig.getString("voteEndSuccess"),
+                rawConfig.getString("voteFail"),
+                rawConfig.getString("deathMessage"),
+                rawConfig.getString("seasonEnding"),
+                rawConfig.getString("seasonGenerating"),
+                rawConfig.getString("playerResurrected")
+        );
+    }
+
+    private void updateConfigurationIfNeeded(String resourceName, BiConsumer<FileConfiguration, HardcoreSeasons> configLoader) {
+        File file = new File(plugin.getDataFolder(), resourceName);
+        File backupFile = new File(plugin.getDataFolder(), resourceName + "-backup.yml");
+        if (!file.exists()) {
+            plugin.saveResource(resourceName, false);
+        }
+        FileConfiguration defaultConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(plugin.getResource(resourceName)));
+        FileConfiguration userConfig = YamlConfiguration.loadConfiguration(file);
+
+        String defaultVersion = defaultConfig.getString("configVersion");
+        String userVersion = userConfig.getString("configVersion");
+
+        if (defaultVersion == null || !defaultVersion.equals(userVersion)) {
+            file.renameTo(backupFile);
+            plugin.saveResource(resourceName, false);
+
+            FileConfiguration newUserConfig = YamlConfiguration.loadConfiguration(file);
+            mergeConfigurations(userConfig, newUserConfig);
+
+            try {
+                newUserConfig.save(file);
+                backupFile.delete();
+            } catch (IOException e) {
+                plugin.getLogger().severe("[Hardcore Seasons]: Failed to update configuration file: " + file.getName());
+                plugin.getLogger().severe("[Hardcore Seasons]: Rolling back to backup file: " + backupFile.getName());
+                backupFile.renameTo(file);
+            }
+        }
+
+        configLoader.accept(YamlConfiguration.loadConfiguration(file), plugin);
+    }
+
+    private void mergeConfigurations(FileConfiguration oldConfig, FileConfiguration newConfig) {
+        newConfig.set("configVersion", newConfig.getString("configVersion"));
+
+        for (String key : oldConfig.getKeys(true)) {
+            if (!"configVersion".equals(key) && newConfig.contains(key)) {
+                Object value = oldConfig.get(key);
+                if (value != null) {
+                    newConfig.set(key, value);
+                }
+            }
+        }
     }
 }
