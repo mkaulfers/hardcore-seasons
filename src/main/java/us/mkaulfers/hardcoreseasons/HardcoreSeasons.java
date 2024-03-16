@@ -1,8 +1,9 @@
 package us.mkaulfers.hardcoreseasons;
 
+import co.aikar.commands.PaperCommandManager;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import us.mkaulfers.hardcoreseasons.commands.SeasonCommand;
+import us.mkaulfers.hardcoreseasons.commands.Season;
 import us.mkaulfers.hardcoreseasons.listeners.*;
 import us.mkaulfers.hardcoreseasons.managers.*;
 import us.mkaulfers.hardcoreseasons.orm.HDataSource;
@@ -30,7 +31,8 @@ public final class HardcoreSeasons extends JavaPlugin {
     }
 
     private void registerCommands() {
-        this.getCommand("season").setExecutor(new SeasonCommand(this));
+        PaperCommandManager manager = new PaperCommandManager(this);
+        manager.registerCommand(new Season(this));
     }
 
     private void handleStorage() {

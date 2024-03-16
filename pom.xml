@@ -45,6 +45,14 @@
                             <pattern>com.github.stefvanschie.inventoryframework</pattern>
                             <shadedPattern>us.mkaulfers.hardcoreseasons.HardcoreSeasons.inventoryframework</shadedPattern>
                         </relocation>
+                        <relocation>
+                            <pattern>co.aikar.commands</pattern>
+                            <shadedPattern>us.mkaulfers.hardcoreseasons.HardcoreSeasons.acf</shadedPattern> <!-- Replace this -->
+                        </relocation>
+                        <relocation>
+                            <pattern>co.aikar.locales</pattern>
+                            <shadedPattern>us.mkaulfers.hardcoreseasons.HardcoreSeasons.locales</shadedPattern> <!-- Replace this -->
+                        </relocation>
                     </relocations>
                     <outputFile>../_minecraft_dev_server/plugins/${project.artifactId}-${project.version}.jar</outputFile>
                 </configuration>
@@ -64,12 +72,13 @@
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
         <repository>
-            <id>sonatype</id>
-            <url>https://oss.sonatype.org/content/groups/public/</url>
+            <id>aikar</id>
+            <url>https://repo.aikar.co/content/groups/aikar/</url>
         </repository>
     </repositories>
 
     <dependencies>
+        <!-- Provided -->
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
@@ -83,11 +92,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.stefvanschie.inventoryframework</groupId>
-            <artifactId>IF</artifactId>
-            <version>0.10.13</version>
-        </dependency>
-        <dependency>
             <groupId>com.j256.ormlite</groupId>
             <artifactId>ormlite-core</artifactId>
             <version>6.1</version>
@@ -98,6 +102,18 @@
             <artifactId>ormlite-jdbc</artifactId>
             <version>6.1</version>
             <scope>provided</scope>
+        </dependency>
+
+        <!-- Compile -->
+        <dependency>
+            <groupId>com.github.stefvanschie.inventoryframework</groupId>
+            <artifactId>IF</artifactId>
+            <version>0.10.13</version>
+        </dependency>
+        <dependency>
+            <groupId>co.aikar</groupId>
+            <artifactId>acf-paper</artifactId>
+            <version>0.5.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
 </project>
