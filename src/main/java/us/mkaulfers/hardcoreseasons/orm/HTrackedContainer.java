@@ -1,5 +1,6 @@
 package us.mkaulfers.hardcoreseasons.orm;
 
+import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
@@ -26,7 +27,7 @@ public class HTrackedContainer {
     @DatabaseField(columnName = "type")
     private String type;
 
-    @DatabaseField(columnName = "contents")
+    @DatabaseField(dataType = DataType.LONG_STRING, columnName = "contents")
     private String contents;
 
     public HTrackedContainer() {}

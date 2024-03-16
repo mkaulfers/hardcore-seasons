@@ -1,9 +1,10 @@
 package us.mkaulfers.hardcoreseasons.listeners;
 
+import org.bukkit.block.BlockState;
+import org.bukkit.block.DoubleChest;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.inventory.BlockInventoryHolder;
 import org.bukkit.inventory.InventoryHolder;
 import us.mkaulfers.hardcoreseasons.HardcoreSeasons;
 import us.mkaulfers.hardcoreseasons.orm.HTrackedContainer;
@@ -24,7 +25,7 @@ public class InventoryClose implements Listener {
 
         InventoryHolder holder = event.getInventory().getHolder();
 
-        if (holder instanceof BlockInventoryHolder) {
+        if (holder instanceof BlockState || holder instanceof DoubleChest) {
             HTrackedContainer trackedContainer = plugin.hDataSource.getTrackedContainer(
                     plugin.currentSeasonNum,
                     event.getInventory().getLocation().getBlockX(),

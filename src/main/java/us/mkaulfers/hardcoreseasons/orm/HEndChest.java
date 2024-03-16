@@ -1,5 +1,6 @@
 package us.mkaulfers.hardcoreseasons.orm;
 
+import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
@@ -16,7 +17,7 @@ public class HEndChest {
     @DatabaseField(columnName = "player_id")
     private UUID playerId;
 
-    @DatabaseField(columnName = "contents")
+    @DatabaseField(dataType = DataType.LONG_STRING, columnName = "contents")
     private String contents;
 
     public HEndChest() {}
