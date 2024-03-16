@@ -419,7 +419,7 @@ public class HDataSource {
     }
 
     public HDataSource(PluginConfig pluginConfig) {
-        if (!pluginConfig.storageType.equalsIgnoreCase("sqlite")) {
+        if (pluginConfig.storageType.equalsIgnoreCase("sqlite")) {
             config.setJdbcUrl("jdbc:sqlite:plugins/HardcoreSeasons/hardcoreseasons.db");
         } else {
             String host = pluginConfig.mySQLConfig.host;
