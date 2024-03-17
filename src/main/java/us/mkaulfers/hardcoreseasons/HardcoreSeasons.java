@@ -13,9 +13,6 @@ import us.mkaulfers.hardcoreseasons.orm.HDataSource;
 import java.util.ArrayList;
 import java.util.List;
 
-import static us.mkaulfers.hardcoreseasons.enums.InternalPlaceholder.CURRENT_SEASON;
-import static us.mkaulfers.hardcoreseasons.enums.InternalPlaceholder.NEXT_SEASON;
-
 public final class HardcoreSeasons extends JavaPlugin {
     public HDataSource hDataSource;
     public boolean isGeneratingNewSeason = false;
@@ -63,11 +60,11 @@ public final class HardcoreSeasons extends JavaPlugin {
             return;
         }
 
-        hDataSource = new HDataSource(configManager.config);
+        hDataSource = new HDataSource(this);
         currentSeasonNum = hDataSource.getActiveSeason().getSeasonId();
         placeholderManager = new PlaceholderManager();
-        placeholderManager.setPlaceholderValue(CURRENT_SEASON, String.valueOf(currentSeasonNum));
-        placeholderManager.setPlaceholderValue(NEXT_SEASON, String.valueOf(currentSeasonNum + 1));
+        placeholderManager.currentSeason = currentSeasonNum;
+        placeholderManager.nextSeason = currentSeasonNum + 1;
 
         seasonManager = new SeasonManager(this);
         rewardManager = new RewardManager(this);

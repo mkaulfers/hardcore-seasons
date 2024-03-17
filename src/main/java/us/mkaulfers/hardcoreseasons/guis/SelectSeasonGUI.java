@@ -17,7 +17,6 @@ import us.mkaulfers.hardcoreseasons.orm.HSeasonReward;
 import java.util.ArrayList;
 import java.util.List;
 
-import static us.mkaulfers.hardcoreseasons.enums.InternalPlaceholder.*;
 import static us.mkaulfers.hardcoreseasons.enums.LocalizationKey.*;
 
 public class SelectSeasonGUI {
@@ -36,7 +35,7 @@ public class SelectSeasonGUI {
             ItemStack guiChestItem = new ItemStack(Material.CHEST);
             ItemMeta guiChestItemMeta = guiChestItem.getItemMeta();
 
-            plugin.placeholderManager.setPlaceholderValue(PAST_SEASON_NUMBER, String.valueOf(seasonReward.getSeasonId()));
+            plugin.placeholderManager.pastSeasonNum = seasonReward.getSeasonId();
 
             guiChestItemMeta.setDisplayName(plugin.configManager.localization.getLocalized(SEASON_ITEM_NAME));
             guiChestItem.setItemMeta(guiChestItemMeta);
@@ -85,8 +84,8 @@ public class SelectSeasonGUI {
         previousMeta.setDisplayName(plugin.configManager.localization.getLocalized(SEASON_PREVIOUS));
         previous.setItemMeta(previousMeta);
 
-        plugin.placeholderManager.setPlaceholderValue(SEASON_SELECT_CURRENT_PAGE, String.valueOf(pages.getPage()));
-        plugin.placeholderManager.setPlaceholderValue(SEASON_SELECT_TOTAL_PAGES, String.valueOf(pages.getPages()));
+        plugin.placeholderManager.seasonSelectCurrentPage = pages.getPage();
+        plugin.placeholderManager.seasonSelectTotalPages = pages.getPages();
 
         // Current
         ItemStack current = new ItemStack(Material.PAPER);

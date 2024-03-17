@@ -30,7 +30,8 @@ public enum LocalizationKey {
     DEATH_MESSAGE("deathMessage"),
     SEASON_ENDING("seasonEnding"),
     SEASON_GENERATING("seasonGenerating"),
-    PLAYER_RESURRECTED("playerResurrected");
+    PLAYER_RESURRECTED("playerResurrected"),
+    SEASON_INFO("seasonInfo");
 
     private final String key;
 

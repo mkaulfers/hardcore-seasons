@@ -14,8 +14,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static us.mkaulfers.hardcoreseasons.enums.InternalPlaceholder.CURRENT_SEASON;
-import static us.mkaulfers.hardcoreseasons.enums.InternalPlaceholder.NEXT_SEASON;
 import static us.mkaulfers.hardcoreseasons.enums.LocalizationKey.*;
 
 public class SeasonManager {
@@ -151,8 +149,8 @@ public class SeasonManager {
         plugin.hDataSource.setActiveSeason(newSeason);
         plugin.currentSeasonNum = plugin.currentSeasonNum + 1;
 
-        plugin.placeholderManager.setPlaceholderValue(CURRENT_SEASON, String.valueOf(newSeason.getSeasonId()));
-        plugin.placeholderManager.setPlaceholderValue(NEXT_SEASON, String.valueOf(newSeason.getSeasonId() + 1));
+        plugin.placeholderManager.currentSeason = newSeason.getSeasonId();
+        plugin.placeholderManager.nextSeason = newSeason.getSeasonId() + 1;
 
         // Generate New Worlds
         plugin.worldManager = new WorldManager(plugin);

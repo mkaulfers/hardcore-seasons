@@ -9,15 +9,17 @@ import com.j256.ormlite.table.TableUtils;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.bukkit.Bukkit;
+import us.mkaulfers.hardcoreseasons.HardcoreSeasons;
 import us.mkaulfers.hardcoreseasons.models.PluginConfig;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 public class HDataSource {
-    private final PluginConfig pluginConfig;
+    private final HardcoreSeasons plugin;
     private final HikariConfig config = new HikariConfig();
     private final HikariDataSource ds;
 
@@ -418,7 +420,11 @@ public class HDataSource {
         }
     }
 
-    public HDataSource(PluginConfig pluginConfig) {
+    public HDataSource(HardcoreSeasons plugin) {
+        this.plugin = plugin;
+
+        PluginConfig pluginConfig = plugin.configManager.config;
+
         if (pluginConfig.storageType.equalsIgnoreCase("sqlite")) {
             config.setJdbcUrl("jdbc:sqlite:plugins/HardcoreSeasons/hardcoreseasons.db");
         } else {
@@ -432,7 +438,6 @@ public class HDataSource {
             config.setPassword(password);
         }
 
-        this.pluginConfig = pluginConfig;
         this.ds = new HikariDataSource(config);
 
         initTables();
@@ -500,8 +505,8 @@ public class HDataSource {
                 season.setId(1);
                 season.setSeasonId(1);
                 season.setStartDate(new Timestamp(System.currentTimeMillis()));
-                season.setSoftEndDate(new Timestamp(System.currentTimeMillis() + daysToMillis(pluginConfig.minSeasonLength)));
-                season.setHardEndDate(new Timestamp(System.currentTimeMillis() + daysToMillis(pluginConfig.maxSeasonLength)));
+                season.setSoftEndDate(new Timestamp(System.currentTimeMillis() + daysToMillis(plugin.configManager.config.minSeasonLength)));
+                season.setHardEndDate(new Timestamp(System.currentTimeMillis() + daysToMillis(plugin.configManager.config.maxSeasonLength)));
                 seasonDao.create(season);
                 seasons = seasonDao.queryForAll();
             }
@@ -542,6 +547,74 @@ public class HDataSource {
         HParticipant participant = getParticipant(playerId, getActiveSeason().getSeasonId());
         participant.setDead(false);
         updateParticipant(participant);
+    }
+
+    public void generatePlaceholderStats() {
+        int playersActiveCount = 0;
+        int playersAliveCount = 0;
+        int playersDeadCount = 0;
+        int inventoriesCount = 0;
+        int inventoriesItemsCount = 0;
+        int enderChestsCount = 0;
+        int enderChestsItemsCount = 0;
+        int containerCount = 0;
+        int containerItemsCount = 0;
+
+        for (HParticipant participant : participants) {
+            Timestamp now = new Timestamp(System.currentTimeMillis());
+            Timestamp threshold = new Timestamp(now.getTime() - daysToMillis(plugin.configManager.config.lastLoginThreshold));
+
+            if (participant.getLastOnline().after(threshold)) {
+                playersActiveCount++;
+            }
+
+            if (!participant.isDead()) {
+                playersAliveCount++;
+            } else {
+                playersDeadCount++;
+            }
+        }
+
+        for (HInventory inventory : inventories) {
+            inventoriesCount++;
+            inventoriesItemsCount += inventory.getContentsCount();
+        }
+
+        for (HEndChest endChest : endChests) {
+            enderChestsCount++;
+            enderChestsItemsCount += endChest.getContentsCount();
+        }
+
+        for (HTrackedContainer trackedContainer : trackedContainers) {
+            containerCount++;
+            containerItemsCount += trackedContainer.getContentsCount();
+        }
+
+        HSeason activeSeason = getActiveSeason();
+        Timestamp startDate = activeSeason.getStartDate();
+        Timestamp softEndDate = activeSeason.getSoftEndDate();
+
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM d, yyyy 'at' h:mma");
+        String formattedStartDate = sdf.format(startDate);
+        String formattedSoftEndDate = sdf.format(softEndDate);
+
+        plugin.placeholderManager.seasonStartDate = formattedStartDate;
+        plugin.placeholderManager.seasonVoteStartDate = formattedSoftEndDate;
+
+        if (plugin.configManager.config.maxSeasonLength != -1) {
+            Timestamp endDate = activeSeason.getHardEndDate();
+            plugin.placeholderManager.seasonEndDate = sdf.format(endDate);
+        }
+
+        plugin.placeholderManager.playersActiveCount = playersActiveCount;
+        plugin.placeholderManager.playersAliveCount = playersAliveCount;
+        plugin.placeholderManager.playersDeadCount = playersDeadCount;
+        plugin.placeholderManager.inventoriesCount = inventoriesCount;
+        plugin.placeholderManager.inventoriesItemsCount = inventoriesItemsCount;
+        plugin.placeholderManager.enderChestsCount = enderChestsCount;
+        plugin.placeholderManager.enderChestsItemsCount = enderChestsItemsCount;
+        plugin.placeholderManager.containersCount = containerCount;
+        plugin.placeholderManager.containersItemsCount = containerItemsCount;
     }
 
     private long daysToMillis(int days) {

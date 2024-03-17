@@ -3,6 +3,7 @@ package us.mkaulfers.hardcoreseasons.orm;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+import us.mkaulfers.hardcoreseasons.utils.InventoryUtils;
 
 import java.util.UUID;
 
@@ -36,6 +37,10 @@ public class HEndChest {
 
     public String getContents() {
         return contents;
+    }
+
+    public int getContentsCount() {
+        return InventoryUtils.countOfItemStacksInBase64(contents);
     }
 
     public void setId(int id) {

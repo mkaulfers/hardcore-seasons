@@ -4,6 +4,9 @@ import org.bukkit.ChatColor;
 import us.mkaulfers.hardcoreseasons.HardcoreSeasons;
 import us.mkaulfers.hardcoreseasons.enums.LocalizationKey;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Localization {
     HardcoreSeasons plugin;
 
@@ -54,6 +57,8 @@ public class Localization {
 
     public final String playerResurrected;
 
+    public final List<String> seasonInfo;
+
     public Localization(
             HardcoreSeasons plugin,
             String configversion,
@@ -86,17 +91,15 @@ public class Localization {
             String deathMessage,
             String seasonEnding,
             String seasonGenerating,
-            String playerResurrected
+            String playerResurrected,
+            List<String> seasonInfo
     ) {
         this.plugin = plugin;
-
         this.configVersion = configversion;
-
         this.configReloaded = configReloaded;
         this.mustBeAPlayer = mustBeAPlayer;
         this.noPermission = noPermission;
         this.invalidCommand = invalidCommand;
-
         this.loadingRewards = loadingRewards;
         this.rewardGoBack = rewardGoBack;
         this.rewardPrevious = rewardPrevious;
@@ -105,7 +108,6 @@ public class Localization {
         this.rewardClose = rewardClose;
         this.rewardPageCounter = rewardPageCounter;
         this.inventoryFull = inventoryFull;
-
         this.loadingSeasons = loadingSeasons;
         this.selectSeasonTitle = selectSeasonTitle;
         this.seasonItemName = seasonItemName;
@@ -113,22 +115,18 @@ public class Localization {
         this.seasonNext = seasonNext;
         this.seasonClose = seasonClose;
         this.seasonPageCounter = seasonPageCounter;
-
         this.haveDied = haveDied;
-
         this.cannotVote = cannotVote;
         this.requestingVoteTop = requestingVoteTop;
         this.requestingVoteBottom = requestingVoteBottom;
         this.voteContinueSuccess = voteContinueSuccess;
         this.voteEndSuccess = voteEndSuccess;
         this.voteFail = voteFail;
-
         this.deathMessage = deathMessage;
-
         this.seasonEnding = seasonEnding;
         this.seasonGenerating = seasonGenerating;
-
         this.playerResurrected = playerResurrected;
+        this.seasonInfo = seasonInfo;
     }
 
     public String getLocalized(LocalizationKey key) {
@@ -163,12 +161,23 @@ public class Localization {
             case SEASON_ENDING -> translateAlternateColorCodes(seasonEnding);
             case SEASON_GENERATING -> translateAlternateColorCodes(seasonGenerating);
             case PLAYER_RESURRECTED -> translateAlternateColorCodes(playerResurrected);
+            case SEASON_INFO -> String.join("\n", translateAlternateColorCodes(seasonInfo));
         };
     }
 
     private String translateAlternateColorCodes(String text) {
         String internalPlaceholderParsed = plugin.placeholderManager.getPlaceholderValue(text);
         return ChatColor.translateAlternateColorCodes('&', internalPlaceholderParsed);
+    }
+
+    private List<String> translateAlternateColorCodes(List<String> text) {
+        List<String> translated = new ArrayList<>();
+
+        for (String line : text) {
+            translated.add(translateAlternateColorCodes(line));
+        }
+
+        return translated;
     }
 }
 

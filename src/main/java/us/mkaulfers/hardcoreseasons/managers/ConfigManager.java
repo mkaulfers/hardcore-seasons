@@ -102,7 +102,8 @@ public class ConfigManager {
                 rawConfig.getString("deathMessage"),
                 rawConfig.getString("seasonEnding"),
                 rawConfig.getString("seasonGenerating"),
-                rawConfig.getString("playerResurrected")
+                rawConfig.getString("playerResurrected"),
+                rawConfig.getStringList("seasonInfo")
         );
     }
 

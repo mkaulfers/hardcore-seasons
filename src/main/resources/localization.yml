@@ -1,5 +1,5 @@
 # Do NOT modify this.
-configVersion: 1.0.0
+configVersion: 1.0.1
 
 # Placeholders:
 # {current_season} - The current season number.
@@ -56,3 +56,18 @@ seasonGenerating: "&9A new season is generating. &c(Rejoin in 1 minute.)"
 
 # Admin Messages
 playerResurrected: "&b{resurrected_player_name} &9has been resurrected, for &bSeason {current_season}&9."
+
+# Info Messages
+seasonInfo:
+  - "&9-------------- &bSeason {current_season} &9--------------"
+  - "&9Season Start: &b{season_start_date}"
+  - "&9Voting Begins: &b{season_vote_start_date}"
+  - "&9Season End: &b{season_end_date}"
+  - "&9Players Active: &b{players_active_count}"
+  - "&9Players Alive: &b{players_alive_count}"
+  - "&9Players Dead: &b{players_dead_count}"
+  - "&9-------------- &bPotential Rewards &9--------------"
+  - "&9Inventories: &b{inventories_count} &9containing &b{inventories_items_count} &9items."
+  - "&9Ender Chests: &b{ender_chests_count} &9containing &b{ender_chests_items_count} &9items."
+  - "&9Containers: &b{containers_count} &9containing &b{containers_items_count} &9items."
+  - "&9--------------------------------------------"
