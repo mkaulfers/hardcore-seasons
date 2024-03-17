@@ -1,5 +1,8 @@
 # Do NOT modify this.
-configVersion: 1.0.0
+configVersion: 1.0.1
+
+# Logging Level, INFO, WARNING, ERROR, OFF
+loggingLevel: "OFF" # Default | OFF
 
 # Enables /season claim command for this server.
 # This command will allow players to claim rewards

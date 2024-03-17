@@ -42,6 +42,10 @@
                 <configuration>
                     <relocations>
                         <relocation>
+                            <pattern>org.bstats</pattern>
+                            <shadedPattern>us.mkaulfers.hardcoreseasons.HardcoreSeasons</shadedPattern>
+                        </relocation>
+                        <relocation>
                             <pattern>com.github.stefvanschie.inventoryframework</pattern>
                             <shadedPattern>us.mkaulfers.hardcoreseasons.HardcoreSeasons.inventoryframework</shadedPattern>
                         </relocation>
@@ -87,6 +91,12 @@
             <artifactId>spigot-api</artifactId>
             <version>1.20.4-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.bstats</groupId>
+            <artifactId>bstats-bukkit</artifactId>
+            <version>3.0.2</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.zaxxer</groupId>

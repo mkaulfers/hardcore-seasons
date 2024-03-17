@@ -4,6 +4,7 @@ import java.util.List;
 
 public class PluginConfig {
     public String configVersion;
+    public String loggingLevel;
     public boolean claimingEnabled;
     public boolean trackingEnabled;
     public boolean persistSeasonWorlds;
@@ -21,6 +22,7 @@ public class PluginConfig {
 
     public PluginConfig(
             String configVersion,
+            String loggingLevel,
             boolean claimingEnabled,
             boolean trackingEnabled,
             boolean persistSeasonWorlds,
@@ -36,6 +38,7 @@ public class PluginConfig {
             String storageType,
             MySQLConfig mySQLConfig
     ) {
+        this.loggingLevel = loggingLevel;
         this.configVersion = configVersion;
         this.claimingEnabled = claimingEnabled;
         this.trackingEnabled = trackingEnabled;

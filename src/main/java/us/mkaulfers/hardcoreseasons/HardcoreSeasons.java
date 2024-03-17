@@ -1,6 +1,8 @@
 package us.mkaulfers.hardcoreseasons;
 
 import co.aikar.commands.PaperCommandManager;
+import com.j256.ormlite.logger.Level;
+import com.j256.ormlite.logger.Logger;
 import net.kyori.adventure.text.Component;
 import net.megavex.scoreboardlibrary.api.ScoreboardLibrary;
 import net.megavex.scoreboardlibrary.api.exception.NoPacketAdapterAvailableException;
@@ -8,6 +10,7 @@ import net.megavex.scoreboardlibrary.api.noop.NoopScoreboardLibrary;
 import net.megavex.scoreboardlibrary.api.sidebar.Sidebar;
 import net.megavex.scoreboardlibrary.api.sidebar.component.ComponentSidebarLayout;
 import net.megavex.scoreboardlibrary.api.sidebar.component.SidebarComponent;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.PluginManager;
@@ -32,15 +35,34 @@ public final class HardcoreSeasons extends JavaPlugin {
     public RewardManager rewardManager;
     public PlaceholderManager placeholderManager;
     public InfoSidebar infoSidebar;
+    public Metrics metrics;
 
     // Lifecycle methods
     @Override
     public void onEnable() {
         this.configManager = new ConfigManager(this);
+        this.metrics = new Metrics(this, 21353);
+        setLogLevel();
         registerCommands();
         handleStorage();
         registerListeners();
         initInfoSidebar();
+    }
+
+    private void setLogLevel() {
+        switch (configManager.config.loggingLevel) {
+            case "INFO":
+                Logger.setGlobalLogLevel(Level.INFO);
+                break;
+            case "WARNING":
+                Logger.setGlobalLogLevel(Level.WARNING);
+                break;
+            case "ERROR":
+                Logger.setGlobalLogLevel(Level.ERROR);
+                break;
+            default:
+                Logger.setGlobalLogLevel(Level.OFF);
+        }
     }
 
     private void registerCommands() {
