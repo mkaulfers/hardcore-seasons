@@ -10,6 +10,18 @@ configVersion: 1.0.1
 # {season_select_total_pages} - The total number of pages when selecting seasons.
 # {past_season_number} - The number of the past season.
 # {resurrected_player_name} - The name of the player that was resurrected.
+# {season_start_date} - The start date of the active season.
+# {season_vote_start_date} - The date voting begins for the active season.
+# {season_end_date} - The end date of the active season.
+# {players_active_count} - The number of active players based on lastLoginThreshold.
+# {players_alive_count} - The number of alive players for the active season.
+# {players_dead_count} - The number of dead players for the active season.
+# {inventories_count} - The number of inventories for the active season.
+# {inventories_items_count} - The number of items in all inventories for the active season.
+# {ender_chests_count} - The number of ender chests for the active season.
+# {ender_chests_items_count} - The number of items in all ender chests for the active season.
+# {containers_count} - The number of containers for the active season.
+# {containers_items_count} - The number of items in all containers for the active season.
 
 # System Messages
 configReloaded: "&9Config reloaded."
