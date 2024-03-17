@@ -1,5 +1,6 @@
 package us.mkaulfers.hardcoreseasons.utils;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -97,113 +98,22 @@ public class InventoryUtils {
         }
     }
 
-    /**
-     * Gets one {@link ItemStack} from Base64 string.
-     *
-     * @param data Base64 string to convert to {@link ItemStack}.
-     * @return {@link ItemStack} created from the Base64 string.
-     * @throws IOException
-     */
-    public static ItemStack itemStackFromBase64(String data) throws IOException {
+    public static int countOfItemStacksInBase64(String contents) {
         try {
-            ByteArrayInputStream inputStream = new ByteArrayInputStream(Base64Coder.decode(data));
-            BukkitObjectInputStream dataInput = new BukkitObjectInputStream(inputStream);
-            ItemStack item;
+            ItemStack[] items = itemStackArrayFromBase64(contents);
+            int count = 0;
 
-            // Read the serialized inventory
-            item = (ItemStack) dataInput.readObject();
-
-            dataInput.close();
-            return item;
-        } catch (ClassNotFoundException e) {
-            throw new IOException("Unable to decode class type.", e);
-        }
-    }
-
-    /**
-     * A method to serialize one {@link ItemStack} to Base64 String.
-     *
-     * @param item to turn into a Base64 String.
-     * @return Base64 string of the item.
-     * @throws IllegalStateException
-     */
-    public static String itemStackToBase64(ItemStack item) throws IllegalStateException {
-        try {
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            BukkitObjectOutputStream dataOutput = new BukkitObjectOutputStream(outputStream);
-
-            // Save every element
-            dataOutput.writeObject(item);
-
-            // Serialize that array
-            dataOutput.close();
-            return new String(Base64Coder.encode(outputStream.toByteArray()));
-        } catch (Exception e) {
-            throw new IllegalStateException("Unable to save item stacks.", e);
-        }
-    }
-
-    /**
-     * Returns a list of unique items with lore containing the total count of each material
-     *
-     * @param items to be sorted and counted
-     * @return list of unique items with lore
-     */
-    public static List<ItemStack> getGUIItemsList(List<ItemStack> items) {
-        // TreeMap to automatically sort items by display name
-        TreeMap<String, ItemStack> uniqueItemsMap = new TreeMap<>();
-
-        // HashMap to store total count of each material
-        HashMap<Material, Integer> itemCount = new HashMap<>();
-
-        for (ItemStack item : items) {
-            if (item != null) {
-                Material material = item.getType();
-                int amount = item.getAmount();
-
-                // Update total count of material
-                itemCount.put(material, itemCount.getOrDefault(material, 0) + amount);
-
-                // Create unique item with lore
-                ItemStack newItem = item.clone();
-                ItemMeta meta = newItem.getItemMeta();
-                if (meta != null) {
-                    meta.setLore(List.of(
-                            ChatColor.GOLD + "Redeemable: " + ChatColor.AQUA + itemCount.get(material) + "x"
-                    ));
-                    newItem.setItemMeta(meta);
-                    newItem.setAmount(1);
+            for (ItemStack item : items) {
+                if (item != null) {
+                    count += item.getAmount();
                 }
-
-                // Add unique item to map
-                uniqueItemsMap.put(material.name(), newItem);
             }
+
+            return count;
+        } catch (IOException e) {
+            Bukkit.getLogger().severe("[HardcoreSeasons]: Failed to count item stacks in base64 string: \n" + e.getMessage());
         }
 
-        // Construct list sorted by display name
-        return new ArrayList<>(uniqueItemsMap.values());
-    }
-
-    /**
-     * Returns a list of items of a specific type
-     *
-     * @param items    to be sorted
-     * @param material to filter items by
-     * @return two lists where [0] is the items of the specified type
-     * and [1] is the items that remain after removal.
-     */
-    public static List<List<ItemStack>> getItemsOfType(List<ItemStack> items, Material material) {
-        List<ItemStack> itemsOfType = new ArrayList<>();
-        List<ItemStack> remainingItems = new ArrayList<>();
-
-        for (ItemStack item : items) {
-            if (item != null && item.getType() == material) {
-                itemsOfType.add(item);
-            } else {
-                remainingItems.add(item);
-            }
-        }
-
-        return List.of(itemsOfType, remainingItems);
+        return 0;
     }
 }
