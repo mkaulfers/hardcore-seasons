@@ -24,62 +24,62 @@ configVersion: 1.0.1
 # {containers_items_count} - The number of items in all containers for the active season.
 
 # System Messages
-configReloaded: "&9Config reloaded."
-mustBeAPlayer: "&9You must be a player to use this command."
-noPermission: "&9You do not have permission to use this command."
+configReloaded: "&6Config reloaded."
+mustBeAPlayer: "&6You must be a player to use this command."
+noPermission: "&6You do not have permission to use this command."
 invalidCommand: "Invalid command."
 
 # Redeeming Rewards GUI
-loadingRewards: "&9Loading rewards for season"
-rewardGoBack: "&9Go Back"
-rewardPrevious: "&9Previous"
-rewardPage: "&9Page"
-rewardNext: "&9Next"
+loadingRewards: "&6Loading rewards for season"
+rewardGoBack: "&6Go Back"
+rewardPrevious: "&6Previous"
+rewardPage: "&6Page"
+rewardNext: "&6Next"
 rewardClose: "&4Close"
-rewardPageCounter: "&9Page {reward_current_page}/{reward_total_pages}"
-inventoryFull: "&9Your inventory is full. Please make room to claim the remaining rewards."
+rewardPageCounter: "&6Page {reward_current_page}/{reward_total_pages}"
+inventoryFull: "&6Your inventory is full. Please make room to claim the remaining rewards."
 
 # Selecting Season GUI
-loadingSeasons: "&9Loading seasonal rewards."
-selectSeasonTitle: "&9Select Season"
-seasonItemName: "&9Season {past_season_number}"
-seasonPrevious: "&9Previous"
-seasonNext: "&9Next"
-seasonClose: "&9Close"
-seasonPageCounter: "&9Page {season_select_current_page}/{season_select_total_pages}"
+loadingSeasons: "&6Loading seasonal rewards."
+selectSeasonTitle: "&6Select Season"
+seasonItemName: "&6Season {past_season_number}"
+seasonPrevious: "&6Previous"
+seasonNext: "&6Next"
+seasonClose: "&6Close"
+seasonPageCounter: "&6Page {season_select_current_page}/{season_select_total_pages}"
 
 # Player Join Messages
 haveDied: "&cYou have died and must wait until &bSeason {next_season}"
 
 # Vote Messages
-cannotVote: "&9You cannot vote at this time. The season is not ending."
-requestingVoteTop: "&9The server is requesting a vote to end the season"
-requestingVoteBottom: "&9Please type &b/season vote &9< &bend&9 or &bcontinue&9 > to vote."
-voteContinueSuccess: "&9You have voted to continue the season."
-voteEndSuccess: "&9You have voted to end the season."
-voteFail: "&9There was an issue casting your vote, please try again."
+cannotVote: "&6You cannot vote at this time. The season is not ending."
+requestingVoteTop: "&6The server is requesting a vote to end the season"
+requestingVoteBottom: "&6Please type &b/season vote &6< &bend&6 or &bcontinue&6 > to vote."
+voteContinueSuccess: "&6You have voted to continue the season."
+voteEndSuccess: "&6You have voted to end the season."
+voteFail: "&6There was an issue casting your vote, please try again."
 
 # Player Death Messages
 deathMessage: "&cYou have died and must wait until &bSeason {next_season}"
 
 # Season End Messages
-seasonEnding: "&9The season has ended. &c(Rejoin in 1 minute.)"
-seasonGenerating: "&9A new season is generating. &c(Rejoin in 1 minute.)"
+seasonEnding: "&6The season has ended. &c(Rejoin in 1 minute.)"
+seasonGenerating: "&6A new season is generating. &c(Rejoin in 1 minute.)"
 
 # Admin Messages
-playerResurrected: "&b{resurrected_player_name} &9has been resurrected, for &bSeason {current_season}&9."
+playerResurrected: "&b{resurrected_player_name} &6has been resurrected, for &bSeason {current_season}&6."
 
-# Info Messages
+# Info Messages & Scoreboard
 seasonInfo:
-  - "&9-------------- &bSeason {current_season} &9--------------"
-  - "&9Season Start: &b{season_start_date}"
-  - "&9Voting Begins: &b{season_vote_start_date}"
-  - "&9Season End: &b{season_end_date}"
-  - "&9Players Active: &b{players_active_count}"
-  - "&9Players Alive: &b{players_alive_count}"
-  - "&9Players Dead: &b{players_dead_count}"
-  - "&9-------------- &bPotential Rewards &9--------------"
-  - "&9Inventories: &b{inventories_count} &9containing &b{inventories_items_count} &9items."
-  - "&9Ender Chests: &b{ender_chests_count} &9containing &b{ender_chests_items_count} &9items."
-  - "&9Containers: &b{containers_count} &9containing &b{containers_items_count} &9items."
-  - "&9--------------------------------------------"
+  - "&6●⏺ &bSeason {current_season} &6⏺●"
+  - "&6Season Start: &b{season_start_date}"
+  - "&6Voting Begins: &b{season_vote_start_date}"
+  - "&6Season End: &b{season_end_date}"
+  - "&6Players Active: &b{players_active_count}"
+  - "&6Players Alive: &b{players_alive_count}"
+  - "&6Players Dead: &b{players_dead_count}"
+  - ""
+  - "&6------- &bPotential Rewards &6-------"
+  - "&6Inventories: &b{inventories_count} &6containing &b{inventories_items_count} &6items."
+  - "&6Ender Chests: &b{ender_chests_count} &6containing &b{ender_chests_items_count} &6items."
+  - "&6Containers: &b{containers_count} &6containing &b{containers_items_count} &6items."

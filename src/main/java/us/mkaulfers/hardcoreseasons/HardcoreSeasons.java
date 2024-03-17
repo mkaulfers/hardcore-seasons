@@ -1,10 +1,19 @@
 package us.mkaulfers.hardcoreseasons;
 
 import co.aikar.commands.PaperCommandManager;
+import net.kyori.adventure.text.Component;
+import net.megavex.scoreboardlibrary.api.ScoreboardLibrary;
+import net.megavex.scoreboardlibrary.api.exception.NoPacketAdapterAvailableException;
+import net.megavex.scoreboardlibrary.api.noop.NoopScoreboardLibrary;
+import net.megavex.scoreboardlibrary.api.sidebar.Sidebar;
+import net.megavex.scoreboardlibrary.api.sidebar.component.ComponentSidebarLayout;
+import net.megavex.scoreboardlibrary.api.sidebar.component.SidebarComponent;
+import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import us.mkaulfers.hardcoreseasons.commands.Season;
+import us.mkaulfers.hardcoreseasons.guis.InfoSidebar;
 import us.mkaulfers.hardcoreseasons.listeners.*;
 import us.mkaulfers.hardcoreseasons.managers.*;
 import us.mkaulfers.hardcoreseasons.models.ResRequest;
@@ -22,6 +31,7 @@ public final class HardcoreSeasons extends JavaPlugin {
     public WorldManager worldManager;
     public RewardManager rewardManager;
     public PlaceholderManager placeholderManager;
+    public InfoSidebar infoSidebar;
 
     // Lifecycle methods
     @Override
@@ -30,6 +40,7 @@ public final class HardcoreSeasons extends JavaPlugin {
         registerCommands();
         handleStorage();
         registerListeners();
+        initInfoSidebar();
     }
 
     private void registerCommands() {
@@ -83,5 +94,13 @@ public final class HardcoreSeasons extends JavaPlugin {
         pm.registerEvents(new PlayerPortal(this), this);
         pm.registerEvents(new PlayerSpawnLocation(this), this);
         pm.registerEvents(new AsyncPlayerPreLogin(this), this);
+    }
+
+    private void initInfoSidebar() {
+        if (!configManager.config.trackingEnabled) {
+            return;
+        }
+
+        infoSidebar = new InfoSidebar(this);
     }
 }

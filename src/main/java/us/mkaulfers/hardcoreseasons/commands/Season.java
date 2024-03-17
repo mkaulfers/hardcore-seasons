@@ -2,6 +2,8 @@ package us.mkaulfers.hardcoreseasons.commands;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
+import net.kyori.adventure.text.Component;
+import net.megavex.scoreboardlibrary.api.sidebar.Sidebar;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import us.mkaulfers.hardcoreseasons.HardcoreSeasons;
@@ -17,6 +19,7 @@ import static us.mkaulfers.hardcoreseasons.enums.LocalizationKey.*;
 @CommandAlias("season|sn")
 public class Season extends BaseCommand {
     HardcoreSeasons plugin;
+
     public Season(HardcoreSeasons plugin) {
         this.plugin = plugin;
     }
@@ -26,12 +29,6 @@ public class Season extends BaseCommand {
         SelectSeasonGUI.make(player, plugin);
     }
 
-    @Subcommand("reload")
-    @CommandPermission("hardcoreseasons.admin")
-    public void onReload(Player player) {
-        plugin.reloadConfig();
-        player.sendMessage(plugin.configManager.localization.getLocalized(CONFIG_RELOADED));
-    }
 
     @Subcommand("vote continue")
     public void onVote(Player player) {
@@ -43,10 +40,25 @@ public class Season extends BaseCommand {
         castVote(player, true);
     }
 
-    @Subcommand("info|stats|top|leaderboard|lb")
+    @Subcommand("info")
     public void onInfo(Player player) {
         plugin.hDataSource.generatePlaceholderStats();
         player.sendMessage(plugin.configManager.localization.getLocalized(SEASON_INFO));
+    }
+
+    @Subcommand("leaderboard|lb")
+    public void onLeaderboard(Player player) {
+        boolean result = plugin.infoSidebar.sidebar.removePlayer(player);
+        if (!result) {
+            plugin.infoSidebar.sidebar.addPlayer(player);
+        }
+    }
+
+    @Subcommand("reload")
+    @CommandPermission("hardcoreseasons.admin")
+    public void onReload(Player player) {
+        plugin.reloadConfig();
+        player.sendMessage(plugin.configManager.localization.getLocalized(CONFIG_RELOADED));
     }
 
     @Subcommand("resurrect")

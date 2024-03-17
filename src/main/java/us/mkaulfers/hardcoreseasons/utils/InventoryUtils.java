@@ -111,9 +111,7 @@ public class InventoryUtils {
 
             return count;
         } catch (IOException e) {
-            Bukkit.getLogger().severe("[HardcoreSeasons]: Failed to count item stacks in base64 string: \n" + e.getMessage());
+            return 0;
         }
-
-        return 0;
     }
 }
