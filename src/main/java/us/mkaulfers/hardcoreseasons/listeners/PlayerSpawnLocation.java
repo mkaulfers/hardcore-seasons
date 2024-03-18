@@ -6,7 +6,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.spigotmc.event.player.PlayerSpawnLocationEvent;
 import us.mkaulfers.hardcoreseasons.HardcoreSeasons;
-import us.mkaulfers.hardcoreseasons.orm.HParticipant;
+import us.mkaulfers.hardcoreseasons.models.Participant;
 
 public class PlayerSpawnLocation implements Listener {
     HardcoreSeasons plugin;
@@ -21,7 +21,7 @@ public class PlayerSpawnLocation implements Listener {
             return;
         }
 
-        HParticipant participant = plugin.hDataSource.getParticipant(
+        Participant participant = plugin.db.participants.getParticipant(
                 event.getPlayer().getUniqueId(),
                 plugin.currentSeasonNum
         );

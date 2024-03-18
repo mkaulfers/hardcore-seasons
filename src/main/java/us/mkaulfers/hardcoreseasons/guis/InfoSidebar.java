@@ -36,7 +36,7 @@ public class InfoSidebar {
     }
 
     public void tick() {
-        plugin.hDataSource.generatePlaceholderStats();
+        plugin.db.generatePlaceholderStats();
 
         List<String> lines = plugin.configManager.localization.seasonInfo;
         List<String> parsedLines = new ArrayList<>();

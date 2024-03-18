@@ -4,7 +4,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import us.mkaulfers.hardcoreseasons.HardcoreSeasons;
-import us.mkaulfers.hardcoreseasons.orm.HParticipant;
+import us.mkaulfers.hardcoreseasons.models.Participant;
 
 import java.sql.Timestamp;
 
@@ -27,7 +27,7 @@ public class PlayerDeath implements Listener {
         String result = plugin.configManager.localization.getLocalized(DEATH_MESSAGE);
         event.getEntity().kickPlayer(result);
 
-        HParticipant participant = plugin.hDataSource.getParticipant(
+        Participant participant = plugin.db.participants.getParticipant(
                 event.getEntity().getUniqueId(),
                 plugin.currentSeasonNum
         );
@@ -35,7 +35,7 @@ public class PlayerDeath implements Listener {
         if (participant != null) {
             participant.setDead(true);
             participant.setLastOnline(new Timestamp(System.currentTimeMillis()));
-            plugin.hDataSource.updateParticipant(participant);
+            plugin.db.participants.updateParticipant(participant);
         }
     }
 }

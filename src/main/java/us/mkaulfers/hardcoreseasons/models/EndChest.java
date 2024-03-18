@@ -1,4 +1,4 @@
-package us.mkaulfers.hardcoreseasons.orm;
+package us.mkaulfers.hardcoreseasons.models;
 
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
@@ -8,7 +8,7 @@ import us.mkaulfers.hardcoreseasons.utils.InventoryUtils;
 import java.util.UUID;
 
 @DatabaseTable(tableName = "end_chests")
-public class HEndChest {
+public class EndChest {
     @DatabaseField(generatedId = true)
     private int id;
 
@@ -21,7 +21,7 @@ public class HEndChest {
     @DatabaseField(dataType = DataType.LONG_STRING, columnName = "contents")
     private String contents;
 
-    public HEndChest() {}
+    public EndChest() {}
 
     public int getId() {
         return id;

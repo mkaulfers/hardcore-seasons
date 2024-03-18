@@ -3,15 +3,7 @@ package us.mkaulfers.hardcoreseasons;
 import co.aikar.commands.PaperCommandManager;
 import com.j256.ormlite.logger.Level;
 import com.j256.ormlite.logger.Logger;
-import net.kyori.adventure.text.Component;
-import net.megavex.scoreboardlibrary.api.ScoreboardLibrary;
-import net.megavex.scoreboardlibrary.api.exception.NoPacketAdapterAvailableException;
-import net.megavex.scoreboardlibrary.api.noop.NoopScoreboardLibrary;
-import net.megavex.scoreboardlibrary.api.sidebar.Sidebar;
-import net.megavex.scoreboardlibrary.api.sidebar.component.ComponentSidebarLayout;
-import net.megavex.scoreboardlibrary.api.sidebar.component.SidebarComponent;
 import org.bstats.bukkit.Metrics;
-import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -20,13 +12,13 @@ import us.mkaulfers.hardcoreseasons.guis.InfoSidebar;
 import us.mkaulfers.hardcoreseasons.listeners.*;
 import us.mkaulfers.hardcoreseasons.managers.*;
 import us.mkaulfers.hardcoreseasons.models.ResRequest;
-import us.mkaulfers.hardcoreseasons.orm.HDataSource;
+import us.mkaulfers.hardcoreseasons.managers.DataSource;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public final class HardcoreSeasons extends JavaPlugin {
-    public HDataSource hDataSource;
+    public DataSource db;
     public boolean isGeneratingNewSeason = false;
     public int currentSeasonNum;
     public ConfigManager configManager;
@@ -93,8 +85,8 @@ public final class HardcoreSeasons extends JavaPlugin {
             return;
         }
 
-        hDataSource = new HDataSource(this);
-        currentSeasonNum = hDataSource.getActiveSeason().getSeasonId();
+        db = new DataSource(this);
+        currentSeasonNum = db.seasons.getActiveSeason().getSeasonId();
         placeholderManager = new PlaceholderManager();
         placeholderManager.currentSeason = currentSeasonNum;
         placeholderManager.nextSeason = currentSeasonNum + 1;

@@ -1,4 +1,4 @@
-package us.mkaulfers.hardcoreseasons.orm;
+package us.mkaulfers.hardcoreseasons.models;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -6,7 +6,7 @@ import com.j256.ormlite.table.DatabaseTable;
 import java.sql.Timestamp;
 
 @DatabaseTable(tableName = "seasons")
-public class HSeason {
+public class Season {
     @DatabaseField(generatedId = true)
     private int id;
 
@@ -22,7 +22,7 @@ public class HSeason {
     @DatabaseField(columnName = "hard_end_date")
     private Timestamp hardEndDate;
 
-    public HSeason() {}
+    public Season() {}
 
     public int getId() {
         return id;

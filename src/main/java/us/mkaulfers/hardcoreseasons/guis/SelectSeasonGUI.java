@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import us.mkaulfers.hardcoreseasons.HardcoreSeasons;
-import us.mkaulfers.hardcoreseasons.orm.HSeasonReward;
+import us.mkaulfers.hardcoreseasons.models.SeasonReward;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,9 +29,9 @@ public class SelectSeasonGUI {
 
         List<GuiItem> seasonChestItem = new ArrayList<>();
 
-        List<HSeasonReward> rewards = plugin.hDataSource.getSeasonRewards(player.getUniqueId());
+        List<SeasonReward> rewards = plugin.db.rewards.getSeasonRewards(player.getUniqueId());
 
-        for (HSeasonReward seasonReward : rewards) {
+        for (SeasonReward seasonReward : rewards) {
             ItemStack guiChestItem = new ItemStack(Material.CHEST);
             ItemMeta guiChestItemMeta = guiChestItem.getItemMeta();
 

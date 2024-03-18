@@ -1,14 +1,13 @@
-package us.mkaulfers.hardcoreseasons.orm;
+package us.mkaulfers.hardcoreseasons.models;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.UUID;
 
 @DatabaseTable(tableName = "participants")
-public class HParticipant {
+public class Participant {
     @DatabaseField(generatedId = true)
     private int id;
 
@@ -39,7 +38,7 @@ public class HParticipant {
     @DatabaseField(columnName = "is_dead")
     private boolean isDead;
 
-    public HParticipant() {}
+    public Participant() {}
 
     public int getId() {
         return id;

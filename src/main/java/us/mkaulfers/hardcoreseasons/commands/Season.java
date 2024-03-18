@@ -2,15 +2,12 @@ package us.mkaulfers.hardcoreseasons.commands;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
-import net.kyori.adventure.text.Component;
-import net.megavex.scoreboardlibrary.api.sidebar.Sidebar;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import us.mkaulfers.hardcoreseasons.HardcoreSeasons;
 import us.mkaulfers.hardcoreseasons.guis.SelectSeasonGUI;
 import us.mkaulfers.hardcoreseasons.models.ResRequest;
-import us.mkaulfers.hardcoreseasons.orm.HSeason;
-import us.mkaulfers.hardcoreseasons.orm.HVote;
+import us.mkaulfers.hardcoreseasons.models.Vote;
 
 import java.sql.Timestamp;
 
@@ -42,7 +39,7 @@ public class Season extends BaseCommand {
 
     @Subcommand("info")
     public void onInfo(Player player) {
-        plugin.hDataSource.generatePlaceholderStats();
+        plugin.db.generatePlaceholderStats();
         player.sendMessage(plugin.configManager.localization.getLocalized(SEASON_INFO));
     }
 
@@ -65,7 +62,7 @@ public class Season extends BaseCommand {
     @CommandPermission("hardcoreseasons.admin")
     @CommandCompletion("@resurrectCompletion")
     public void onResurrect(CommandSender sender, @Single ResRequest request) {
-        plugin.hDataSource.resurrectPlayer(request.playerId);
+        plugin.db.resurrectPlayer(request.playerId);
         plugin.placeholderManager.currentSeason = plugin.currentSeasonNum;
         plugin.placeholderManager.resurrectedPlayerName = request.playerName;
         sender.sendMessage(plugin.configManager.localization.getLocalized(PLAYER_RESURRECTED));
@@ -73,7 +70,7 @@ public class Season extends BaseCommand {
 
     private void castVote(CommandSender sender, boolean shouldEndSeason) {
         Timestamp now = new Timestamp(System.currentTimeMillis());
-        HSeason activeSeason = plugin.hDataSource.getActiveSeason();
+        us.mkaulfers.hardcoreseasons.models.Season activeSeason = plugin.db.seasons.getActiveSeason();
 
         if (activeSeason == null || !activeSeason.getSoftEndDate().before(now)) {
             sender.sendMessage(plugin.configManager.localization.getLocalized(CANNOT_VOTE));
@@ -83,13 +80,13 @@ public class Season extends BaseCommand {
         if (sender instanceof Player) {
             Player player = (Player) sender;
 
-            HVote vote = new HVote();
+            Vote vote = new Vote();
             vote.setSeasonId(activeSeason.getId());
             vote.setPlayerId(player.getUniqueId());
             vote.setDateLastVoted(now);
             vote.setShouldEndSeason(shouldEndSeason);
 
-            boolean successful = plugin.hDataSource.setVote(vote);
+            boolean successful = plugin.db.votes.setVote(vote);
 
             if (successful) {
                 sender.sendMessage(plugin.configManager.localization.getLocalized(shouldEndSeason ? VOTE_END_SUCCESS : VOTE_CONTINUE_SUCCESS));
