@@ -124,7 +124,7 @@ public class DataSource {
         Timestamp startDate = activeSeason.getStartDate();
         Timestamp softEndDate = activeSeason.getSoftEndDate();
 
-        SimpleDateFormat sdf = new SimpleDateFormat("MMM d, yyyy 'at' h:mma");
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM d, yyyy");
         String formattedStartDate = sdf.format(startDate);
         String formattedSoftEndDate = sdf.format(softEndDate);
 
