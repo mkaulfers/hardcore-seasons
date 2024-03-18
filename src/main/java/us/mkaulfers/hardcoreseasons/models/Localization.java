@@ -28,7 +28,7 @@ public class Localization {
     public final String rewardPageCounter;
     public final String inventoryFull;
 
-    // Selecting Season GUI
+    // Selecting SeasonCMD GUI
     public final String loadingSeasons;
     public final String selectSeasonTitle;
     public final String seasonItemName;
@@ -51,7 +51,7 @@ public class Localization {
     // Player Death Messages
     public final String deathMessage;
 
-    // Season Messages
+    // SeasonCMD Messages
     public final String seasonEnding;
     public final String seasonGenerating;
 

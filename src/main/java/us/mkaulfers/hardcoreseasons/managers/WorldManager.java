@@ -16,7 +16,7 @@ public class WorldManager {
 
     public WorldManager(HardcoreSeasons plugin) {
         this.plugin = plugin;
-        initWorlds(plugin.currentSeasonNum);
+        initWorlds(plugin.activeSeason.getSeasonId());
     }
 
     private void initWorlds(int seasonNum) {
@@ -65,7 +65,19 @@ public class WorldManager {
             WorldCreator worldCreator = new WorldCreator(baseDir + namePrefix + seasonNum + nameSuffix);
             worldCreator.copy(officialWorld);
             worldCreator.seed(System.currentTimeMillis());
-            return worldCreator.createWorld();
+
+            World generatedWorld = worldCreator.createWorld();
+
+            if (generatedWorld == null) {
+                plugin.getLogger().severe("[HardcoreSeasons]: Failed to create world " + namePrefix + seasonNum + nameSuffix);
+                return null;
+            }
+
+            generatedWorld.setHardcore(officialWorld.isHardcore());
+            generatedWorld.setDifficulty(officialWorld.getDifficulty());
+            generatedWorld.setPVP(officialWorld.getPVP());
+
+            return generatedWorld;
         }
         return null;
     }

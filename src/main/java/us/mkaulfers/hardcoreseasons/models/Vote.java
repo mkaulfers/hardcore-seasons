@@ -1,4 +1,4 @@
-package us.mkaulfers.hardcoreseasons.orm;
+package us.mkaulfers.hardcoreseasons.models;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -7,7 +7,7 @@ import java.sql.Timestamp;
 import java.util.UUID;
 
 @DatabaseTable(tableName = "votes")
-public class HVote {
+public class Vote {
     @DatabaseField(generatedId = true)
     private int id;
 
@@ -23,7 +23,7 @@ public class HVote {
     @DatabaseField(columnName = "should_end_season")
     private boolean shouldEndSeason;
 
-    public HVote() {}
+    public Vote() {}
 
     public int getId() {
         return id;

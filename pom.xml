@@ -6,7 +6,7 @@
 
     <groupId>us.mkaulfers.hardcoreseasons.HardcoreSeasons</groupId>
     <artifactId>HardcoreSeasons</artifactId>
-    <version>1.3.0b</version>
+    <version>1.4.1b</version>
     <packaging>jar</packaging>
 
     <name>HardcoreSeasons</name>
@@ -42,6 +42,10 @@
                 <configuration>
                     <relocations>
                         <relocation>
+                            <pattern>org.bstats</pattern>
+                            <shadedPattern>us.mkaulfers.hardcoreseasons.HardcoreSeasons</shadedPattern>
+                        </relocation>
+                        <relocation>
                             <pattern>com.github.stefvanschie.inventoryframework</pattern>
                             <shadedPattern>us.mkaulfers.hardcoreseasons.HardcoreSeasons.inventoryframework</shadedPattern>
                         </relocation>
@@ -75,15 +79,24 @@
             <id>aikar</id>
             <url>https://repo.aikar.co/content/groups/aikar/</url>
         </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io/</url>
+        </repository>
     </repositories>
 
     <dependencies>
-        <!-- Provided -->
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
             <version>1.20.4-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.bstats</groupId>
+            <artifactId>bstats-bukkit</artifactId>
+            <version>3.0.2</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.zaxxer</groupId>
@@ -103,8 +116,6 @@
             <version>6.1</version>
             <scope>provided</scope>
         </dependency>
-
-        <!-- Compile -->
         <dependency>
             <groupId>com.github.stefvanschie.inventoryframework</groupId>
             <artifactId>IF</artifactId>
@@ -114,6 +125,29 @@
             <groupId>co.aikar</groupId>
             <artifactId>acf-paper</artifactId>
             <version>0.5.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.megavexnetwork.scoreboard-library</groupId>
+            <artifactId>scoreboard-library-api</artifactId>
+            <version>2.1.3</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.megavexnetwork.scoreboard-library</groupId>
+            <artifactId>scoreboard-library-implementation</artifactId>
+            <version>2.1.3</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.megavexnetwork.scoreboard-library</groupId>
+            <artifactId>scoreboard-library-modern</artifactId>
+            <version>2.1.3</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.kyori</groupId>
+            <artifactId>adventure-platform-bukkit</artifactId>
+            <version>4.0.1</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>

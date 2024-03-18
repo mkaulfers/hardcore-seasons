@@ -6,7 +6,7 @@ import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.inventory.BlockInventoryHolder;
 import org.bukkit.inventory.Inventory;
 import us.mkaulfers.hardcoreseasons.HardcoreSeasons;
-import us.mkaulfers.hardcoreseasons.orm.HTrackedContainer;
+import us.mkaulfers.hardcoreseasons.models.TrackedContainer;
 import us.mkaulfers.hardcoreseasons.utils.InventoryUtils;
 
 public class InventoryMoveItem implements Listener {
@@ -26,8 +26,8 @@ public class InventoryMoveItem implements Listener {
         Inventory destination = event.getDestination();
 
         if (source.getHolder() instanceof BlockInventoryHolder) {
-            HTrackedContainer trackedContainer = plugin.hDataSource.getTrackedContainer(
-                    plugin.currentSeasonNum,
+            TrackedContainer trackedContainer = plugin.db.containers.getTrackedContainer(
+                    plugin.activeSeason.getSeasonId(),
                     source.getLocation().getBlockX(),
                     source.getLocation().getBlockY(),
                     source.getLocation().getBlockZ(),
@@ -38,13 +38,13 @@ public class InventoryMoveItem implements Listener {
             if (trackedContainer != null) {
                 String contents = InventoryUtils.itemStackArrayToBase64(source.getContents());
                 trackedContainer.setContents(contents);
-                plugin.hDataSource.updateTrackedContainer(trackedContainer);
+                plugin.db.containers.updateTrackedContainer(trackedContainer);
             }
         }
 
         if (destination.getHolder() instanceof BlockInventoryHolder) {
-            HTrackedContainer trackedContainer = plugin.hDataSource.getTrackedContainer(
-                    plugin.currentSeasonNum,
+            TrackedContainer trackedContainer = plugin.db.containers.getTrackedContainer(
+                    plugin.activeSeason.getSeasonId(),
                     destination.getLocation().getBlockX(),
                     destination.getLocation().getBlockY(),
                     destination.getLocation().getBlockZ(),
@@ -55,7 +55,7 @@ public class InventoryMoveItem implements Listener {
             if (trackedContainer != null) {
                 String contents = InventoryUtils.itemStackArrayToBase64(destination.getContents());
                 trackedContainer.setContents(contents);
-                plugin.hDataSource.updateTrackedContainer(trackedContainer);
+                plugin.db.containers.updateTrackedContainer(trackedContainer);
             }
         }
     }

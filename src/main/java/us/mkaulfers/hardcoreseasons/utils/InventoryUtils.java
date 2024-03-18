@@ -3,12 +3,17 @@ package us.mkaulfers.hardcoreseasons.utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
+import us.mkaulfers.hardcoreseasons.HardcoreSeasons;
+import us.mkaulfers.hardcoreseasons.models.EndChest;
+import us.mkaulfers.hardcoreseasons.models.ParticipantInventory;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -111,9 +116,46 @@ public class InventoryUtils {
 
             return count;
         } catch (IOException e) {
-            Bukkit.getLogger().severe("[HardcoreSeasons]: Failed to count item stacks in base64 string: \n" + e.getMessage());
+            return 0;
+        }
+    }
+
+    public static void updatePlayerInventories(Player player, HardcoreSeasons plugin) {
+        int currentSeasonNum = plugin.activeSeason.getSeasonId();
+        UUID playerId = player.getUniqueId();
+        EndChest endChest = plugin.db.endChests.getEndChest(playerId, currentSeasonNum);
+
+        if (endChest != null) {
+            // Update
+            endChest.setSeasonId(currentSeasonNum);
+            endChest.setPlayerId(playerId);
+            endChest.setContents(InventoryUtils.itemStackArrayToBase64(player.getEnderChest().getContents()));
+            plugin.db.endChests.updateEndChest(endChest);
+        } else {
+            // Insert
+            endChest = new EndChest();
+            endChest.setSeasonId(currentSeasonNum);
+            endChest.setPlayerId(playerId);
+            endChest.setContents(InventoryUtils.itemStackArrayToBase64(player.getEnderChest().getContents()));
+            plugin.db.endChests.setEndChest(endChest);
         }
 
-        return 0;
+        // Do the same for Inventory
+        ParticipantInventory participantInventory = plugin.db.inventories.getInventory(playerId, currentSeasonNum);
+
+        if (participantInventory != null) {
+            // Update
+            participantInventory.setSeasonId(currentSeasonNum);
+            participantInventory.setPlayerId(playerId);
+            participantInventory.setContents(InventoryUtils.playerInventoryToBase64(player.getInventory()));
+            plugin.db.inventories.updateInventory(participantInventory);
+        } else {
+            // Insert
+            participantInventory = new ParticipantInventory();
+            participantInventory.setSeasonId(currentSeasonNum);
+            participantInventory.setPlayerId(playerId);
+            participantInventory.setContents(InventoryUtils.playerInventoryToBase64(player.getInventory()));
+            plugin.db.inventories.setInventory(participantInventory);
+        }
     }
 }

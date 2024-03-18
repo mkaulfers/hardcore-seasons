@@ -21,8 +21,8 @@ public class BlockBreak implements Listener {
         Block block = event.getBlock();
         if (BlockUtils.isTrackable(block)) {
             Location loc = block.getLocation();
-            plugin.hDataSource.deleteTrackedContainer(
-                    plugin.currentSeasonNum,
+            plugin.db.containers.deleteTrackedContainer(
+                    plugin.activeSeason.getSeasonId(),
                     loc.getBlockX(),
                     loc.getBlockY(),
                     loc.getBlockZ()

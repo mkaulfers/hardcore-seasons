@@ -1,5 +1,8 @@
 # Do NOT modify this.
-configVersion: 1.0.0
+configVersion: 1.0.1
+
+# Logging Level, INFO, WARNING, ERROR, OFF
+loggingLevel: "OFF" # Default | OFF
 
 # Enables /season claim command for this server.
 # This command will allow players to claim rewards
@@ -41,12 +44,12 @@ persistSeasonWorlds: true # Default | true
 unloadPastSeasons: true # Default | true
 
 # This is the minimum length for the season.
-# Season cannot end before this length of time
+# SeasonCMD cannot end before this length of time
 # unless there are no players alive.
 minSeasonLength: 14 #Default | 14
 
 # This is the maximum length for the season.
-# Season will end if it reaches this length of time.
+# SeasonCMD will end if it reaches this length of time.
 # Rewards will be distributed among all players,
 # based on maxSurvivorsRemaining and player activity.
 maxSeasonLength: -1 # Default | -1 (Disabled)
@@ -87,7 +90,7 @@ voteResetInterval: 2 # Default | 1 (Days)
 # These commands will be executed when the season ends.
 # The commands will only be executed on the non-seasonal server.
 endOfSeasonCommands:
-  - "say Season has ended! The world will be reset and rewards will be split among all players."
+  - "say SeasonCMD has ended! The world will be reset and rewards will be split among all players."
   - "server [playerName] survival"
 
 # The storageType can be either SQLite or MySQL.
