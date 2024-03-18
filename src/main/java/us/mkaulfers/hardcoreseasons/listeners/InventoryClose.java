@@ -7,7 +7,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.InventoryHolder;
 import us.mkaulfers.hardcoreseasons.HardcoreSeasons;
-import us.mkaulfers.hardcoreseasons.orm.HTrackedContainer;
+import us.mkaulfers.hardcoreseasons.models.TrackedContainer;
 import us.mkaulfers.hardcoreseasons.utils.InventoryUtils;
 
 public class InventoryClose implements Listener {
@@ -26,7 +26,7 @@ public class InventoryClose implements Listener {
         InventoryHolder holder = event.getInventory().getHolder();
 
         if (holder instanceof BlockState || holder instanceof DoubleChest) {
-            HTrackedContainer trackedContainer = plugin.hDataSource.getTrackedContainer(
+            TrackedContainer trackedContainer = plugin.db.containers.getTrackedContainer(
                     plugin.currentSeasonNum,
                     event.getInventory().getLocation().getBlockX(),
                     event.getInventory().getLocation().getBlockY(),
@@ -38,7 +38,7 @@ public class InventoryClose implements Listener {
             if (trackedContainer != null) {
                 String contents = InventoryUtils.itemStackArrayToBase64(event.getInventory().getContents());
                 trackedContainer.setContents(contents);
-                plugin.hDataSource.updateTrackedContainer(trackedContainer);
+                plugin.db.containers.updateTrackedContainer(trackedContainer);
             }
         }
     }

@@ -4,8 +4,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 import us.mkaulfers.hardcoreseasons.HardcoreSeasons;
-import us.mkaulfers.hardcoreseasons.orm.HEndChest;
-import us.mkaulfers.hardcoreseasons.orm.HInventory;
+import us.mkaulfers.hardcoreseasons.models.EndChest;
+import us.mkaulfers.hardcoreseasons.models.ParticipantInventory;
 import us.mkaulfers.hardcoreseasons.utils.InventoryUtils;
 
 import java.util.UUID;
@@ -21,39 +21,39 @@ public class PlayerQuit implements Listener {
 
         UUID playerId = event.getPlayer().getUniqueId();
 
-        HEndChest hEndChest = plugin.hDataSource.getEndChest(playerId, plugin.currentSeasonNum);
+        EndChest endChest = plugin.db.endChests.getEndChest(playerId, plugin.currentSeasonNum);
 
-        if (hEndChest != null) {
+        if (endChest != null) {
             // Update
-            hEndChest.setSeasonId(plugin.currentSeasonNum);
-            hEndChest.setPlayerId(playerId);
-            hEndChest.setContents(InventoryUtils.itemStackArrayToBase64(event.getPlayer().getEnderChest().getContents()));
-            plugin.hDataSource.updateEndChest(hEndChest);
+            endChest.setSeasonId(plugin.currentSeasonNum);
+            endChest.setPlayerId(playerId);
+            endChest.setContents(InventoryUtils.itemStackArrayToBase64(event.getPlayer().getEnderChest().getContents()));
+            plugin.db.endChests.updateEndChest(endChest);
         } else {
             // Insert
-            hEndChest = new HEndChest();
-            hEndChest.setSeasonId(plugin.currentSeasonNum);
-            hEndChest.setPlayerId(playerId);
-            hEndChest.setContents(InventoryUtils.itemStackArrayToBase64(event.getPlayer().getEnderChest().getContents()));
-            plugin.hDataSource.setEndChest(hEndChest);
+            endChest = new EndChest();
+            endChest.setSeasonId(plugin.currentSeasonNum);
+            endChest.setPlayerId(playerId);
+            endChest.setContents(InventoryUtils.itemStackArrayToBase64(event.getPlayer().getEnderChest().getContents()));
+            plugin.db.endChests.setEndChest(endChest);
         }
 
         // Do the same for Inventory
-        HInventory hInventory = plugin.hDataSource.getInventory(playerId, plugin.currentSeasonNum);
+        ParticipantInventory participantInventory = plugin.db.inventories.getInventory(playerId, plugin.currentSeasonNum);
 
-        if (hInventory != null) {
+        if (participantInventory != null) {
             // Update
-            hInventory.setSeasonId(plugin.currentSeasonNum);
-            hInventory.setPlayerId(playerId);
-            hInventory.setContents(InventoryUtils.playerInventoryToBase64(event.getPlayer().getInventory()));
-            plugin.hDataSource.updateInventory(hInventory);
+            participantInventory.setSeasonId(plugin.currentSeasonNum);
+            participantInventory.setPlayerId(playerId);
+            participantInventory.setContents(InventoryUtils.playerInventoryToBase64(event.getPlayer().getInventory()));
+            plugin.db.inventories.updateInventory(participantInventory);
         } else {
             // Insert
-            hInventory = new HInventory();
-            hInventory.setSeasonId(plugin.currentSeasonNum);
-            hInventory.setPlayerId(playerId);
-            hInventory.setContents(InventoryUtils.playerInventoryToBase64(event.getPlayer().getInventory()));
-            plugin.hDataSource.setInventory(hInventory);
+            participantInventory = new ParticipantInventory();
+            participantInventory.setSeasonId(plugin.currentSeasonNum);
+            participantInventory.setPlayerId(playerId);
+            participantInventory.setContents(InventoryUtils.playerInventoryToBase64(event.getPlayer().getInventory()));
+            plugin.db.inventories.setInventory(participantInventory);
         }
     }
 

@@ -4,9 +4,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import us.mkaulfers.hardcoreseasons.HardcoreSeasons;
-import us.mkaulfers.hardcoreseasons.orm.HParticipant;
-import us.mkaulfers.hardcoreseasons.orm.HSeason;
-import us.mkaulfers.hardcoreseasons.orm.HVote;
+import us.mkaulfers.hardcoreseasons.models.Participant;
+import us.mkaulfers.hardcoreseasons.models.Season;
+import us.mkaulfers.hardcoreseasons.models.Vote;
 
 import java.io.File;
 import java.sql.Timestamp;
@@ -28,7 +28,7 @@ public class SeasonManager {
     private void scheduleVoteReminder() {
         plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
 
-            HSeason activeSeason = plugin.hDataSource.getActiveSeason();
+            Season activeSeason = plugin.db.seasons.getActiveSeason();
             Timestamp now = new Timestamp(System.currentTimeMillis());
 
             // Only prompt players to vote if the soft-end date has passed
@@ -39,7 +39,7 @@ public class SeasonManager {
                 return;
             }
 
-            List<HParticipant> participants = plugin.hDataSource.getParticipants(activeSeason.getSeasonId());
+            List<Participant> participants = plugin.db.participants.getParticipants(activeSeason.getSeasonId());
 
             // Only prompt players to vote if there are less than or equal to the maxSurvivorsRemaining
             if (participants.size() > plugin.configManager.config.maxSurvivorsRemaining) {
@@ -50,8 +50,8 @@ public class SeasonManager {
             // Or to players who need to confirm their vote again
             // because the voteResetInterval has passed
 
-            for (HParticipant participant : participants) {
-                HVote vote = plugin.hDataSource.getVote(participant.getPlayerId(), activeSeason.getSeasonId());
+            for (Participant participant : participants) {
+                Vote vote = plugin.db.votes.getVote(participant.getPlayerId(), activeSeason.getSeasonId());
 
                 int confirmationThreshold = plugin.configManager.config.voteResetInterval;
                 Timestamp threshold = new Timestamp(now.getTime() - confirmationThreshold * 86400000L);
@@ -65,12 +65,12 @@ public class SeasonManager {
                 }
             }
 
-            List<HVote> votes = plugin.hDataSource.getVotes(activeSeason.getSeasonId());
+            List<Vote> votes = plugin.db.votes.getVotes(activeSeason.getSeasonId());
 
             // Check if there are enough votes to end the season
             int votePercent = plugin.configManager.config.minVotesToEndSeason;
             long voteCount = votes.size();
-            long voteEndCount = votes.stream().filter(HVote::isShouldEndSeason).count();
+            long voteEndCount = votes.stream().filter(Vote::isShouldEndSeason).count();
 
             if (voteCount == 0) {
                 return;
@@ -87,19 +87,19 @@ public class SeasonManager {
     private void scheduleSeasonEndTracker() {
         plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
 
-                    HSeason activeSeason = plugin.hDataSource.getActiveSeason();
+                    Season activeSeason = plugin.db.seasons.getActiveSeason();
 
                     if (activeSeason == null) { return; }
 
-                    List<HParticipant> participants = plugin.hDataSource.getParticipants(activeSeason.getSeasonId());
+                    List<Participant> participants = plugin.db.participants.getParticipants(activeSeason.getSeasonId());
 
                     if (participants == null) { return; }
 
-                    List<HParticipant> activePlayers = new ArrayList<>();
+                    List<Participant> activePlayers = new ArrayList<>();
                     Timestamp now = new Timestamp(System.currentTimeMillis());
                     Timestamp lastOnlineThreshold = new Timestamp(now.getTime() - plugin.configManager.config.lastLoginThreshold * 86400000L);
 
-                    for (HParticipant participant : participants) {
+                    for (Participant participant : participants) {
                         if (participant.getLastOnline() == null || participant.getLastOnline().after(lastOnlineThreshold)) {
                             activePlayers.add(participant);
                         }
@@ -125,7 +125,7 @@ public class SeasonManager {
      * Ends the season, generates seasonal rewards, splitting as needed.
      * Destroys the world, and generates a new world.
      */
-    private void endSeason(List<HParticipant> winners) {
+    private void endSeason(List<Participant> winners) {
         kickPlayersPreventRejoin();
 
         // Generate Rewards
@@ -140,13 +140,13 @@ public class SeasonManager {
             seasonHardEndDate = new Timestamp(System.currentTimeMillis() + plugin.configManager.config.maxSeasonLength * 86400000L);
         }
 
-        HSeason newSeason = new HSeason();
+        Season newSeason = new Season();
         newSeason.setSeasonId(plugin.currentSeasonNum + 1);
         newSeason.setStartDate(seasonStartDate);
         newSeason.setSoftEndDate(seasonSoftEndDate);
         newSeason.setHardEndDate(seasonHardEndDate);
 
-        plugin.hDataSource.setActiveSeason(newSeason);
+        plugin.db.seasons.setActiveSeason(newSeason);
         plugin.currentSeasonNum = plugin.currentSeasonNum + 1;
 
         plugin.placeholderManager.currentSeason = newSeason.getSeasonId();

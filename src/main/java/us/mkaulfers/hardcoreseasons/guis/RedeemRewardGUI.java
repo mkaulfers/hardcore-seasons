@@ -16,7 +16,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import us.mkaulfers.hardcoreseasons.HardcoreSeasons;
-import us.mkaulfers.hardcoreseasons.orm.HSeasonReward;
+import us.mkaulfers.hardcoreseasons.models.SeasonReward;
 import us.mkaulfers.hardcoreseasons.utils.InventoryUtils;
 
 import java.io.IOException;
@@ -35,10 +35,10 @@ public class RedeemRewardGUI {
         int height = 5;
         PaginatedPane pages = new PaginatedPane(0, 0, length, height);
 
-        List<HSeasonReward> playerRewards = plugin.hDataSource.getSeasonRewards(player.getUniqueId());
+        List<SeasonReward> playerRewards = plugin.db.rewards.getSeasonRewards(player.getUniqueId());
         List<ItemStack> shulkerBoxes = new ArrayList<>();
 
-        for (HSeasonReward seasonReward : playerRewards) {
+        for (SeasonReward seasonReward : playerRewards) {
             if (seasonReward.getSeasonId() == seasonId) {
                 try {
                     ItemStack[] contents = InventoryUtils.itemStackArrayFromBase64(seasonReward.getContents());
@@ -124,7 +124,7 @@ public class RedeemRewardGUI {
         Bukkit.getLogger().info("Number of shulkerBoxes: " + shulkerBoxes.size());
 
         String shulkerBoxesBase64 = InventoryUtils.itemStackArrayToBase64(shulkerBoxes.toArray(new ItemStack[0]));
-        plugin.hDataSource.updateSeasonReward(seasonId, player.getUniqueId(), shulkerBoxesBase64);
+        plugin.db.rewards.updateSeasonReward(seasonId, player.getUniqueId(), shulkerBoxesBase64);
 
         gui.update();
     }

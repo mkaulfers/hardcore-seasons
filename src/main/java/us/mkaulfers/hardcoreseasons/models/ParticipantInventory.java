@@ -1,53 +1,58 @@
-package us.mkaulfers.hardcoreseasons.orm;
+package us.mkaulfers.hardcoreseasons.models;
 
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+import us.mkaulfers.hardcoreseasons.utils.InventoryUtils;
 
 import java.util.UUID;
 
-@DatabaseTable(tableName = "season_rewards")
-public class HSeasonReward {
+@DatabaseTable(tableName = "inventories")
+public class ParticipantInventory {
     @DatabaseField(generatedId = true)
     private int id;
-
-    @DatabaseField(columnName = "player_id")
-    private UUID playerId;
 
     @DatabaseField(columnName = "season_id")
     private int seasonId;
 
+    @DatabaseField(columnName = "player_id")
+    private UUID playerId;
+
     @DatabaseField(dataType = DataType.LONG_STRING, columnName = "contents")
     private String contents;
 
-    public HSeasonReward() {}
+    public ParticipantInventory() {}
 
     public int getId() {
         return id;
-    }
-
-    public UUID getPlayerId() {
-        return playerId;
     }
 
     public int getSeasonId() {
         return seasonId;
     }
 
+    public UUID getPlayerId() {
+        return playerId;
+    }
+
     public String getContents() {
         return contents;
+    }
+
+    public int getContentsCount() {
+        return InventoryUtils.countOfItemStacksInBase64(contents);
     }
 
     public void setId(int id) {
         this.id = id;
     }
 
-    public void setPlayerId(UUID playerId) {
-        this.playerId = playerId;
-    }
-
     public void setSeasonId(int seasonId) {
         this.seasonId = seasonId;
+    }
+
+    public void setPlayerId(UUID playerId) {
+        this.playerId = playerId;
     }
 
     public void setContents(String contents) {

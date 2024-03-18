@@ -6,7 +6,7 @@ import org.bukkit.block.ShulkerBox;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BlockStateMeta;
 import us.mkaulfers.hardcoreseasons.HardcoreSeasons;
-import us.mkaulfers.hardcoreseasons.orm.*;
+import us.mkaulfers.hardcoreseasons.models.*;
 import us.mkaulfers.hardcoreseasons.utils.InventoryUtils;
 
 import java.io.IOException;
@@ -19,29 +19,29 @@ public class RewardManager {
         this.plugin = plugin;
     }
 
-    public void saveRewards(List<HParticipant> winners) {
+    public void saveRewards(List<Participant> winners) {
         if (winners.isEmpty()) {
             return;
         }
 
 
         List<ItemStack> rewards = new ArrayList<>();
-        List<HEndChest> endChests = plugin.hDataSource.getEndChests(plugin.currentSeasonNum);
-        List< HInventory> inventories = plugin.hDataSource.getInventories(plugin.currentSeasonNum);
-        List<HTrackedContainer> trackedContainers = plugin.hDataSource.getTrackedContainers(plugin.currentSeasonNum);
+        List<EndChest> endChests = plugin.db.endChests.getEndChests(plugin.currentSeasonNum);
+        List<ParticipantInventory> inventories = plugin.db.inventories.getInventories(plugin.currentSeasonNum);
+        List<TrackedContainer> trackedContainers = plugin.db.containers.getTrackedContainers(plugin.currentSeasonNum);
 
         try {
-            for (HEndChest endChest : endChests) {
+            for (EndChest endChest : endChests) {
                 List<ItemStack> contents = List.of(InventoryUtils.itemStackArrayFromBase64(endChest.getContents()));
                 rewards.addAll(contents);
             }
 
-            for (HInventory inventory : inventories) {
+            for (ParticipantInventory inventory : inventories) {
                 List<ItemStack> contents = List.of(InventoryUtils.itemStackArrayFromBase64(inventory.getContents()));
                 rewards.addAll(contents);
             }
 
-            for (HTrackedContainer trackedContainer : trackedContainers) {
+            for (TrackedContainer trackedContainer : trackedContainers) {
                 List<ItemStack> contents = List.of(InventoryUtils.itemStackArrayFromBase64(trackedContainer.getContents()));
                 rewards.addAll(contents);
             }
@@ -51,14 +51,14 @@ public class RewardManager {
         }
 
         // Remove endChests, inventories, and trackedContainers from the database
-        plugin.hDataSource.deleteEndChests(plugin.currentSeasonNum);
-        plugin.hDataSource.deleteInventories(plugin.currentSeasonNum);
-        plugin.hDataSource.deleteTrackedContainers(plugin.currentSeasonNum);
+        plugin.db.endChests.deleteEndChests(plugin.currentSeasonNum);
+        plugin.db.inventories.deleteInventories(plugin.currentSeasonNum);
+        plugin.db.containers.deleteTrackedContainers(plugin.currentSeasonNum);
 
         distributeRewards(winners, rewards);
     }
 
-    private void distributeRewards(List<HParticipant> winners, List<ItemStack> rewards) {
+    private void distributeRewards(List<Participant> winners, List<ItemStack> rewards) {
         // Step 1: Aggregate ItemStacks by Material
         Map<Material, Integer> aggregatedRewards = new HashMap<>();
         for (ItemStack reward : rewards) {
@@ -67,13 +67,13 @@ public class RewardManager {
 
         // Sort winners based on joinDate, then by lastOnline for handling remainders
         winners.sort(
-                Comparator.comparing(HParticipant::getJoinDate)
-                        .thenComparing(HParticipant::getLastOnline)
+                Comparator.comparing(Participant::getJoinDate)
+                        .thenComparing(Participant::getLastOnline)
                         .reversed()
         );
 
         // Step 2: Distribute Items Evenly Among Winners
-        Map<HParticipant, List<ItemStack>> winnerRewards = new HashMap<>();
+        Map<Participant, List<ItemStack>> winnerRewards = new HashMap<>();
         for (Map.Entry<Material, Integer> entry : aggregatedRewards.entrySet()) {
             Material material = entry.getKey();
             int totalAmount = entry.getValue();
@@ -81,7 +81,7 @@ public class RewardManager {
             int remainder = totalAmount % winners.size();
 
             for (int i = 0; i < winners.size(); i++) {
-                HParticipant winner = winners.get(i);
+                Participant winner = winners.get(i);
                 int amountToGive = baseAmount;
                 if (i == 0 && remainder > 0) { // First winner gets the remainder
                     amountToGive += remainder;
@@ -101,22 +101,22 @@ public class RewardManager {
         saveWinnerRewardsToDatabase(winnerRewards);
     }
 
-    private void saveWinnerRewardsToDatabase(Map<HParticipant, List<ItemStack>> winnerRewards) {
+    private void saveWinnerRewardsToDatabase(Map<Participant, List<ItemStack>> winnerRewards) {
         // This method should contain logic to save the rewards for each player in the database
         // The exact implementation will depend on how your database is structured and how you manage transactions
-        for (Map.Entry<HParticipant, List<ItemStack>> entry : winnerRewards.entrySet()) {
-            HParticipant winner = entry.getKey();
+        for (Map.Entry<Participant, List<ItemStack>> entry : winnerRewards.entrySet()) {
+            Participant winner = entry.getKey();
             List<ItemStack> rewards = entry.getValue();
 
             List<ItemStack> shulkerBoxes = new ArrayList<>();
             packRewardsIntoShulkerBoxes(new LinkedList<>(rewards), shulkerBoxes);
 
-            HSeasonReward seasonReward = new HSeasonReward();
+            SeasonReward seasonReward = new SeasonReward();
             seasonReward.setPlayerId(winner.getPlayerId());
             seasonReward.setSeasonId(plugin.currentSeasonNum);
             seasonReward.setContents(InventoryUtils.itemStackArrayToBase64(shulkerBoxes.toArray(new ItemStack[0])));
 
-            plugin.hDataSource.setSeasonReward(seasonReward);
+            plugin.db.rewards.setSeasonReward(seasonReward);
         }
     }
 

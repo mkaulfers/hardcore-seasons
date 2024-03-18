@@ -1,4 +1,4 @@
-package us.mkaulfers.hardcoreseasons.orm;
+package us.mkaulfers.hardcoreseasons.models;
 
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
@@ -6,7 +6,7 @@ import com.j256.ormlite.table.DatabaseTable;
 import us.mkaulfers.hardcoreseasons.utils.InventoryUtils;
 
 @DatabaseTable(tableName = "tracked_containers")
-public class HTrackedContainer {
+public class TrackedContainer {
     @DatabaseField(generatedId = true)
     private int id;
 
@@ -31,7 +31,7 @@ public class HTrackedContainer {
     @DatabaseField(dataType = DataType.LONG_STRING, columnName = "contents")
     private String contents;
 
-    public HTrackedContainer() {}
+    public TrackedContainer() {}
 
     public int getId() {
         return id;

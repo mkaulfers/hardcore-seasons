@@ -45,6 +45,7 @@ public class ConfigManager {
     private PluginConfig constructPluginConfig(FileConfiguration rawConfig) {
         return new PluginConfig(
                 rawConfig.getString("configVersion"),
+                rawConfig.getString("loggingLevel"),
                 rawConfig.getBoolean("claimingEnabled"),
                 rawConfig.getBoolean("trackingEnabled"),
                 rawConfig.getBoolean("persistSeasonWorlds"),

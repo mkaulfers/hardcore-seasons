@@ -1,20 +1,24 @@
 package us.mkaulfers.hardcoreseasons;
 
 import co.aikar.commands.PaperCommandManager;
+import com.j256.ormlite.logger.Level;
+import com.j256.ormlite.logger.Logger;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import us.mkaulfers.hardcoreseasons.commands.Season;
+import us.mkaulfers.hardcoreseasons.guis.InfoSidebar;
 import us.mkaulfers.hardcoreseasons.listeners.*;
 import us.mkaulfers.hardcoreseasons.managers.*;
 import us.mkaulfers.hardcoreseasons.models.ResRequest;
-import us.mkaulfers.hardcoreseasons.orm.HDataSource;
+import us.mkaulfers.hardcoreseasons.managers.DataSource;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public final class HardcoreSeasons extends JavaPlugin {
-    public HDataSource hDataSource;
+    public DataSource db;
     public boolean isGeneratingNewSeason = false;
     public int currentSeasonNum;
     public ConfigManager configManager;
@@ -22,14 +26,35 @@ public final class HardcoreSeasons extends JavaPlugin {
     public WorldManager worldManager;
     public RewardManager rewardManager;
     public PlaceholderManager placeholderManager;
+    public InfoSidebar infoSidebar;
+    public Metrics metrics;
 
     // Lifecycle methods
     @Override
     public void onEnable() {
         this.configManager = new ConfigManager(this);
+        this.metrics = new Metrics(this, 21353);
+        setLogLevel();
         registerCommands();
         handleStorage();
         registerListeners();
+        initInfoSidebar();
+    }
+
+    private void setLogLevel() {
+        switch (configManager.config.loggingLevel) {
+            case "INFO":
+                Logger.setGlobalLogLevel(Level.INFO);
+                break;
+            case "WARNING":
+                Logger.setGlobalLogLevel(Level.WARNING);
+                break;
+            case "ERROR":
+                Logger.setGlobalLogLevel(Level.ERROR);
+                break;
+            default:
+                Logger.setGlobalLogLevel(Level.OFF);
+        }
     }
 
     private void registerCommands() {
@@ -60,8 +85,8 @@ public final class HardcoreSeasons extends JavaPlugin {
             return;
         }
 
-        hDataSource = new HDataSource(this);
-        currentSeasonNum = hDataSource.getActiveSeason().getSeasonId();
+        db = new DataSource(this);
+        currentSeasonNum = db.seasons.getActiveSeason().getSeasonId();
         placeholderManager = new PlaceholderManager();
         placeholderManager.currentSeason = currentSeasonNum;
         placeholderManager.nextSeason = currentSeasonNum + 1;
@@ -83,5 +108,13 @@ public final class HardcoreSeasons extends JavaPlugin {
         pm.registerEvents(new PlayerPortal(this), this);
         pm.registerEvents(new PlayerSpawnLocation(this), this);
         pm.registerEvents(new AsyncPlayerPreLogin(this), this);
+    }
+
+    private void initInfoSidebar() {
+        if (!configManager.config.trackingEnabled) {
+            return;
+        }
+
+        infoSidebar = new InfoSidebar(this);
     }
 }
