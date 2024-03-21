@@ -39,8 +39,11 @@ public class SeasonCMD extends BaseCommand {
 
     @Subcommand("info")
     public void onInfo(Player player) {
-        plugin.db.generatePlaceholderStats();
-        player.sendMessage(plugin.configManager.localization.getLocalized(SEASON_INFO));
+        player.sendMessage("§9----------- §6§lHardcoreSeasons §9-----------");
+        player.sendMessage("§7§lVersion | §f§l" + plugin.getDescription().getVersion());
+        player.sendMessage("§7§lAuthor  | §f§lxTwisteDx");
+        player.sendMessage("§7§lWebsite | §f§lhttps://github.com/mkaulfers/");
+        player.sendMessage("§9-----------------------------------------");
     }
 
     @Subcommand("leaderboard|lb")

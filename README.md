@@ -28,6 +28,12 @@ Hardcore Seasons is tailored to stimulate and augment the hardcore gameplay expe
 
 # Default Config
 ```yaml
+# Do NOT modify this.
+configVersion: 1.0.1
+
+# Logging Level, INFO, WARNING, ERROR, OFF
+loggingLevel: "OFF" # Default | OFF
+
 # Enables /season claim command for this server.
 # This command will allow players to claim rewards
 # from previous seasons. If you're using MySQL, then
