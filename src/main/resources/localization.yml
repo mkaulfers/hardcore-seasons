@@ -70,6 +70,8 @@ seasonGenerating: "&6A new season is generating. &c(Rejoin in 1 minute.)"
 playerResurrected: "&b{resurrected_player_name} &6has been resurrected, for &bSeason {current_season}&6."
 
 # Info Messages & Scoreboard
+# Special placeholders: {voting_countdown}, {ending_countdown}
+# These placeholders can only be used in the seasonInfo section.
 seasonInfo:
   - "&6●⏺ &bSeason {current_season} &6⏺●"
   - "&6Voting in &b{voting_countdown}"
