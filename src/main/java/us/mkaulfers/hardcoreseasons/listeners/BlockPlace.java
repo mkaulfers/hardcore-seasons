@@ -1,12 +1,14 @@
 package us.mkaulfers.hardcoreseasons.listeners;
 
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import us.mkaulfers.hardcoreseasons.HardcoreSeasons;
 import us.mkaulfers.hardcoreseasons.models.TrackedContainer;
 import us.mkaulfers.hardcoreseasons.utils.BlockUtils;
+import us.mkaulfers.hardcoreseasons.utils.InventoryUtils;
 
 public class BlockPlace implements Listener {
     HardcoreSeasons plugin;
@@ -29,6 +31,9 @@ public class BlockPlace implements Listener {
             trackedContainer.setContents("");
             plugin.db.containers.setTrackedContainer(trackedContainer);
         }
+
+        Player player = event.getPlayer();
+        InventoryUtils.updatePlayerInventories(player, plugin);
     }
 
     public BlockPlace(HardcoreSeasons plugin) {
